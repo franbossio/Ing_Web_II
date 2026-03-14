@@ -1,0 +1,84 @@
+body {
+    background-color: #f3f2ef;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #0a66c2;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.caja-login {
+    background-color: white;
+    width: 350px;
+    margin: 30px auto;
+    padding: 30px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+}
+
+.caja-login h2 {
+    text-align: center;
+    color: #333333;
+}
+
+.caja-login p {
+    color: #666666;
+    text-align: center;
+    font-size: 14px;
+}
+
+label {
+    font-size: 14px;
+    color: #333333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.boton-login {
+    background-color: #0a66c2;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.boton-login:hover {
+    background-color: #004182;
+}
+
+.linea {
+    border: none;
+    border-top: 1px solid #cccccc;
+    margin: 20px 0;
+}
+
+.texto-registro {
+    text-align: center;
+    font-size: 14px;
+    color: #666666;
+}
+
+.texto-registro a {
+    color: #0a66c2;
+}
+
+.link-olvide {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: #0a66c2;
+    margin-bottom: 15px;
+}
