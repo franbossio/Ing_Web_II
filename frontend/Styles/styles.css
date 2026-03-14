@@ -1,48 +1,84 @@
+/* ===========================
+   ESTILOS GENERALES
+=========================== */
+
 body {
-    background-color: #f3f2ef;
+    background-color: #eef2f7;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     color: #0a66c2;
     text-align: center;
     margin-top: 40px;
+    font-size: 28px;
+    letter-spacing: 1px;
 }
+
+/* ===========================
+   CAJA PRINCIPAL
+=========================== */
 
 .caja-login {
     background-color: white;
-    width: 350px;
+    width: 370px;
     margin: 30px auto;
-    padding: 30px;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
+    padding: 35px 40px;
+    border: 1px solid #d0d8e4;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .caja-login h2 {
     text-align: center;
-    color: #333333;
+    color: #1a1a1a;
+    font-size: 22px;
+    margin-bottom: 6px;
 }
 
 .caja-login p {
-    color: #666666;
+    color: #777777;
     text-align: center;
     font-size: 14px;
+    margin-top: 0;
 }
 
+/* ===========================
+   LABELS E INPUTS
+=========================== */
+
 label {
-    font-size: 14px;
-    color: #333333;
+    font-size: 13px;
+    font-weight: bold;
+    color: #444444;
+    display: block;
+    margin-bottom: 5px;
 }
 
 input {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
+    padding: 11px 13px;
+    margin-bottom: 18px;
+    border: 1.5px solid #cccccc;
+    border-radius: 6px;
     font-size: 14px;
+    color: #333;
+    background-color: #f9fafc;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 }
+
+input:focus {
+    border-color: #0a66c2;
+    outline: none;
+    background-color: #fff;
+}
+
+/* ===========================
+   BOTONES
+=========================== */
 
 .boton-login {
     background-color: #0a66c2;
@@ -50,29 +86,51 @@ input {
     width: 100%;
     padding: 12px;
     border: none;
-    border-radius: 20px;
-    font-size: 16px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
+    margin-top: 5px;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
 .boton-login:hover {
-    background-color: #004182;
+    background-color: #004fa3;
 }
+
+.boton-login:active {
+    transform: scale(0.98);
+}
+
+/* ===========================
+   LINEA SEPARADORA
+=========================== */
 
 .linea {
     border: none;
-    border-top: 1px solid #cccccc;
-    margin: 20px 0;
+    border-top: 1.5px solid #e8edf3;
+    margin: 22px 0;
 }
+
+/* ===========================
+   LINKS Y TEXTOS INFERIORES
+=========================== */
 
 .texto-registro {
     text-align: center;
     font-size: 14px;
     color: #666666;
+    margin: 0;
 }
 
 .texto-registro a {
     color: #0a66c2;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.texto-registro a:hover {
+    text-decoration: underline;
 }
 
 .link-olvide {
@@ -80,5 +138,32 @@ input {
     text-align: center;
     font-size: 13px;
     color: #0a66c2;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+    text-decoration: none;
+}
+
+.link-olvide:hover {
+    text-decoration: underline;
+}
+
+/* ===========================
+   TERMINOS Y CONDICIONES
+   (usado en crearCuenta.html)
+=========================== */
+
+.texto-terminos {
+    font-size: 12px;
+    color: #888888;
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+
+.texto-terminos a {
+    color: #0a66c2;
+    text-decoration: none;
+}
+
+.texto-terminos a:hover {
+    text-decoration: underline;
 }
