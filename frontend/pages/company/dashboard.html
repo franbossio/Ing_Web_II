@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — TalentAI Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/company.css" />
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+
+    <div class="sidebar-company">
+      <div class="company-badge">
+        <div class="company-avatar">AC</div>
+        <div class="company-info">
+          <div class="company-name">Acme Corp S.A.</div>
+          <div class="company-role">Empresa</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="candidates.html" class="nav-item">
+        <span class="nav-icon">🔍</span> Buscar candidatos
+        <span class="nav-badge">24</span>
+      </a>
+
+      <span class="nav-section-label">Ofertas</span>
+      <a href="post-job.html" class="nav-item">
+        <span class="nav-icon">➕</span> Publicar oferta
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📋</span> Mis ofertas
+      </a>
+
+      <span class="nav-section-label">Gestión</span>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📬</span> Postulaciones
+        <span class="nav-badge">8</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⭐</span> Favoritos
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-subtitle">Bienvenido de vuelta, Acme Corp</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
+        <a href="post-job.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">
+          ➕ Nueva oferta
+        </a>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="page-content">
+
+      <!-- ── Stat cards ── -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Ofertas activas</span>
+            <span class="stat-card-icon">📋</span>
+          </div>
+          <div class="stat-card-value">12</div>
+          <div class="stat-card-change change-up">↑ 3 este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Postulaciones</span>
+            <span class="stat-card-icon">📬</span>
+          </div>
+          <div class="stat-card-value">148</div>
+          <div class="stat-card-change change-up">↑ 24 esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Candidatos revisados</span>
+            <span class="stat-card-icon">👁</span>
+          </div>
+          <div class="stat-card-value">63</div>
+          <div class="stat-card-change">De 148 totales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Entrevistas agendadas</span>
+            <span class="stat-card-icon">📅</span>
+          </div>
+          <div class="stat-card-value">7</div>
+          <div class="stat-card-change change-up">↑ 2 nuevas</div>
+        </div>
+      </div>
+
+      <!-- ── Dos columnas ── -->
+      <div class="grid-2">
+
+        <!-- Mis ofertas recientes -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Ofertas recientes</div>
+              <div class="panel-subtitle">Tus últimas publicaciones activas</div>
+            </div>
+            <a href="post-job.html" class="icon-btn">➕ Nueva</a>
+          </div>
+          <div class="panel-body" style="padding:16px;">
+            <div class="job-list">
+
+              <div class="job-row">
+                <div class="job-row-left">
+                  <div class="job-row-icon">💻</div>
+                  <div>
+                    <div class="job-row-title">Desarrollador Full Stack</div>
+                    <div class="job-row-meta">
+                      <span>🏠 Remoto</span>
+                      <span>📅 Hace 2 días</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="job-row-right">
+                  <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
+                  <span style="font-size:0.8rem;color:var(--clr-muted);">34 postulantes</span>
+                </div>
+              </div>
+
+              <div class="job-row">
+                <div class="job-row-left">
+                  <div class="job-row-icon">🎨</div>
+                  <div>
+                    <div class="job-row-title">Diseñador UX/UI</div>
+                    <div class="job-row-meta">
+                      <span>🏢 Presencial</span>
+                      <span>📅 Hace 5 días</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="job-row-right">
+                  <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
+                  <span style="font-size:0.8rem;color:var(--clr-muted);">21 postulantes</span>
+                </div>
+              </div>
+
+              <div class="job-row">
+                <div class="job-row-left">
+                  <div class="job-row-icon">📊</div>
+                  <div>
+                    <div class="job-row-title">Data Analyst</div>
+                    <div class="job-row-meta">
+                      <span>🔀 Híbrido</span>
+                      <span>📅 Hace 1 semana</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="job-row-right">
+                  <span class="badge badge-gold"><span class="badge-dot"></span> En revisión</span>
+                  <span style="font-size:0.8rem;color:var(--clr-muted);">18 postulantes</span>
+                </div>
+              </div>
+
+              <div class="job-row">
+                <div class="job-row-left">
+                  <div class="job-row-icon">🔧</div>
+                  <div>
+                    <div class="job-row-title">DevOps Engineer</div>
+                    <div class="job-row-meta">
+                      <span>🏠 Remoto</span>
+                      <span>📅 Hace 2 semanas</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="job-row-right">
+                  <span class="badge badge-gray">Pausada</span>
+                  <span style="font-size:0.8rem;color:var(--clr-muted);">9 postulantes</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="panel-footer">
+            <a href="#">Ver todas las ofertas →</a>
+          </div>
+        </div>
+
+        <!-- Actividad reciente -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Actividad reciente</div>
+              <div class="panel-subtitle">Últimas acciones en tu cuenta</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:16px 24px;">
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-icon">📄</div>
+                <div class="activity-text">
+                  <strong>Lucía Fernández</strong> se postuló a <strong>Desarrollador Full Stack</strong>
+                </div>
+                <div class="activity-time">Hace 10 min</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">🤖</div>
+                <div class="activity-text">
+                  IA analizó el CV de <strong>Martín López</strong> — Score: <strong style="color:var(--clr-accent)">87%</strong>
+                </div>
+                <div class="activity-time">Hace 32 min</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">⭐</div>
+                <div class="activity-text">
+                  Guardaste a <strong>Ana Gómez</strong> en favoritos
+                </div>
+                <div class="activity-time">Hace 1 h</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">📬</div>
+                <div class="activity-text">
+                  <strong>Carlos Ruiz</strong> se postuló a <strong>Diseñador UX/UI</strong>
+                </div>
+                <div class="activity-time">Hace 2 h</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">📋</div>
+                <div class="activity-text">
+                  Publicaste la oferta <strong>Data Analyst</strong>
+                </div>
+                <div class="activity-time">Hace 1 semana</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon">✅</div>
+                <div class="activity-text">
+                  Agendaste entrevista con <strong>Diego Torres</strong>
+                </div>
+                <div class="activity-time">Hace 1 semana</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Candidatos sugeridos por IA ── -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">🤖 Candidatos sugeridos por IA</div>
+            <div class="panel-subtitle">Los mejores matches para tus ofertas activas</div>
+          </div>
+          <a href="candidates.html" class="icon-btn">Ver todos</a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Candidato</th>
+                  <th>Oferta sugerida</th>
+                  <th>Match IA</th>
+                  <th>Habilidades clave</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="cell-candidate">
+                      <div class="cand-avatar">JP</div>
+                      <div>
+                        <div class="cand-name">Juan Pérez</div>
+                        <div class="cand-email">juan@email.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style="font-size:0.85rem;">Full Stack Dev</span></td>
+                  <td>
+                    <div class="match-cell">
+                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:87%"></div></div>
+                      <span class="match-pct">87%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="tag-list">
+                      <span class="skill-tag highlight">React</span>
+                      <span class="skill-tag highlight">Node.js</span>
+                      <span class="skill-tag">PostgreSQL</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-gold">Nuevo</span></td>
+                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="cell-candidate">
+                      <div class="cand-avatar alt">MG</div>
+                      <div>
+                        <div class="cand-name">María García</div>
+                        <div class="cand-email">mgarcia@email.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style="font-size:0.85rem;">UX/UI Designer</span></td>
+                  <td>
+                    <div class="match-cell">
+                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:92%"></div></div>
+                      <span class="match-pct">92%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="tag-list">
+                      <span class="skill-tag highlight">Figma</span>
+                      <span class="skill-tag highlight">UX Research</span>
+                      <span class="skill-tag">Prototyping</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-green">Revisado</span></td>
+                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="cell-candidate">
+                      <div class="cand-avatar alt2">LR</div>
+                      <div>
+                        <div class="cand-name">Lucas Rodríguez</div>
+                        <div class="cand-email">lrodriguez@email.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style="font-size:0.85rem;">Data Analyst</span></td>
+                  <td>
+                    <div class="match-cell">
+                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:79%"></div></div>
+                      <span class="match-pct">79%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="tag-list">
+                      <span class="skill-tag highlight">Python</span>
+                      <span class="skill-tag highlight">SQL</span>
+                      <span class="skill-tag">Power BI</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-gold">Nuevo</span></td>
+                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <a href="candidates.html">Ver todos los candidatos →</a>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+
+</div><!-- /app-layout -->
+
+</body>
+</html>

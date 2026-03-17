@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buscar candidatos — TalentAI Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/company.css" />
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+
+    <div class="sidebar-company">
+      <div class="company-badge">
+        <div class="company-avatar">AC</div>
+        <div class="company-info">
+          <div class="company-name">Acme Corp S.A.</div>
+          <div class="company-role">Empresa</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="candidates.html" class="nav-item active">
+        <span class="nav-icon">🔍</span> Buscar candidatos
+        <span class="nav-badge">24</span>
+      </a>
+
+      <span class="nav-section-label">Ofertas</span>
+      <a href="post-job.html" class="nav-item">
+        <span class="nav-icon">➕</span> Publicar oferta
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📋</span> Mis ofertas
+      </a>
+
+      <span class="nav-section-label">Gestión</span>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📬</span> Postulaciones
+        <span class="nav-badge">8</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⭐</span> Favoritos
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Buscar candidatos</div>
+        <div class="topbar-subtitle">Encontrá el perfil ideal para tus vacantes</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="view-toggle" title="Cambiar vista">⊞ Grilla</button>
+        <button class="icon-btn">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="page-content">
+
+      <!-- ── Barra de búsqueda + filtros ── -->
+      <div class="panel" style="margin-bottom:24px;">
+        <div class="panel-body" style="padding:20px 24px;">
+
+          <!-- Búsqueda principal -->
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input"
+                placeholder="Buscá por nombre, habilidad o tecnología... ej: React, Python, UX" />
+            </div>
+            <button class="btn btn-primary" style="padding:11px 22px;font-size:0.88rem;" id="search-btn">
+              Buscar
+            </button>
+          </div>
+
+          <!-- Filtros secundarios -->
+          <div class="filters-bar">
+            <select class="filter-select" id="filter-area">
+              <option value="">📁 Todas las áreas</option>
+              <option>Tecnología e IT</option>
+              <option>Diseño y UX</option>
+              <option>Marketing Digital</option>
+              <option>Ventas y Comercial</option>
+              <option>Finanzas y Contabilidad</option>
+            </select>
+
+            <select class="filter-select" id="filter-exp">
+              <option value="">🏆 Cualquier experiencia</option>
+              <option>Sin experiencia</option>
+              <option>1-2 años</option>
+              <option>3-5 años</option>
+              <option>+5 años</option>
+            </select>
+
+            <select class="filter-select" id="filter-location">
+              <option value="">📍 Cualquier ubicación</option>
+              <option>Buenos Aires</option>
+              <option>Córdoba</option>
+              <option>Rosario</option>
+              <option>Mendoza</option>
+              <option>Remoto</option>
+            </select>
+
+            <select class="filter-select" id="filter-match">
+              <option value="">🤖 Cualquier match</option>
+              <option>+90% match</option>
+              <option>+75% match</option>
+              <option>+60% match</option>
+            </select>
+
+            <button class="icon-btn" id="clear-filters" style="font-size:0.8rem;">✕ Limpiar filtros</button>
+
+            <span class="results-info" id="results-count">Mostrando 6 candidatos</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── Sugerencia IA ── -->
+      <div style="
+        background: rgba(201,168,76,0.06);
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: var(--radius-md);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        font-size: 0.88rem;
+        color: var(--clr-text);
+      ">
+        <span style="font-size:1.3rem;">🤖</span>
+        <div>
+          <strong style="color:var(--clr-accent);">Sugerencia IA activa</strong>
+          — Los candidatos están ordenados por compatibilidad con tu oferta
+          <strong>Desarrollador Full Stack</strong>.
+          <a href="#" style="color:var(--clr-accent);margin-left:6px;">Cambiar oferta →</a>
+        </div>
+        <button style="
+          margin-left:auto; background:none; border:none; cursor:pointer;
+          color:var(--clr-muted); font-size:1.1rem;
+        ">×</button>
+      </div>
+
+      <!-- ── Grid de candidatos ── -->
+      <div class="candidates-grid" id="candidates-container">
+
+        <!-- Candidato 1 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar">JP</div>
+              <div>
+                <div class="cand-card-name">Juan Pérez</div>
+                <div class="cand-card-title">Full Stack Developer</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">87%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Buenos Aires</span>
+            <span>🏆 4 años exp.</span>
+            <span>🎓 Ing. Sistemas</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">React</span>
+            <span class="skill-tag highlight">Node.js</span>
+            <span class="skill-tag highlight">TypeScript</span>
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">Docker</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <!-- Candidato 2 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar v2">MG</div>
+              <div>
+                <div class="cand-card-name">María García</div>
+                <div class="cand-card-title">UX/UI Designer</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">92%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Córdoba</span>
+            <span>🏆 6 años exp.</span>
+            <span>🎓 Diseño Gráfico</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">Figma</span>
+            <span class="skill-tag highlight">UX Research</span>
+            <span class="skill-tag">Prototyping</span>
+            <span class="skill-tag">Framer</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <!-- Candidato 3 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar v3">LR</div>
+              <div>
+                <div class="cand-card-name">Lucas Rodríguez</div>
+                <div class="cand-card-title">Data Analyst</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">79%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Rosario</span>
+            <span>🏆 3 años exp.</span>
+            <span>🎓 Lic. Matemática</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">Python</span>
+            <span class="skill-tag highlight">SQL</span>
+            <span class="skill-tag">Power BI</span>
+            <span class="skill-tag">Pandas</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <!-- Candidato 4 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar v4">SF</div>
+              <div>
+                <div class="cand-card-name">Sofía Fernández</div>
+                <div class="cand-card-title">Backend Developer</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">74%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Remoto</span>
+            <span>🏆 2 años exp.</span>
+            <span>🎓 Ing. Informática</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">NestJS</span>
+            <span class="skill-tag highlight">PostgreSQL</span>
+            <span class="skill-tag">Redis</span>
+            <span class="skill-tag">AWS</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <!-- Candidato 5 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar v5">DT</div>
+              <div>
+                <div class="cand-card-name">Diego Torres</div>
+                <div class="cand-card-title">DevOps Engineer</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">68%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Buenos Aires</span>
+            <span>🏆 5 años exp.</span>
+            <span>🎓 Tec. Sistemas</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">Docker</span>
+            <span class="skill-tag highlight">Kubernetes</span>
+            <span class="skill-tag">CI/CD</span>
+            <span class="skill-tag">Terraform</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <!-- Candidato 6 -->
+        <div class="candidate-card">
+          <div class="cand-card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="cand-card-avatar v6">AM</div>
+              <div>
+                <div class="cand-card-name">Agustina Molina</div>
+                <div class="cand-card-title">Frontend Developer</div>
+              </div>
+            </div>
+            <div class="cand-card-match">
+              <div class="cand-card-match-pct">83%</div>
+              <div class="cand-card-match-label">Match IA</div>
+            </div>
+          </div>
+          <div class="cand-card-meta">
+            <span>📍 Mendoza</span>
+            <span>🏆 3 años exp.</span>
+            <span>🎓 Diseño Web</span>
+          </div>
+          <div class="cand-card-tags">
+            <span class="skill-tag highlight">Vue.js</span>
+            <span class="skill-tag highlight">CSS avanzado</span>
+            <span class="skill-tag">Nuxt</span>
+            <span class="skill-tag">Tailwind</span>
+          </div>
+          <div class="cand-card-actions">
+            <button class="btn btn-ghost">⭐ Guardar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+      </div><!-- /candidates-grid -->
+
+      <!-- Paginación -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:32px;align-items:center;">
+        <button class="icon-btn" disabled>← Anterior</button>
+        <button class="icon-btn active" style="border-color:var(--clr-accent);color:var(--clr-accent);">1</button>
+        <button class="icon-btn">2</button>
+        <button class="icon-btn">3</button>
+        <span style="color:var(--clr-muted);font-size:0.85rem;">...</span>
+        <button class="icon-btn">8</button>
+        <button class="icon-btn">Siguiente →</button>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+
+</div><!-- /app-layout -->
+
+<script>
+  // ── Filtro de búsqueda (client-side demo) ────────────────
+  const cards = document.querySelectorAll('.candidate-card');
+
+  function filterCandidates() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('results-count').textContent =
+      `Mostrando ${visible} candidato${visible !== 1 ? 's' : ''}`;
+  }
+
+  document.getElementById('search-input').addEventListener('input', filterCandidates);
+  document.getElementById('search-btn').addEventListener('click', filterCandidates);
+
+  document.getElementById('clear-filters').addEventListener('click', () => {
+    document.getElementById('search-input').value = '';
+    ['filter-area','filter-exp','filter-location','filter-match'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    filterCandidates();
+  });
+
+  // ── Toggle vista grilla / lista ──────────────────────────
+  const container = document.getElementById('candidates-container');
+  const toggleBtn = document.getElementById('view-toggle');
+  let isGrid = true;
+
+  toggleBtn.addEventListener('click', () => {
+    isGrid = !isGrid;
+    if (isGrid) {
+      container.className = 'candidates-grid';
+      toggleBtn.textContent = '⊞ Grilla';
+    } else {
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.className = '';
+      toggleBtn.textContent = '☰ Lista';
+    }
+  });
+
+  // ── Favoritos (toggle visual) ────────────────────────────
+  document.querySelectorAll('.cand-card-actions .btn-ghost').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const saved = btn.textContent.includes('Guardado');
+      btn.textContent = saved ? '⭐ Guardar' : '★ Guardado';
+      btn.style.borderColor = saved ? '' : 'var(--clr-accent)';
+      btn.style.color       = saved ? '' : 'var(--clr-accent)';
+    });
+  });
+</script>
+
+</body>
+</html>
