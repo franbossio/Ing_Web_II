@@ -98,7 +98,7 @@
   display: flex;
   gap: 32px;
 }
-.stat-item { }
+
 .stat-num {
   font-family: var(--font-display);
   font-size: 1.8rem;
