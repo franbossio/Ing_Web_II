@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil — TalentAI</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <style>
+    /* ── Tabs ─────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--clr-muted);
+      padding: 10px 16px;
+      border-radius: calc(var(--radius-md) - 4px);
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .tab-btn:hover { color: var(--clr-text); background: var(--clr-surface); }
+    .tab-btn.active {
+      background: var(--clr-surface);
+      color: var(--clr-accent);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Progress steps ───────────────────────── */
+    .profile-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 28px;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .step-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      font-size: 0.82rem;
+      color: var(--clr-muted);
+      border-right: 1px solid var(--clr-border);
+      transition: background var(--transition);
+    }
+    .step-item:last-child { border-right: none; }
+    .step-item.done { color: var(--clr-success); }
+    .step-item.pending { color: var(--clr-accent); }
+    .step-dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+    }
+    .step-item.done .step-dot { background: rgba(76,175,132,0.15); border-color: rgba(76,175,132,0.4); }
+    .step-item.pending .step-dot { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); }
+
+    /* ── Avatar upload ────────────────────────── */
+    .avatar-upload {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+    .avatar-large {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.8rem; font-weight: 700; color: #0d0f14;
+      flex-shrink: 0;
+      border: 3px solid rgba(201,168,76,0.3);
+      position: relative; cursor: pointer;
+    }
+    .avatar-large:hover::after {
+      content: '📷';
+      position: absolute; inset: 0;
+      background: rgba(13,15,20,0.6);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .avatar-info { flex: 1; }
+    .avatar-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+    .avatar-sub { font-size: 0.82rem; color: var(--clr-muted); margin-bottom: 12px; }
+
+    /* ── Form sections ────────────────────────── */
+    .form-section { margin-bottom: 28px; }
+    .form-section-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem; font-weight: 600;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--clr-border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+    .col-span-2  { grid-column: span 2; }
+
+    /* ── Tags input ───────────────────────────── */
+    .tags-input-wrapper {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      align-items: center; min-height: 46px; cursor: text;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .tags-input-wrapper:focus-within {
+      border-color: var(--clr-accent);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    }
+    .tag-pill {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.25);
+      color: var(--clr-accent);
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 500;
+    }
+    .tag-remove {
+      background: none; border: none; cursor: pointer;
+      color: var(--clr-accent-dim); font-size: 0.85rem;
+      padding: 0 2px; line-height: 1; transition: color var(--transition);
+    }
+    .tag-remove:hover { color: var(--clr-error); }
+    .tags-input {
+      background: none; border: none; outline: none;
+      color: var(--clr-text); font-family: var(--font-body);
+      font-size: 0.88rem; min-width: 120px; flex: 1;
+    }
+    .tags-input::placeholder { color: var(--clr-muted); }
+
+    /* ── Experience / Education items ─────────── */
+    .exp-list { display: flex; flex-direction: column; gap: 12px; }
+    .exp-item {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      position: relative;
+    }
+    .exp-item-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .exp-item-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
+    .exp-item-sub { font-size: 0.78rem; color: var(--clr-muted); }
+    .exp-item-actions { display: flex; gap: 6px; }
+    .exp-action-btn {
+      background: none; border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm); cursor: pointer;
+      color: var(--clr-muted); font-size: 0.78rem;
+      padding: 4px 10px; transition: all var(--transition);
+    }
+    .exp-action-btn:hover { border-color: var(--clr-accent); color: var(--clr-accent); }
+    .exp-action-btn.danger:hover { border-color: var(--clr-error); color: var(--clr-error); }
+
+    .add-item-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 12px;
+      background: none;
+      border: 1px dashed var(--clr-border);
+      border-radius: var(--radius-md);
+      color: var(--clr-muted); font-size: 0.85rem;
+      cursor: pointer; font-family: var(--font-body);
+      transition: all var(--transition); margin-top: 10px;
+    }
+    .add-item-btn:hover { border-color: var(--clr-accent); color: var(--clr-accent); background: rgba(201,168,76,0.04); }
+
+    /* ── CV Upload area ───────────────────────── */
+    .cv-drop-area {
+      border: 2px dashed var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 48px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--clr-surface-2);
+    }
+    .cv-drop-area:hover, .cv-drop-area.drag-over {
+      border-color: var(--clr-accent);
+      background: rgba(201,168,76,0.04);
+    }
+    .cv-drop-icon { font-size: 2.5rem; margin-bottom: 14px; display: block; }
+    .cv-drop-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .cv-drop-sub { font-size: 0.85rem; color: var(--clr-muted); margin-bottom: 20px; }
+    .cv-drop-formats { font-size: 0.75rem; color: var(--clr-muted); margin-top: 14px; }
+
+    .cv-current {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(76,175,132,0.06);
+      border: 1px solid rgba(76,175,132,0.2);
+      border-radius: var(--radius-md);
+      padding: 18px 20px; margin-bottom: 20px;
+    }
+    .cv-file-icon { font-size: 2.2rem; }
+    .cv-file-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
+    .cv-file-meta { font-size: 0.75rem; color: var(--clr-muted); }
+    .cv-file-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* AI analysis result */
+    .ai-result {
+      background: rgba(201,168,76,0.05);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: var(--radius-md);
+      padding: 20px; margin-top: 20px;
+    }
+    .ai-result-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .ai-result-title {
+      font-size: 0.88rem; font-weight: 600; color: var(--clr-accent);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ai-result-date { font-size: 0.73rem; color: var(--clr-muted); }
+    .ai-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .ai-tag {
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25);
+      color: var(--clr-accent); padding: 3px 11px;
+      border-radius: 100px; font-size: 0.75rem; font-weight: 500;
+    }
+    .ai-summary-text {
+      font-size: 0.85rem; color: var(--clr-muted);
+      line-height: 1.7; font-style: italic;
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding-top: 12px; margin-top: 4px;
+    }
+    .ai-reanalyze {
+      display: flex; justify-content: flex-end; margin-top: 14px;
+    }
+
+    /* ── Language level ───────────────────────── */
+    .lang-list { display: flex; flex-direction: column; gap: 10px; }
+    .lang-row {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+    }
+    .lang-name { font-size: 0.88rem; font-weight: 500; min-width: 100px; }
+    .lang-level { flex: 1; }
+    .lang-level select {
+      width: 100%;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.83rem; padding: 6px 10px;
+      outline: none; cursor: pointer;
+    }
+    .lang-remove { background: none; border: none; cursor: pointer; color: var(--clr-muted); font-size: 1rem; transition: color var(--transition); }
+    .lang-remove:hover { color: var(--clr-error); }
+
+    /* ── Form actions ─────────────────────────── */
+    .form-actions {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 12px; padding: 20px 24px;
+      border-top: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    @media (max-width: 860px) {
+      .form-grid   { grid-template-columns: 1fr; }
+      .form-grid-3 { grid-template-columns: 1fr; }
+      .col-span-2  { grid-column: span 1; }
+      .profile-steps { flex-direction: column; }
+      .step-item { border-right: none; border-bottom: 1px solid var(--clr-border); }
+      .tabs { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+
+    <div class="sidebar-profile">
+      <div class="profile-badge">
+        <div class="profile-avatar">JP</div>
+        <div class="profile-info">
+          <div class="profile-name">Juan Pérez</div>
+          <div class="profile-role">Candidato</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="jobs.html" class="nav-item">
+        <span class="nav-icon">🔍</span> Explorar ofertas
+        <span class="nav-badge">12</span>
+      </a>
+
+      <span class="nav-section-label">Mi perfil</span>
+      <a href="profile.html" class="nav-item active">
+        <span class="nav-icon">👤</span> Editar perfil
+      </a>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">📄</span> Mi CV
+      </a>
+
+      <span class="nav-section-label">Postulaciones</span>
+      <a href="applications.html" class="nav-item">
+        <span class="nav-icon">📬</span> Mis postulaciones
+        <span class="nav-badge">5</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⭐</span> Guardados
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Mi perfil</div>
+        <div class="topbar-subtitle">Completá tu información para mejorar tus chances</div>
+      </div>
+      <div class="topbar-right">
+        <a href="dashboard.html" class="icon-btn">← Volver</a>
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ── Pasos de completado ── -->
+      <div class="profile-steps">
+        <div class="step-item done">
+          <div class="step-dot">✓</div>
+          <span>Datos personales</span>
+        </div>
+        <div class="step-item done">
+          <div class="step-dot">✓</div>
+          <span>Experiencia laboral</span>
+        </div>
+        <div class="step-item done">
+          <div class="step-dot">✓</div>
+          <span>CV subido</span>
+        </div>
+        <div class="step-item pending">
+          <div class="step-dot">!</div>
+          <span>Educación</span>
+        </div>
+        <div class="step-item pending">
+          <div class="step-dot">!</div>
+          <span>Idiomas</span>
+        </div>
+        <div class="step-item" style="color:var(--clr-muted)">
+          <div class="step-dot">○</div>
+          <span>Habilidades</span>
+        </div>
+      </div>
+
+      <!-- ── Tabs ── -->
+      <div class="tabs" id="tabs">
+        <button class="tab-btn active" data-tab="personal">👤 Datos personales</button>
+        <button class="tab-btn" data-tab="experience">💼 Experiencia</button>
+        <button class="tab-btn" data-tab="education">🎓 Educación</button>
+        <button class="tab-btn" data-tab="skills">🛠 Habilidades</button>
+        <button class="tab-btn" data-tab="cv" id="tab-cv">📄 CV</button>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           TAB: DATOS PERSONALES
+      ══════════════════════════════════════ -->
+      <div class="tab-panel active" id="panel-personal">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Información personal</div>
+              <div class="panel-subtitle">Datos básicos de tu perfil público</div>
+            </div>
+            <span class="badge badge-green">✓ Completado</span>
+          </div>
+          <div class="panel-body">
+
+            <!-- Avatar -->
+            <div class="avatar-upload">
+              <div class="avatar-large" title="Cambiar foto">JP</div>
+              <div class="avatar-info">
+                <div class="avatar-name">Juan Pérez</div>
+                <div class="avatar-sub">Desarrollador Full Stack · Buenos Aires</div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;">📷 Cambiar foto</button>
+                  <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;color:var(--clr-muted);">Eliminar</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">📋 Información básica</div>
+              <div class="form-grid" style="margin-bottom:18px;">
+                <div class="form-group">
+                  <label for="firstName">Nombre *</label>
+                  <input type="text" id="firstName" value="Juan" />
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Apellido *</label>
+                  <input type="text" id="lastName" value="Pérez" />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email *</label>
+                  <input type="email" id="email" value="juan.perez@email.com" />
+                </div>
+                <div class="form-group">
+                  <label for="phone">Teléfono</label>
+                  <input type="tel" id="phone" placeholder="+54 11 0000-0000" value="+54 11 4567-8901" />
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="jobTitle">Título profesional *</label>
+                  <input type="text" id="jobTitle" value="Desarrollador Full Stack" placeholder="Ej: Frontend Developer" />
+                </div>
+                <div class="form-group">
+                  <label for="location">Ubicación *</label>
+                  <input type="text" id="location" value="Buenos Aires, Argentina" />
+                </div>
+                <div class="form-group">
+                  <label for="availability">Disponibilidad</label>
+                  <select id="availability">
+                    <option selected>Disponible inmediatamente</option>
+                    <option>En 2 semanas</option>
+                    <option>En 1 mes</option>
+                    <option>Solo ofertas pasivas</option>
+                    <option>No disponible</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="modality">Modalidad preferida</label>
+                  <select id="modality">
+                    <option>Remoto</option>
+                    <option selected>Híbrido</option>
+                    <option>Presencial</option>
+                    <option>Indiferente</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">📝 Sobre mí</div>
+              <div class="form-group">
+                <label for="bio">Resumen profesional</label>
+                <textarea id="bio" rows="4" placeholder="Describite en pocas palabras...">Desarrollador Full Stack con 4 años de experiencia en React, Node.js y TypeScript. Apasionado por construir productos digitales de calidad y aprender continuamente.</textarea>
+              </div>
+              <div style="text-align:right;font-size:0.74rem;color:var(--clr-muted);margin-top:4px;" id="bio-count">186 / 500 caracteres</div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">🔗 Redes y portfolio</div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="linkedin">LinkedIn</label>
+                  <input type="url" id="linkedin" placeholder="linkedin.com/in/tu-perfil" value="linkedin.com/in/juanperez" />
+                </div>
+                <div class="form-group">
+                  <label for="github">GitHub</label>
+                  <input type="url" id="github" placeholder="github.com/tu-usuario" value="github.com/juanperez" />
+                </div>
+                <div class="form-group">
+                  <label for="portfolio">Portfolio / Web</label>
+                  <input type="url" id="portfolio" placeholder="tuportfolio.com" />
+                </div>
+                <div class="form-group">
+                  <label for="salary">Expectativa salarial (USD/mes)</label>
+                  <input type="number" id="salary" placeholder="Ej: 2500" value="2500" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveSection('personal')">💾 Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           TAB: EXPERIENCIA
+      ══════════════════════════════════════ -->
+      <div class="tab-panel" id="panel-experience">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Experiencia laboral</div>
+              <div class="panel-subtitle">Tus trabajos anteriores y actuales</div>
+            </div>
+            <span class="badge badge-green">✓ 2 cargadas</span>
+          </div>
+          <div class="panel-body">
+            <div class="exp-list" id="exp-list">
+
+              <div class="exp-item">
+                <div class="exp-item-header">
+                  <div>
+                    <div class="exp-item-title">Full Stack Developer</div>
+                    <div class="exp-item-sub">🏢 TechSolutions · Ene 2023 – Presente · 2 años</div>
+                  </div>
+                  <div class="exp-item-actions">
+                    <button class="exp-action-btn">✏️ Editar</button>
+                    <button class="exp-action-btn danger">🗑</button>
+                  </div>
+                </div>
+                <div class="form-grid" style="margin-bottom:14px;">
+                  <div class="form-group">
+                    <label>Cargo</label>
+                    <input type="text" value="Full Stack Developer" />
+                  </div>
+                  <div class="form-group">
+                    <label>Empresa</label>
+                    <input type="text" value="TechSolutions" />
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha inicio</label>
+                    <input type="month" value="2023-01" />
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha fin</label>
+                    <input type="month" placeholder="Presente" disabled />
+                    <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-top:6px;cursor:pointer;">
+                      <input type="checkbox" checked onchange="this.closest('.form-group').querySelector('input[type=month]').disabled=this.checked" />
+                      Trabajo actual
+                    </label>
+                  </div>
+                  <div class="form-group col-span-2">
+                    <label>Descripción</label>
+                    <textarea rows="3">Desarrollo de aplicaciones web con React y Node.js. Integración con APIs REST y bases de datos PostgreSQL. Trabajo en equipo ágil con metodología Scrum.</textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-item-header">
+                  <div>
+                    <div class="exp-item-title">Frontend Developer Jr.</div>
+                    <div class="exp-item-sub">🚀 StartupABC · Mar 2021 – Dic 2022 · 1 año 9 meses</div>
+                  </div>
+                  <div class="exp-item-actions">
+                    <button class="exp-action-btn">✏️ Editar</button>
+                    <button class="exp-action-btn danger">🗑</button>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Cargo</label>
+                    <input type="text" value="Frontend Developer Jr." />
+                  </div>
+                  <div class="form-group">
+                    <label>Empresa</label>
+                    <input type="text" value="StartupABC" />
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha inicio</label>
+                    <input type="month" value="2021-03" />
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha fin</label>
+                    <input type="month" value="2022-12" />
+                  </div>
+                  <div class="form-group col-span-2">
+                    <label>Descripción</label>
+                    <textarea rows="3">Desarrollo de interfaces con React y CSS. Colaboración en el diseño de componentes reutilizables y optimización de performance.</textarea>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <button class="add-item-btn" id="add-exp-btn">
+              ➕ Agregar experiencia
+            </button>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveSection('experience')">💾 Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           TAB: EDUCACIÓN
+      ══════════════════════════════════════ -->
+      <div class="tab-panel" id="panel-education">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Educación</div>
+              <div class="panel-subtitle">Tu formación académica</div>
+            </div>
+            <span class="badge badge-gold">! Pendiente</span>
+          </div>
+          <div class="panel-body">
+            <div class="exp-list" id="edu-list">
+
+              <div class="exp-item">
+                <div class="exp-item-header">
+                  <div>
+                    <div class="exp-item-title">Ingeniería en Sistemas de Información</div>
+                    <div class="exp-item-sub">🎓 UTN — Facultad Regional Buenos Aires · 2018 – 2023</div>
+                  </div>
+                  <div class="exp-item-actions">
+                    <button class="exp-action-btn">✏️ Editar</button>
+                    <button class="exp-action-btn danger">🗑</button>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Título / Carrera</label>
+                    <input type="text" value="Ingeniería en Sistemas de Información" />
+                  </div>
+                  <div class="form-group">
+                    <label>Institución</label>
+                    <input type="text" value="UTN — Facultad Regional Buenos Aires" />
+                  </div>
+                  <div class="form-group">
+                    <label>Año inicio</label>
+                    <input type="number" value="2018" min="1990" max="2030" />
+                  </div>
+                  <div class="form-group">
+                    <label>Año fin</label>
+                    <input type="number" value="2023" min="1990" max="2030" />
+                  </div>
+                  <div class="form-group">
+                    <label>Estado</label>
+                    <select>
+                      <option selected>Graduado</option>
+                      <option>En curso</option>
+                      <option>Incompleto</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <button class="add-item-btn" id="add-edu-btn">
+              ➕ Agregar educación
+            </button>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveSection('education')">💾 Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           TAB: HABILIDADES
+      ══════════════════════════════════════ -->
+      <div class="tab-panel" id="panel-skills">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Habilidades y herramientas</div>
+              <div class="panel-subtitle">La IA las usa para matchearte con ofertas relevantes</div>
+            </div>
+            <span class="badge badge-blue">🤖 Usado por IA</span>
+          </div>
+          <div class="panel-body">
+
+            <div class="form-section">
+              <div class="form-section-title">💻 Habilidades técnicas</div>
+              <div class="tags-input-wrapper" id="tech-wrapper">
+                <span class="tag-pill">React <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">Node.js <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">TypeScript <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">PostgreSQL <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">Docker <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">Git <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">REST APIs <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <input class="tags-input" id="tech-input" placeholder="Agregá una tecnología y presioná Enter..." />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">🤝 Habilidades blandas</div>
+              <div class="tags-input-wrapper" id="soft-wrapper">
+                <span class="tag-pill">Trabajo en equipo <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">Comunicación <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <span class="tag-pill">Resolución de problemas <button class="tag-remove" onclick="removeTag(this)">×</button></span>
+                <input class="tags-input" id="soft-input" placeholder="Agregá una habilidad y presioná Enter..." />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">🌍 Idiomas</div>
+              <div class="lang-list" id="lang-list">
+                <div class="lang-row">
+                  <span class="lang-name">🇦🇷 Español</span>
+                  <div class="lang-level">
+                    <select><option selected>Nativo</option><option>Avanzado</option><option>Intermedio</option><option>Básico</option></select>
+                  </div>
+                  <button class="lang-remove" title="Eliminar">×</button>
+                </div>
+                <div class="lang-row">
+                  <span class="lang-name">🇺🇸 Inglés</span>
+                  <div class="lang-level">
+                    <select><option>Nativo</option><option selected>Avanzado</option><option>Intermedio</option><option>Básico</option></select>
+                  </div>
+                  <button class="lang-remove" title="Eliminar">×</button>
+                </div>
+              </div>
+              <button class="add-item-btn" id="add-lang-btn">➕ Agregar idioma</button>
+            </div>
+
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveSection('skills')">💾 Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           TAB: CV
+      ══════════════════════════════════════ -->
+      <div class="tab-panel" id="panel-cv">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Mi currículum</div>
+              <div class="panel-subtitle">Subí tu CV en PDF para que la IA lo analice</div>
+            </div>
+            <span class="badge badge-green">✓ CV cargado</span>
+          </div>
+          <div class="panel-body">
+
+            <!-- CV actual -->
+            <div class="cv-current">
+              <span class="cv-file-icon">📄</span>
+              <div style="flex:1;">
+                <div class="cv-file-name">CV_Juan_Perez_2026.pdf</div>
+                <div class="cv-file-meta">Subido el 10 mar 2026 · 1.2 MB · Analizado por IA ✓</div>
+              </div>
+              <div class="cv-file-actions">
+                <a href="#" class="icon-btn" style="font-size:0.8rem;">⬇ Descargar</a>
+                <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="removeCv()">🗑 Eliminar</button>
+              </div>
+            </div>
+
+            <!-- Drop area para reemplazar -->
+            <div class="cv-drop-area" id="drop-area"
+              onclick="document.getElementById('cv-input').click()"
+              ondragover="event.preventDefault();this.classList.add('drag-over')"
+              ondragleave="this.classList.remove('drag-over')"
+              ondrop="handleDrop(event)">
+              <span class="cv-drop-icon">📤</span>
+              <div class="cv-drop-title">Reemplazar CV</div>
+              <div class="cv-drop-sub">Arrastrá tu archivo acá o hacé clic para seleccionar</div>
+              <button class="btn btn-ghost" style="pointer-events:none;">Seleccionar archivo</button>
+              <div class="cv-drop-formats">Formatos aceptados: PDF · Máximo 5 MB</div>
+            </div>
+            <input type="file" id="cv-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
+
+            <!-- Resultado análisis IA -->
+            <div class="ai-result" id="ai-result">
+              <div class="ai-result-header">
+                <div class="ai-result-title">🤖 Análisis de IA — completado</div>
+                <div class="ai-result-date">Analizado el 10 mar 2026</div>
+              </div>
+              <div class="ai-tags">
+                <span class="ai-tag">React</span>
+                <span class="ai-tag">Node.js</span>
+                <span class="ai-tag">TypeScript</span>
+                <span class="ai-tag">PostgreSQL</span>
+                <span class="ai-tag">Docker</span>
+                <span class="ai-tag">Git</span>
+                <span class="ai-tag">REST APIs</span>
+                <span class="ai-tag">Scrum</span>
+              </div>
+              <div class="ai-summary-text">
+                "Desarrollador con sólida experiencia en stack MERN y TypeScript.
+                Demuestra capacidad para trabajar en proyectos de escala media-alta
+                con foco en buenas prácticas, código limpio y metodologías ágiles.
+                Perfil orientado al backend con conocimientos de frontend."
+              </div>
+              <div class="ai-reanalyze">
+                <button class="btn btn-ghost" style="font-size:0.82rem;padding:8px 16px;" onclick="reanalyze()">
+                  🔄 Re-analizar con IA
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert global -->
+      <div id="global-alert" class="alert" style="margin-top:16px;"></div>
+
+    </div><!-- /page-content -->
+  </main>
+</div>
+
+<script>
+  // ── Tabs ─────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── Bio char count ────────────────────────────────
+  const bio = document.getElementById('bio');
+  const bioCount = document.getElementById('bio-count');
+  bio.addEventListener('input', () => {
+    bioCount.textContent = `${bio.value.length} / 500 caracteres`;
+    bioCount.style.color = bio.value.length > 500 ? 'var(--clr-error)' : 'var(--clr-muted)';
+  });
+
+  // ── Tags input ────────────────────────────────────
+  function removeTag(btn) { btn.parentElement.remove(); }
+
+  ['tech', 'soft'].forEach(type => {
+    const input = document.getElementById(`${type}-input`);
+    const wrapper = document.getElementById(`${type}-wrapper`);
+    input.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) {
+        e.preventDefault();
+        const tag = document.createElement('span');
+        tag.className = 'tag-pill';
+        tag.innerHTML = `${input.value.trim()} <button class="tag-remove" onclick="removeTag(this)">×</button>`;
+        wrapper.insertBefore(tag, input);
+        input.value = '';
+      }
+    });
+  });
+
+  // ── Save sections ─────────────────────────────────
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('global-alert');
+    el.className = `alert alert-${type} visible`;
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('visible'), 3000);
+  }
+
+  function saveSection(section) {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '💾 Guardar cambios';
+      showAlert('✓ Cambios guardados correctamente.');
+    }, 900);
+  }
+
+  // ── Add experience ────────────────────────────────
+  document.getElementById('add-exp-btn').addEventListener('click', () => {
+    const list = document.getElementById('exp-list');
+    const item = document.createElement('div');
+    item.className = 'exp-item';
+    item.innerHTML = `
+      <div class="exp-item-header">
+        <div>
+          <div class="exp-item-title">Nueva experiencia</div>
+          <div class="exp-item-sub">Completá los datos</div>
+        </div>
+        <div class="exp-item-actions">
+          <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Cargo *</label><input type="text" placeholder="Ej: Backend Developer" /></div>
+        <div class="form-group"><label>Empresa *</label><input type="text" placeholder="Nombre de la empresa" /></div>
+        <div class="form-group"><label>Fecha inicio</label><input type="month" /></div>
+        <div class="form-group"><label>Fecha fin</label><input type="month" /></div>
+        <div class="form-group col-span-2"><label>Descripción</label><textarea rows="3" placeholder="Describí tus tareas y logros..."></textarea></div>
+      </div>`;
+    list.appendChild(item);
+    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ── Add education ─────────────────────────────────
+  document.getElementById('add-edu-btn').addEventListener('click', () => {
+    const list = document.getElementById('edu-list');
+    const item = document.createElement('div');
+    item.className = 'exp-item';
+    item.innerHTML = `
+      <div class="exp-item-header">
+        <div><div class="exp-item-title">Nueva educación</div></div>
+        <div class="exp-item-actions">
+          <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Título / Carrera *</label><input type="text" placeholder="Ej: Ingeniería en Sistemas" /></div>
+        <div class="form-group"><label>Institución *</label><input type="text" placeholder="Nombre de la institución" /></div>
+        <div class="form-group"><label>Año inicio</label><input type="number" min="1990" max="2030" /></div>
+        <div class="form-group"><label>Año fin</label><input type="number" min="1990" max="2030" /></div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select><option>Graduado</option><option>En curso</option><option>Incompleto</option></select>
+        </div>
+      </div>`;
+    list.appendChild(item);
+    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ── Add language ──────────────────────────────────
+  const langs = ['🇧🇷 Portugués','🇫🇷 Francés','🇩🇪 Alemán','🇮🇹 Italiano','🇯🇵 Japonés','🇨🇳 Chino'];
+  let langIdx = 0;
+  document.getElementById('add-lang-btn').addEventListener('click', () => {
+    const list = document.getElementById('lang-list');
+    const row = document.createElement('div');
+    row.className = 'lang-row';
+    row.innerHTML = `
+      <input type="text" style="background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-sm);color:var(--clr-text);font-family:var(--font-body);font-size:0.85rem;padding:6px 10px;outline:none;min-width:100px;" placeholder="Idioma" value="${langs[langIdx % langs.length] || ''}" />
+      <div class="lang-level">
+        <select><option>Nativo</option><option>Avanzado</option><option selected>Intermedio</option><option>Básico</option></select>
+      </div>
+      <button class="lang-remove" onclick="this.parentElement.remove()">×</button>`;
+    list.appendChild(row);
+    langIdx++;
+  });
+
+  // ── CV upload ─────────────────────────────────────
+  function handleFileSelect(input) {
+    if (input.files[0]) processFile(input.files[0]);
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-area').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') processFile(file);
+    else showAlert('Solo se aceptan archivos PDF.', 'error');
+  }
+  function processFile(file) {
+    if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
+    const name = document.querySelector('.cv-file-name');
+    const meta = document.querySelector('.cv-file-meta');
+    if (name) name.textContent = file.name;
+    if (meta) meta.textContent = `Subido ahora · ${(file.size/1024/1024).toFixed(1)} MB · Analizando con IA...`;
+    showAlert('✓ CV cargado. La IA lo está analizando...');
+    setTimeout(() => {
+      if (meta) meta.textContent = meta.textContent.replace('Analizando con IA...', 'Analizado por IA ✓');
+      showAlert('🤖 Análisis de IA completado.');
+    }, 2500);
+  }
+  function removeCv() {
+    if (confirm('¿Seguro que querés eliminar tu CV?')) showAlert('CV eliminado.', 'error');
+  }
+  function reanalyze() {
+    showAlert('🤖 Re-analizando CV con IA...');
+    setTimeout(() => showAlert('✓ Análisis actualizado correctamente.'), 2000);
+  }
+</script>
+
+</body>
+</html>
