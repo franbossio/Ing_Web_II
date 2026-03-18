@@ -176,7 +176,7 @@
         ">×</button>
       </div>
 
-      <!-- ── Grid de candidatos ── -->
+      <!-- ── Grid de candidatos (Esto despues se cambia por los datos reales en el backend) ── -->
       <div class="candidates-grid" id="candidates-container">
 
         <!-- Candidato 1 -->
@@ -389,63 +389,6 @@
   </main>
 
 </div><!-- /app-layout -->
-
-<script>
-  // ── Filtro de búsqueda (client-side demo) ────────────────
-  const cards = document.querySelectorAll('.candidate-card');
-
-  function filterCandidates() {
-    const q = document.getElementById('search-input').value.toLowerCase();
-    let visible = 0;
-    cards.forEach(card => {
-      const text = card.textContent.toLowerCase();
-      const match = !q || text.includes(q);
-      card.style.display = match ? '' : 'none';
-      if (match) visible++;
-    });
-    document.getElementById('results-count').textContent =
-      `Mostrando ${visible} candidato${visible !== 1 ? 's' : ''}`;
-  }
-
-  document.getElementById('search-input').addEventListener('input', filterCandidates);
-  document.getElementById('search-btn').addEventListener('click', filterCandidates);
-
-  document.getElementById('clear-filters').addEventListener('click', () => {
-    document.getElementById('search-input').value = '';
-    ['filter-area','filter-exp','filter-location','filter-match'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    filterCandidates();
-  });
-
-  // ── Toggle vista grilla / lista ──────────────────────────
-  const container = document.getElementById('candidates-container');
-  const toggleBtn = document.getElementById('view-toggle');
-  let isGrid = true;
-
-  toggleBtn.addEventListener('click', () => {
-    isGrid = !isGrid;
-    if (isGrid) {
-      container.className = 'candidates-grid';
-      toggleBtn.textContent = '⊞ Grilla';
-    } else {
-      container.style.display = 'flex';
-      container.style.flexDirection = 'column';
-      container.className = '';
-      toggleBtn.textContent = '☰ Lista';
-    }
-  });
-
-  // ── Favoritos (toggle visual) ────────────────────────────
-  document.querySelectorAll('.cand-card-actions .btn-ghost').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const saved = btn.textContent.includes('Guardado');
-      btn.textContent = saved ? '⭐ Guardar' : '★ Guardado';
-      btn.style.borderColor = saved ? '' : 'var(--clr-accent)';
-      btn.style.color       = saved ? '' : 'var(--clr-accent)';
-    });
-  });
-</script>
 
 </body>
 </html>
