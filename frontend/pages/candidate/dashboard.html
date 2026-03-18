@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Dashboard — TalentAI</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/candidate.css" />
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+
+    <div class="sidebar-profile">
+      <div class="profile-badge">
+        <div class="profile-avatar">JP</div>
+        <div class="profile-info">
+          <div class="profile-name">Juan Pérez</div>
+          <div class="profile-role">Candidato</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="jobs.html" class="nav-item">
+        <span class="nav-icon">🔍</span> Explorar ofertas
+        <span class="nav-badge">12</span>
+      </a>
+
+      <span class="nav-section-label">Mi perfil</span>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span> Editar perfil
+      </a>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">📄</span> Mi CV
+      </a>
+
+      <span class="nav-section-label">Postulaciones</span>
+      <a href="applications.html" class="nav-item">
+        <span class="nav-icon">📬</span> Mis postulaciones
+        <span class="nav-badge">5</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⭐</span> Guardados
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-subtitle">Bienvenido de vuelta, Juan 👋</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">
+          🔍 Explorar ofertas
+        </a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ── Hero perfil ── -->
+      <div class="profile-hero">
+        <div class="profile-hero-bg"></div>
+        <div class="profile-hero-left">
+          <div class="hero-avatar">JP</div>
+          <div>
+            <div class="hero-name">Juan Pérez</div>
+            <div class="hero-title">Desarrollador Full Stack · 4 años de experiencia</div>
+            <div class="hero-meta">
+              <span>📍 Buenos Aires, Argentina</span>
+              <span>🎓 Ing. en Sistemas — UTN</span>
+              <span>💼 Disponible inmediatamente</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-hero-right">
+          <div class="complete-label">Perfil completado</div>
+          <div class="complete-ring">
+            <svg viewBox="0 0 76 76" width="76" height="76">
+              <circle class="ring-bg" cx="38" cy="38" r="30"/>
+              <circle class="ring-fill" cx="38" cy="38" r="30"/>
+            </svg>
+            <div class="ring-pct">70%</div>
+          </div>
+          <div class="complete-hint">
+            <a href="profile.html" style="color:var(--clr-accent);font-size:0.78rem;">Completar perfil →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Stats ── -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Postulaciones</span>
+            <span class="stat-card-icon">📬</span>
+          </div>
+          <div class="stat-card-value">5</div>
+          <div class="stat-card-sub">2 en revisión activa</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Ofertas sugeridas</span>
+            <span class="stat-card-icon">🤖</span>
+          </div>
+          <div class="stat-card-value">12</div>
+          <div class="stat-card-sub">Por la IA según tu perfil</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Vistas del perfil</span>
+            <span class="stat-card-icon">👁</span>
+          </div>
+          <div class="stat-card-value">38</div>
+          <div class="stat-card-sub">Empresas vieron tu perfil</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Entrevistas</span>
+            <span class="stat-card-icon">📅</span>
+          </div>
+          <div class="stat-card-value">1</div>
+          <div class="stat-card-sub">Agendada esta semana</div>
+        </div>
+      </div>
+
+      <!-- ── Acciones rápidas ── -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Acciones rápidas</div>
+            <div class="panel-subtitle">Lo que podés hacer ahora mismo</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="quick-actions">
+            <a href="profile.html" class="quick-action">
+              <span class="qa-icon">👤</span>
+              <span class="qa-label">Completar perfil</span>
+              <span class="qa-desc">Te falta agregar idiomas y educación</span>
+            </a>
+            <a href="profile.html" class="quick-action">
+              <span class="qa-icon">📄</span>
+              <span class="qa-label">Actualizar CV</span>
+              <span class="qa-desc">Subí la última versión de tu CV</span>
+            </a>
+            <a href="jobs.html" class="quick-action">
+              <span class="qa-icon">🔍</span>
+              <span class="qa-label">Explorar ofertas</span>
+              <span class="qa-desc">12 nuevas ofertas que te pueden interesar</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Dos columnas ── -->
+      <div class="grid-2">
+
+        <!-- Postulaciones recientes -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Mis postulaciones</div>
+              <div class="panel-subtitle">Estado de tus últimas aplicaciones</div>
+            </div>
+            <a href="applications.html" class="icon-btn">Ver todas</a>
+          </div>
+          <div class="panel-body" style="padding:14px 20px;">
+            <div class="app-list">
+
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-company-icon">🏢</div>
+                  <div>
+                    <div class="app-job-title">Desarrollador Full Stack</div>
+                    <div class="app-company-name">Acme Corp S.A.</div>
+                  </div>
+                </div>
+                <div class="app-row-right">
+                  <span class="app-date">Hace 2 días</span>
+                  <span class="badge badge-gold"><span class="badge-dot"></span> En revisión</span>
+                </div>
+              </div>
+
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-company-icon">🚀</div>
+                  <div>
+                    <div class="app-job-title">Backend Developer</div>
+                    <div class="app-company-name">StartupXYZ</div>
+                  </div>
+                </div>
+                <div class="app-row-right">
+                  <span class="app-date">Hace 5 días</span>
+                  <span class="badge badge-green"><span class="badge-dot"></span> Entrevista</span>
+                </div>
+              </div>
+
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-company-icon">💻</div>
+                  <div>
+                    <div class="app-job-title">React Developer</div>
+                    <div class="app-company-name">TechSolutions</div>
+                  </div>
+                </div>
+                <div class="app-row-right">
+                  <span class="app-date">Hace 1 sem.</span>
+                  <span class="badge badge-gray">Pendiente</span>
+                </div>
+              </div>
+
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-company-icon">🏦</div>
+                  <div>
+                    <div class="app-job-title">Node.js Developer</div>
+                    <div class="app-company-name">FinBank Digital</div>
+                  </div>
+                </div>
+                <div class="app-row-right">
+                  <span class="app-date">Hace 2 sem.</span>
+                  <span class="badge badge-red">No seleccionado</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="panel-footer">
+            <a href="applications.html">Ver todas las postulaciones →</a>
+          </div>
+        </div>
+
+        <!-- CV + análisis IA -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Mi CV y análisis IA</div>
+              <div class="panel-subtitle">Último CV analizado por la IA</div>
+            </div>
+            <a href="profile.html" class="icon-btn">Actualizar</a>
+          </div>
+          <div class="panel-body">
+            <div class="cv-status">
+
+              <div class="cv-uploaded">
+                <span class="cv-icon">📄</span>
+                <div style="flex:1;">
+                  <div class="cv-filename">CV_Juan_Perez_2026.pdf</div>
+                  <div class="cv-fileinfo">Subido el 10 mar 2026 · 1.2 MB</div>
+                </div>
+                <a href="#" class="icon-btn" style="font-size:0.78rem;">⬇ Descargar</a>
+              </div>
+
+              <div class="ai-analysis">
+                <div class="ai-analysis-header">
+                  🤖 Análisis IA — completado
+                </div>
+                <div class="ai-skills">
+                  <span class="skill-tag match">React</span>
+                  <span class="skill-tag match">Node.js</span>
+                  <span class="skill-tag match">TypeScript</span>
+                  <span class="skill-tag match">PostgreSQL</span>
+                  <span class="skill-tag">Docker</span>
+                  <span class="skill-tag">Git</span>
+                  <span class="skill-tag">REST APIs</span>
+                </div>
+                <div class="ai-summary">
+                  "Desarrollador con sólida experiencia en stack MERN y TypeScript.
+                  Demuestra capacidad para trabajar en proyectos de escala media-alta
+                  con foco en buenas prácticas y código limpio."
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Recomendaciones IA ── -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">🤖 Ofertas recomendadas para vos</div>
+            <div class="panel-subtitle">Basadas en tu perfil y habilidades detectadas por IA</div>
+          </div>
+          <a href="jobs.html" class="icon-btn">Ver todas</a>
+        </div>
+        <div class="panel-body" style="padding:16px 20px;">
+          <div class="rec-list">
+
+            <div class="rec-card">
+              <div class="rec-card-top">
+                <div>
+                  <div class="rec-card-title">Senior Full Stack Developer</div>
+                  <div class="rec-card-company">🏢 Globant · Buenos Aires</div>
+                </div>
+                <div>
+                  <div class="rec-match-pct">92%</div>
+                  <div class="rec-match-label">Match IA</div>
+                </div>
+              </div>
+              <div class="rec-card-meta">
+                <span>🏠 Remoto</span>
+                <span>💰 USD 2.500 – 3.500</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Hace 1 día</span>
+              </div>
+              <div class="rec-card-tags">
+                <span class="skill-tag match">React</span>
+                <span class="skill-tag match">Node.js</span>
+                <span class="skill-tag match">TypeScript</span>
+                <span class="skill-tag">AWS</span>
+                <span class="skill-tag">Microservices</span>
+              </div>
+              <div class="rec-card-footer">
+                <span class="badge badge-green"><span class="badge-dot"></span> Alta compatibilidad</span>
+                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;">Postularme</button>
+              </div>
+            </div>
+
+            <div class="rec-card">
+              <div class="rec-card-top">
+                <div>
+                  <div class="rec-card-title">Backend Developer — NestJS</div>
+                  <div class="rec-card-company">🚀 MercadoLibre · Remoto</div>
+                </div>
+                <div>
+                  <div class="rec-match-pct">85%</div>
+                  <div class="rec-match-label">Match IA</div>
+                </div>
+              </div>
+              <div class="rec-card-meta">
+                <span>🏠 Remoto</span>
+                <span>💰 USD 2.000 – 2.800</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Hace 3 días</span>
+              </div>
+              <div class="rec-card-tags">
+                <span class="skill-tag match">Node.js</span>
+                <span class="skill-tag match">TypeScript</span>
+                <span class="skill-tag match">PostgreSQL</span>
+                <span class="skill-tag">Redis</span>
+                <span class="skill-tag">Docker</span>
+              </div>
+              <div class="rec-card-footer">
+                <span class="badge badge-gold"><span class="badge-dot"></span> Buena compatibilidad</span>
+                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;">Postularme</button>
+              </div>
+            </div>
+
+            <div class="rec-card">
+              <div class="rec-card-top">
+                <div>
+                  <div class="rec-card-title">Frontend Developer — React</div>
+                  <div class="rec-card-company">💻 Despegar · Buenos Aires</div>
+                </div>
+                <div>
+                  <div class="rec-match-pct">78%</div>
+                  <div class="rec-match-label">Match IA</div>
+                </div>
+              </div>
+              <div class="rec-card-meta">
+                <span>🔀 Híbrido</span>
+                <span>💰 ARS 800k – 1.2M</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Hace 5 días</span>
+              </div>
+              <div class="rec-card-tags">
+                <span class="skill-tag match">React</span>
+                <span class="skill-tag match">TypeScript</span>
+                <span class="skill-tag">Next.js</span>
+                <span class="skill-tag">Tailwind</span>
+              </div>
+              <div class="rec-card-footer">
+                <span class="badge badge-gray">Compatibilidad media</span>
+                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;">Postularme</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="panel-footer">
+          <a href="jobs.html">Ver todas las recomendaciones →</a>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+
+</div><!-- /app-layout -->
+
+</body>
+</html>
