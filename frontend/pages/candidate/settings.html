@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración — TalentAI</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <style>
+    /* ── Settings layout ──────────────────────── */
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Settings nav ─────────────────────────── */
+    .settings-nav {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: sticky;
+      top: 80px;
+    }
+    .settings-nav-title {
+      font-size: 0.72rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.09em;
+      color: var(--clr-muted); padding: 14px 16px 8px;
+    }
+    .settings-nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 10px 16px; font-size: 0.85rem;
+      color: var(--clr-muted); cursor: pointer;
+      transition: all var(--transition);
+      border-left: 3px solid transparent;
+      font-family: var(--font-body);
+      background: none; border-right: none; border-top: none; border-bottom: none;
+      width: 100%; text-align: left;
+    }
+    .settings-nav-item:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+    .settings-nav-item.active {
+      color: var(--clr-accent); font-weight: 500;
+      background: rgba(201,168,76,0.07);
+      border-left-color: var(--clr-accent);
+    }
+    .settings-nav-divider {
+      height: 1px; background: var(--clr-border); margin: 4px 0;
+    }
+
+    /* ── Settings panel ───────────────────────── */
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+
+    /* ── Section block ────────────────────────── */
+    .settings-block {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .settings-block-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .settings-block-title {
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .settings-block-body { padding: 22px 24px; }
+    .settings-block-footer {
+      padding: 14px 24px; border-top: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+    /* ── Toggle switch ────────────────────────── */
+    .toggle-row {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(37,42,56,0.5);
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 0.88rem; font-weight: 500; color: var(--clr-text); margin-bottom: 3px; }
+    .toggle-desc { font-size: 0.78rem; color: var(--clr-muted); line-height: 1.5; }
+
+    .toggle-switch { position: relative; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider {
+      display: block; width: 44px; height: 24px;
+      background: var(--clr-border); border-radius: 100px;
+      cursor: pointer; transition: background var(--transition);
+      position: relative;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: white; top: 3px; left: 3px;
+      transition: transform var(--transition);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--clr-accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    /* ── Danger zone ──────────────────────────── */
+    .danger-block {
+      background: rgba(224,92,92,0.05);
+      border: 1px solid rgba(224,92,92,0.2);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+    .danger-title {
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+      color: var(--clr-error); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .danger-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid rgba(224,92,92,0.1);
+      gap: 20px;
+    }
+    .danger-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .danger-item-info { flex: 1; }
+    .danger-item-label { font-size: 0.88rem; font-weight: 500; color: var(--clr-text); margin-bottom: 3px; }
+    .danger-item-desc { font-size: 0.78rem; color: var(--clr-muted); line-height: 1.5; }
+    .btn-danger {
+      background: none; border: 1px solid rgba(224,92,92,0.4);
+      border-radius: var(--radius-sm); color: var(--clr-error);
+      cursor: pointer; padding: 8px 16px; font-size: 0.82rem;
+      font-family: var(--font-body); transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .btn-danger:hover { background: rgba(224,92,92,0.1); border-color: var(--clr-error); }
+
+    /* ── Connected accounts ───────────────────── */
+    .connected-list { display: flex; flex-direction: column; gap: 12px; }
+    .connected-item {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .connected-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .connected-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 2px; }
+    .connected-status { font-size: 0.75rem; color: var(--clr-muted); }
+    .connected-status.linked { color: var(--clr-success); }
+    .connected-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* ── Appearance ───────────────────────────── */
+    .theme-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .theme-card {
+      border: 2px solid var(--clr-border);
+      border-radius: var(--radius-md); overflow: hidden;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .theme-card:hover { border-color: var(--clr-accent-dim); }
+    .theme-card.active { border-color: var(--clr-accent); }
+    .theme-preview {
+      height: 64px;
+      display: flex; flex-direction: column;
+      padding: 8px; gap: 4px;
+    }
+    .theme-preview-bar { height: 8px; border-radius: 4px; }
+    .theme-preview-content { display: flex; gap: 4px; flex: 1; }
+    .theme-preview-side { width: 20px; border-radius: 3px; }
+    .theme-preview-main { flex: 1; border-radius: 3px; }
+
+    /* Dark theme */
+    .theme-dark .theme-preview { background: #0d0f14; }
+    .theme-dark .theme-preview-bar { background: #c9a84c; }
+    .theme-dark .theme-preview-side { background: #13161e; }
+    .theme-dark .theme-preview-main { background: #1a1e2a; }
+
+    /* Light theme */
+    .theme-light .theme-preview { background: #f5f5f5; }
+    .theme-light .theme-preview-bar { background: #c9a84c; }
+    .theme-light .theme-preview-side { background: #e8e8e8; }
+    .theme-light .theme-preview-main { background: #ffffff; }
+
+    /* System theme */
+    .theme-system .theme-preview {
+      background: linear-gradient(135deg, #0d0f14 50%, #f5f5f5 50%);
+    }
+    .theme-system .theme-preview-bar { background: #c9a84c; }
+    .theme-system .theme-preview-side { background: rgba(255,255,255,0.15); }
+    .theme-system .theme-preview-main { background: rgba(255,255,255,0.1); }
+
+    .theme-name {
+      padding: 8px; text-align: center; font-size: 0.78rem; font-weight: 500;
+      color: var(--clr-muted); border-top: 1px solid var(--clr-border);
+    }
+    .theme-card.active .theme-name { color: var(--clr-accent); }
+
+    /* ── Session list ─────────────────────────── */
+    .session-list { display: flex; flex-direction: column; gap: 10px; }
+    .session-item {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .session-item.current { border-color: rgba(76,175,132,0.3); }
+    .session-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .session-device { font-weight: 600; font-size: 0.88rem; margin-bottom: 2px; }
+    .session-detail { font-size: 0.75rem; color: var(--clr-muted); }
+    .session-current-tag {
+      margin-left: auto;
+      background: rgba(76,175,132,0.1);
+      border: 1px solid rgba(76,175,132,0.25);
+      color: var(--clr-success);
+      font-size: 0.7rem; padding: 2px 8px; border-radius: 100px; white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .settings-layout { grid-template-columns: 1fr; }
+      .settings-nav { position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; }
+      .settings-nav-title { display: none; }
+      .settings-nav-item { padding: 8px 12px; border-radius: var(--radius-sm); border-left: none; font-size: 0.8rem; }
+      .settings-nav-item.active { border-left: none; }
+      .settings-nav-divider { display: none; }
+      .theme-options { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .theme-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+    <div class="sidebar-profile">
+      <div class="profile-badge">
+        <div class="profile-avatar">JP</div>
+        <div class="profile-info">
+          <div class="profile-name">Juan Pérez</div>
+          <div class="profile-role">Candidato</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="jobs.html" class="nav-item"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
+      <span class="nav-section-label">Mi perfil</span>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
+      <span class="nav-section-label">Postulaciones</span>
+      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
+      <a href="saved.html" class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
+      <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item"><span class="nav-icon">🚪</span> Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Configuración</div>
+        <div class="topbar-subtitle">Personalizá tu experiencia en TalentAI</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="settings-layout">
+
+        <!-- NAV LATERAL -->
+        <nav class="settings-nav">
+          <div class="settings-nav-title">Configuración</div>
+          <button class="settings-nav-item active" onclick="showPanel('cuenta', this)">👤 Mi cuenta</button>
+          <button class="settings-nav-item" onclick="showPanel('notificaciones', this)">🔔 Notificaciones</button>
+          <button class="settings-nav-item" onclick="showPanel('privacidad', this)">🔒 Privacidad</button>
+          <button class="settings-nav-item" onclick="showPanel('apariencia', this)">🎨 Apariencia</button>
+          <button class="settings-nav-item" onclick="showPanel('seguridad', this)">🛡 Seguridad</button>
+          <button class="settings-nav-item" onclick="showPanel('conexiones', this)">🔗 Conexiones</button>
+          <div class="settings-nav-divider"></div>
+          <button class="settings-nav-item" onclick="showPanel('peligro', this)" style="color:var(--clr-error);">⚠️ Zona de peligro</button>
+        </nav>
+
+        <!-- PANELS -->
+        <div>
+
+          <!-- ══ CUENTA ══ -->
+          <div class="settings-panel active" id="panel-cuenta">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">👤 Información de la cuenta</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="form-grid" style="margin-bottom:18px;">
+                  <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" value="Juan" />
+                  </div>
+                  <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" value="Pérez" />
+                  </div>
+                  <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" value="juan.perez@email.com" />
+                  </div>
+                  <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" value="+54 11 4567-8901" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Título profesional</label>
+                  <input type="text" value="Desarrollador Full Stack" />
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-ghost">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🌍 Preferencias de búsqueda</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Modalidad preferida</label>
+                    <select>
+                      <option>Remoto</option>
+                      <option selected>Híbrido</option>
+                      <option>Presencial</option>
+                      <option>Indiferente</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Disponibilidad</label>
+                    <select>
+                      <option selected>Inmediata</option>
+                      <option>En 2 semanas</option>
+                      <option>En 1 mes</option>
+                      <option>Solo pasivo</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Moneda preferida</label>
+                    <select>
+                      <option selected>USD</option>
+                      <option>ARS</option>
+                      <option>Indiferente</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Expectativa salarial (USD)</label>
+                    <input type="number" value="2500" />
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-ghost">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ NOTIFICACIONES ══ -->
+          <div class="settings-panel" id="panel-notificaciones">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">📧 Notificaciones por email</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Nuevas ofertas recomendadas</div>
+                    <div class="toggle-desc">Recibí un resumen diario de ofertas que matchean con tu perfil</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Estado de postulaciones</div>
+                    <div class="toggle-desc">Notificaciones cuando una empresa revisa o responde tu postulación</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Recordatorios de ofertas guardadas</div>
+                    <div class="toggle-desc">Aviso cuando una oferta guardada está por vencer</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Novedades de TalentAI</div>
+                    <div class="toggle-desc">Actualizaciones de la plataforma, nuevas funcionalidades y tips</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar preferencias</button>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🔔 Notificaciones en la app</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Mensajes de empresas</div>
+                    <div class="toggle-desc">Notificación cuando una empresa te envía un mensaje</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Análisis de CV completado</div>
+                    <div class="toggle-desc">Cuando la IA termina de analizar tu currículum</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Sugerencias de la IA</div>
+                    <div class="toggle-desc">Nuevas recomendaciones de ofertas generadas por IA</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar preferencias</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ PRIVACIDAD ══ -->
+          <div class="settings-panel" id="panel-privacidad">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">👁 Visibilidad del perfil</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Perfil público</div>
+                    <div class="toggle-desc">Las empresas pueden encontrar tu perfil en búsquedas</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Mostrar expectativa salarial</div>
+                    <div class="toggle-desc">Las empresas pueden ver tu rango salarial esperado</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Mostrar disponibilidad</div>
+                    <div class="toggle-desc">Indicar a empresas si estás disponible para cambios laborales</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Permitir que la IA sugiera mi perfil</div>
+                    <div class="toggle-desc">Las empresas pueden recibir tu perfil como recomendación de la IA</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">📊 Datos y privacidad</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Mejorar recomendaciones con mis datos</div>
+                    <div class="toggle-desc">Permitir que la IA use tu historial para mejorar sugerencias</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <div class="toggle-label">Análisis de comportamiento</div>
+                    <div class="toggle-desc">Datos de navegación para personalizar la experiencia</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <div style="flex:1;">
+                  <a href="#" style="font-size:0.82rem;color:var(--clr-muted);">Ver política de privacidad →</a>
+                </div>
+                <button class="btn btn-ghost" style="font-size:0.82rem;">Descargar mis datos</button>
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ APARIENCIA ══ -->
+          <div class="settings-panel" id="panel-apariencia">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🎨 Tema de la interfaz</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="theme-options">
+                  <div class="theme-card theme-dark active" onclick="selectTheme(this, 'dark')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">🌙 Oscuro</div>
+                  </div>
+                  <div class="theme-card theme-light" onclick="selectTheme(this, 'light')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">☀️ Claro</div>
+                  </div>
+                  <div class="theme-card theme-system" onclick="selectTheme(this, 'system')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">💻 Sistema</div>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🌐 Idioma y región</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Idioma de la interfaz</label>
+                    <select>
+                      <option selected>Español</option>
+                      <option>English</option>
+                      <option>Português</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Región</label>
+                    <select>
+                      <option selected>Argentina</option>
+                      <option>Uruguay</option>
+                      <option>Chile</option>
+                      <option>México</option>
+                      <option>España</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Formato de fecha</label>
+                    <select>
+                      <option selected>DD/MM/YYYY</option>
+                      <option>MM/DD/YYYY</option>
+                      <option>YYYY-MM-DD</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Zona horaria</label>
+                    <select>
+                      <option selected>America/Buenos_Aires (UTC-3)</option>
+                      <option>America/Santiago (UTC-4)</option>
+                      <option>America/Mexico_City (UTC-6)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ SEGURIDAD ══ -->
+          <div class="settings-panel" id="panel-seguridad">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🔑 Cambiar contraseña</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="form-grid-1" style="max-width:420px;">
+                  <div class="form-group">
+                    <label>Contraseña actual</label>
+                    <input type="password" placeholder="••••••••" />
+                  </div>
+                  <div class="form-group">
+                    <label>Nueva contraseña</label>
+                    <input type="password" placeholder="Mínimo 8 caracteres" id="new-pass" />
+                    <div class="password-strength" id="strength-bars" style="margin-top:6px;">
+                      <div style="flex:1;height:3px;border-radius:2px;background:var(--clr-border)" id="bar1"></div>
+                      <div style="flex:1;height:3px;border-radius:2px;background:var(--clr-border)" id="bar2"></div>
+                      <div style="flex:1;height:3px;border-radius:2px;background:var(--clr-border)" id="bar3"></div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Confirmar nueva contraseña</label>
+                    <input type="password" placeholder="••••••••" />
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">🔑 Cambiar contraseña</button>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">📱 Sesiones activas</div>
+                <button class="icon-btn" style="font-size:0.78rem;" onclick="if(confirm('¿Cerrar todas las otras sesiones?'))showAlert('Sesiones cerradas.')">Cerrar todas</button>
+              </div>
+              <div class="settings-block-body">
+                <div class="session-list">
+                  <div class="session-item current">
+                    <span class="session-icon">💻</span>
+                    <div>
+                      <div class="session-device">Chrome — Windows 11</div>
+                      <div class="session-detail">Buenos Aires, Argentina · Ahora mismo</div>
+                    </div>
+                    <span class="session-current-tag">✓ Esta sesión</span>
+                  </div>
+                  <div class="session-item">
+                    <span class="session-icon">📱</span>
+                    <div>
+                      <div class="session-device">Safari — iPhone 15</div>
+                      <div class="session-detail">Buenos Aires, Argentina · Hace 2 horas</div>
+                    </div>
+                    <button class="icon-btn" style="font-size:0.78rem;margin-left:auto;" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                  </div>
+                  <div class="session-item">
+                    <span class="session-icon">💻</span>
+                    <div>
+                      <div class="session-device">Firefox — macOS</div>
+                      <div class="session-detail">Córdoba, Argentina · Hace 3 días</div>
+                    </div>
+                    <button class="icon-btn" style="font-size:0.78rem;margin-left:auto;" onclick="this.closest('.session-item').remove()">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ CONEXIONES ══ -->
+          <div class="settings-panel" id="panel-conexiones">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🔗 Cuentas conectadas</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="connected-list">
+                  <div class="connected-item">
+                    <span class="connected-icon">💼</span>
+                    <div>
+                      <div class="connected-name">LinkedIn</div>
+                      <div class="connected-status linked">✓ Conectado como Juan Pérez</div>
+                    </div>
+                    <div class="connected-actions">
+                      <button class="icon-btn" style="font-size:0.78rem;">Sincronizar</button>
+                      <button class="icon-btn" style="font-size:0.78rem;color:var(--clr-error);">Desconectar</button>
+                    </div>
+                  </div>
+                  <div class="connected-item">
+                    <span class="connected-icon">🐙</span>
+                    <div>
+                      <div class="connected-name">GitHub</div>
+                      <div class="connected-status linked">✓ Conectado como @juanperez</div>
+                    </div>
+                    <div class="connected-actions">
+                      <button class="icon-btn" style="font-size:0.78rem;">Sincronizar</button>
+                      <button class="icon-btn" style="font-size:0.78rem;color:var(--clr-error);">Desconectar</button>
+                    </div>
+                  </div>
+                  <div class="connected-item">
+                    <span class="connected-icon">🔵</span>
+                    <div>
+                      <div class="connected-name">Google</div>
+                      <div class="connected-status">No conectado</div>
+                    </div>
+                    <div class="connected-actions">
+                      <button class="btn btn-ghost" style="font-size:0.78rem;padding:6px 14px;">Conectar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ ZONA DE PELIGRO ══ -->
+          <div class="settings-panel" id="panel-peligro">
+            <div class="danger-block">
+              <div class="danger-title">⚠️ Zona de peligro</div>
+              <div class="danger-item">
+                <div class="danger-item-info">
+                  <div class="danger-item-label">Desactivar cuenta</div>
+                  <div class="danger-item-desc">Tu perfil dejará de ser visible para las empresas. Podés reactivarla en cualquier momento.</div>
+                </div>
+                <button class="btn-danger" onclick="if(confirm('¿Desactivar tu cuenta?'))showAlert('Cuenta desactivada.')">Desactivar</button>
+              </div>
+              <div class="danger-item">
+                <div class="danger-item-info">
+                  <div class="danger-item-label">Eliminar todos mis datos</div>
+                  <div class="danger-item-desc">Elimina tu CV, historial de postulaciones y datos del perfil. Esta acción no se puede deshacer.</div>
+                </div>
+                <button class="btn-danger" onclick="if(confirm('¿Eliminar todos tus datos? Esta acción es irreversible.'))showAlert('Datos eliminados.')">Eliminar datos</button>
+              </div>
+              <div class="danger-item">
+                <div class="danger-item-info">
+                  <div class="danger-item-label">Eliminar cuenta permanentemente</div>
+                  <div class="danger-item-desc">Elimina tu cuenta, perfil, CV y postulaciones para siempre. Esta acción es irreversible.</div>
+                </div>
+                <button class="btn-danger" onclick="if(confirm('¿Eliminar tu cuenta para siempre? Esta acción NO se puede deshacer.'))window.location.href='../../pages/login.html'">Eliminar cuenta</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panels -->
+      </div><!-- /settings-layout -->
+
+      <div id="global-alert" class="alert" style="margin-top:16px;"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ── Nav settings ──────────────────────────────────
+  function showPanel(id, btn) {
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Save ──────────────────────────────────────────
+  function saveSettings(btn) {
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div> Guardando...';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      showAlert('✓ Configuración guardada correctamente.');
+    }, 900);
+  }
+
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('global-alert');
+    el.className = `alert alert-${type} visible`;
+    el.textContent = msg;
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => el.classList.remove('visible'), 3500);
+  }
+
+  // ── Tema ──────────────────────────────────────────
+  function selectTheme(card, theme) {
+    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+  }
+
+  // ── Password strength ─────────────────────────────
+  document.getElementById('new-pass').addEventListener('input', function() {
+    const val = this.value;
+    const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3')];
+    bars.forEach(b => { b.style.background = 'var(--clr-border)'; });
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const colors = ['', '#e05c5c', '#e0a84c', '#4caf84'];
+    for (let i = 0; i < score; i++) bars[i].style.background = colors[score];
+  });
+</script>
+
+</body>
+</html>
