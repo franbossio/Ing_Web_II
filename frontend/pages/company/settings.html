@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración — TalentAI Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/company.css" />
+
+  <style>
+    .settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
+    .settings-nav { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); overflow: hidden; position: sticky; top: 80px; }
+    .settings-nav-title { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; color: var(--clr-muted); padding: 14px 16px 8px; }
+    .settings-nav-item { display: flex; align-items: center; gap: 9px; padding: 10px 16px; font-size: 0.85rem; color: var(--clr-muted); cursor: pointer; transition: all var(--transition); border-left: 3px solid transparent; font-family: var(--font-body); background: none; border-right: none; border-top: none; border-bottom: none; width: 100%; text-align: left; }
+    .settings-nav-item:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+    .settings-nav-item.active { color: var(--clr-accent); font-weight: 500; background: rgba(201,168,76,0.07); border-left-color: var(--clr-accent); }
+    .settings-nav-divider { height: 1px; background: var(--clr-border); margin: 4px 0; }
+
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+
+    .settings-block { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 20px; }
+    .settings-block-header { padding: 18px 24px; border-bottom: 1px solid var(--clr-border); display: flex; align-items: center; justify-content: space-between; }
+    .settings-block-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .settings-block-body { padding: 22px 24px; }
+    .settings-block-footer { padding: 14px 24px; border-top: 1px solid var(--clr-border); display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .col-span-2 { grid-column: span 2; }
+
+    /* Logo upload */
+    .logo-upload { display: flex; align-items: center; gap: 24px; padding: 20px; background: var(--clr-surface-2); border: 1px solid var(--clr-border); border-radius: var(--radius-md); margin-bottom: 22px; }
+    .company-logo-lg { width: 80px; height: 80px; border-radius: var(--radius-md); background: linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: #0d0f14; flex-shrink: 0; }
+    .logo-info-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .logo-info-sub { font-size: 0.8rem; color: var(--clr-muted); margin-bottom: 12px; }
+
+    /* Toggle */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(37,42,56,0.5); }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 0.88rem; font-weight: 500; color: var(--clr-text); margin-bottom: 3px; }
+    .toggle-desc { font-size: 0.78rem; color: var(--clr-muted); line-height: 1.5; }
+    .toggle-switch { position: relative; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider { display: block; width: 44px; height: 24px; background: var(--clr-border); border-radius: 100px; cursor: pointer; transition: background var(--transition); position: relative; }
+    .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform var(--transition); }
+    .toggle-switch input:checked + .toggle-slider { background: var(--clr-accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    /* Team members */
+    .member-list { display: flex; flex-direction: column; gap: 10px; }
+    .member-row { display: flex; align-items: center; gap: 14px; background: var(--clr-surface-2); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 12px 16px; }
+    .member-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim)); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #0d0f14; font-family: var(--font-display); flex-shrink: 0; }
+    .member-avatar.alt { background: linear-gradient(135deg,#4c82c8,#2d5a9e); }
+    .member-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 2px; }
+    .member-email { font-size: 0.74rem; color: var(--clr-muted); }
+    .role-select { margin-left: auto; background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.78rem; padding: 5px 24px 5px 10px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+    .member-remove { background: none; border: none; cursor: pointer; color: var(--clr-muted); font-size: 1rem; transition: color var(--transition); margin-left: 6px; }
+    .member-remove:hover { color: var(--clr-error); }
+
+    /* Invite */
+    .invite-row { display: flex; gap: 8px; margin-top: 14px; }
+    .invite-row input { flex: 1; background: var(--clr-surface-2); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 14px; outline: none; transition: border-color var(--transition); }
+    .invite-row input:focus { border-color: var(--clr-accent); }
+
+    /* Billing */
+    .plan-card { background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-md); padding: 22px; margin-bottom: 16px; }
+    .plan-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .plan-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+    .plan-features { display: flex; flex-direction: column; gap: 8px; }
+    .plan-feature { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--clr-muted); }
+    .plan-feature.active { color: var(--clr-text); }
+    .plan-feature::before { content: '✓'; color: var(--clr-accent); font-weight: 700; font-size: 0.8rem; }
+    .plan-feature.disabled::before { content: '✕'; color: var(--clr-muted); }
+
+    /* Danger */
+    .danger-block { background: rgba(224,92,92,0.05); border: 1px solid rgba(224,92,92,0.2); border-radius: var(--radius-md); padding: 22px 24px; margin-bottom: 20px; }
+    .danger-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--clr-error); margin-bottom: 14px; }
+    .danger-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(224,92,92,0.1); gap: 20px; }
+    .danger-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .danger-item-label { font-size: 0.88rem; font-weight: 500; color: var(--clr-text); margin-bottom: 3px; }
+    .danger-item-desc { font-size: 0.78rem; color: var(--clr-muted); line-height: 1.5; }
+    .btn-danger { background: none; border: 1px solid rgba(224,92,92,0.4); border-radius: var(--radius-sm); color: var(--clr-error); cursor: pointer; padding: 8px 16px; font-size: 0.82rem; font-family: var(--font-body); transition: all var(--transition); flex-shrink: 0; }
+    .btn-danger:hover { background: rgba(224,92,92,0.1); border-color: var(--clr-error); }
+
+    @media (max-width:900px) {
+      .settings-layout { grid-template-columns: 1fr; }
+      .settings-nav { position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; }
+      .settings-nav-title { display: none; }
+      .settings-nav-item { padding: 8px 12px; border-radius: var(--radius-sm); border-left: none; font-size: 0.8rem; }
+      .settings-nav-divider { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .col-span-2 { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+    <div class="sidebar-company">
+      <div class="company-badge">
+        <div class="company-avatar">AC</div>
+        <div class="company-info">
+          <div class="company-name">Acme Corp S.A.</div>
+          <div class="company-role">Empresa</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
+      <span class="nav-section-label">Ofertas</span>
+      <a href="post-job.html" class="nav-item"><span class="nav-icon">➕</span> Publicar oferta</a>
+      <a href="my-jobs.html" class="nav-item"><span class="nav-icon">📋</span> Mis ofertas</a>
+      <span class="nav-section-label">Gestión</span>
+      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
+      <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
+      <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item"><span class="nav-icon">🚪</span> Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Configuración</div>
+        <div class="topbar-subtitle">Administrá tu empresa y preferencias</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="settings-layout">
+
+        <nav class="settings-nav">
+          <div class="settings-nav-title">Configuración</div>
+          <button class="settings-nav-item active" onclick="showPanel('empresa',this)">🏢 Mi empresa</button>
+          <button class="settings-nav-item" onclick="showPanel('equipo',this)">👥 Equipo</button>
+          <button class="settings-nav-item" onclick="showPanel('notificaciones',this)">🔔 Notificaciones</button>
+          <button class="settings-nav-item" onclick="showPanel('ia',this)">🤖 IA y matching</button>
+          <button class="settings-nav-item" onclick="showPanel('seguridad',this)">🛡 Seguridad</button>
+          <button class="settings-nav-item" onclick="showPanel('plan',this)">💳 Plan y facturación</button>
+          <div class="settings-nav-divider"></div>
+          <button class="settings-nav-item" onclick="showPanel('peligro',this)" style="color:var(--clr-error);">⚠️ Zona de peligro</button>
+        </nav>
+
+        <div>
+
+          <!-- ══ EMPRESA ══ -->
+          <div class="settings-panel active" id="panel-empresa">
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">🏢 Datos de la empresa</div></div>
+              <div class="settings-block-body">
+                <div class="logo-upload">
+                  <div class="company-logo-lg">AC</div>
+                  <div>
+                    <div class="logo-info-name">Acme Corp S.A.</div>
+                    <div class="logo-info-sub">Buenos Aires, Argentina</div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;">📷 Cambiar logo</button>
+                      <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;color:var(--clr-muted);">Eliminar</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-grid" style="margin-bottom:18px;">
+                  <div class="form-group">
+                    <label>Nombre de la empresa *</label>
+                    <input type="text" value="Acme Corp S.A." />
+                  </div>
+                  <div class="form-group">
+                    <label>Industria</label>
+                    <select>
+                      <option selected>Tecnología e IT</option>
+                      <option>Fintech</option>
+                      <option>E-commerce</option>
+                      <option>Salud</option>
+                      <option>Educación</option>
+                      <option>Otro</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Tamaño de la empresa</label>
+                    <select>
+                      <option>1-10 empleados</option>
+                      <option selected>11-50 empleados</option>
+                      <option>51-200 empleados</option>
+                      <option>201-1000 empleados</option>
+                      <option>+1000 empleados</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" value="Buenos Aires, Argentina" />
+                  </div>
+                  <div class="form-group">
+                    <label>Sitio web</label>
+                    <input type="url" value="https://acmecorp.com" />
+                  </div>
+                  <div class="form-group">
+                    <label>LinkedIn</label>
+                    <input type="url" placeholder="linkedin.com/company/..." value="linkedin.com/company/acmecorp" />
+                  </div>
+                  <div class="form-group col-span-2">
+                    <label>Descripción de la empresa</label>
+                    <textarea rows="4">Acme Corp es una empresa de tecnología especializada en soluciones digitales para el sector financiero. Fundada en 2018, contamos con más de 40 empleados distribuidos en Argentina y Uruguay.</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-ghost">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ EQUIPO ══ -->
+          <div class="settings-panel" id="panel-equipo">
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">👥 Miembros del equipo</div>
+                <span class="badge badge-gold">3 miembros</span>
+              </div>
+              <div class="settings-block-body">
+                <div class="member-list">
+                  <div class="member-row">
+                    <div class="member-avatar">AP</div>
+                    <div>
+                      <div class="member-name">Ana Pérez</div>
+                      <div class="member-email">ana@acmecorp.com</div>
+                    </div>
+                    <select class="role-select">
+                      <option selected>Administrador</option>
+                      <option>Reclutador</option>
+                      <option>Solo lectura</option>
+                    </select>
+                    <span style="font-size:0.72rem;color:var(--clr-muted);margin-left:6px;">Tú</span>
+                  </div>
+                  <div class="member-row">
+                    <div class="member-avatar alt">MR</div>
+                    <div>
+                      <div class="member-name">Martín Rodríguez</div>
+                      <div class="member-email">martin@acmecorp.com</div>
+                    </div>
+                    <select class="role-select">
+                      <option>Administrador</option>
+                      <option selected>Reclutador</option>
+                      <option>Solo lectura</option>
+                    </select>
+                    <button class="member-remove" onclick="this.closest('.member-row').remove()">×</button>
+                  </div>
+                  <div class="member-row">
+                    <div class="member-avatar" style="background:linear-gradient(135deg,#4caf84,#2e8060);">LG</div>
+                    <div>
+                      <div class="member-name">Laura González</div>
+                      <div class="member-email">laura@acmecorp.com</div>
+                    </div>
+                    <select class="role-select">
+                      <option>Administrador</option>
+                      <option>Reclutador</option>
+                      <option selected>Solo lectura</option>
+                    </select>
+                    <button class="member-remove" onclick="this.closest('.member-row').remove()">×</button>
+                  </div>
+                </div>
+                <div class="invite-row">
+                  <input type="email" placeholder="Email del nuevo miembro..." />
+                  <select class="role-select" style="background:var(--clr-surface-2);">
+                    <option>Reclutador</option>
+                    <option>Solo lectura</option>
+                    <option>Administrador</option>
+                  </select>
+                  <button class="btn btn-primary" style="padding:10px 18px;font-size:0.85rem;" onclick="inviteMember()">Invitar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ NOTIFICACIONES ══ -->
+          <div class="settings-panel" id="panel-notificaciones">
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">📧 Notificaciones por email</div></div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Nuevas postulaciones</div><div class="toggle-desc">Recibí un email cada vez que alguien se postule a tus ofertas</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Resumen diario</div><div class="toggle-desc">Un resumen de todas las postulaciones y actividad del día</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Candidatos recomendados por IA</div><div class="toggle-desc">Notificación cuando la IA encuentra candidatos con +85% de match</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Ofertas por vencer</div><div class="toggle-desc">Aviso 7 días antes de que una oferta expire</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Novedades de TalentAI</div><div class="toggle-desc">Actualizaciones, nuevas funciones y tips de la plataforma</div></div>
+                  <label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ IA ══ -->
+          <div class="settings-panel" id="panel-ia">
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">🤖 Configuración de IA y matching</div></div>
+              <div class="settings-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Análisis automático de CVs</div><div class="toggle-desc">La IA analiza cada CV apenas se postula un candidato</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Sugerencias proactivas de candidatos</div><div class="toggle-desc">La IA busca candidatos compatibles aunque no se hayan postulado</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Ranking automático de postulantes</div><div class="toggle-desc">Ordenar postulantes por compatibilidad con la oferta automáticamente</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-label">Análisis de habilidades faltantes</div><div class="toggle-desc">Mostrar qué habilidades le faltan a cada candidato respecto al puesto</div></div>
+                  <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-block-body" style="padding-top:0;">
+                <div class="form-group">
+                  <label>Match mínimo para notificar candidatos (porcentaje)</label>
+                  <input type="range" min="50" max="100" value="75" step="5" style="width:100%;accent-color:var(--clr-accent);margin:8px 0;" oninput="document.getElementById('match-val').textContent=this.value+'%'" />
+                  <div style="display:flex;justify-content:space-between;font-size:0.74rem;color:var(--clr-muted);">
+                    <span>50%</span><span id="match-val">75%</span><span>100%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ SEGURIDAD ══ -->
+          <div class="settings-panel" id="panel-seguridad">
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">🔑 Cambiar contraseña</div></div>
+              <div class="settings-block-body">
+                <div style="display:grid;grid-template-columns:1fr;gap:16px;max-width:420px;">
+                  <div class="form-group"><label>Contraseña actual</label><input type="password" placeholder="••••••••" /></div>
+                  <div class="form-group"><label>Nueva contraseña</label><input type="password" placeholder="Mínimo 8 caracteres" /></div>
+                  <div class="form-group"><label>Confirmar contraseña</label><input type="password" placeholder="••••••••" /></div>
+                </div>
+              </div>
+              <div class="settings-block-footer">
+                <button class="btn btn-primary" onclick="saveSettings(this)">🔑 Cambiar contraseña</button>
+              </div>
+            </div>
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">🔒 Autenticación de dos factores</div></div>
+              <div class="settings-block-body">
+                <div class="toggle-row" style="padding:0;">
+                  <div class="toggle-info"><div class="toggle-label">Activar 2FA</div><div class="toggle-desc">Requerí un código adicional al iniciar sesión para mayor seguridad</div></div>
+                  <label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ PLAN ══ -->
+          <div class="settings-panel" id="panel-plan">
+            <div class="settings-block">
+              <div class="settings-block-header"><div class="settings-block-title">💳 Plan actual</div></div>
+              <div class="settings-block-body">
+                <div class="plan-card">
+                  <div class="plan-header">
+                    <div>
+                      <div class="plan-name">Plan Gratuito</div>
+                      <div style="font-size:0.8rem;color:var(--clr-muted);margin-top:3px;">Perfecto para empezar</div>
+                    </div>
+                    <span class="badge badge-green">Activo</span>
+                  </div>
+                  <div class="plan-features">
+                    <div class="plan-feature active">Hasta 3 ofertas activas simultáneas</div>
+                    <div class="plan-feature active">Análisis IA de CVs</div>
+                    <div class="plan-feature active">Búsqueda de candidatos</div>
+                    <div class="plan-feature active">Hasta 2 miembros del equipo</div>
+                    <div class="plan-feature disabled">Exportar candidatos a CSV</div>
+                    <div class="plan-feature disabled">Integraciones con ATS externos</div>
+                    <div class="plan-feature disabled">Soporte prioritario</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" style="width:100%;padding:14px;">⭐ Mejorar a Plan Pro</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ PELIGRO ══ -->
+          <div class="settings-panel" id="panel-peligro">
+            <div class="danger-block">
+              <div class="danger-title">⚠️ Zona de peligro</div>
+              <div class="danger-item">
+                <div><div class="danger-item-label">Eliminar todas las ofertas</div><div class="danger-item-desc">Elimina todas las ofertas publicadas y su historial de postulaciones.</div></div>
+                <button class="btn-danger" onclick="if(confirm('¿Eliminar todas las ofertas?'))showAlert('Ofertas eliminadas.','error')">Eliminar ofertas</button>
+              </div>
+              <div class="danger-item">
+                <div><div class="danger-item-label">Eliminar cuenta de empresa</div><div class="danger-item-desc">Elimina la cuenta, ofertas, postulaciones y miembros del equipo permanentemente.</div></div>
+                <button class="btn-danger" onclick="if(confirm('¿Eliminar la cuenta de empresa para siempre?'))window.location.href='../../pages/login.html'">Eliminar cuenta</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="global-alert" class="alert" style="margin-top:16px;"></div>
+    </div>
+  </main>
+</div>
+<script>
+  function showPanel(id, btn) {
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+  function saveSettings(btn) {
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div> Guardando...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = orig;
+      showAlert('✓ Configuración guardada correctamente.');
+    }, 900);
+  }
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('global-alert');
+    el.className = `alert alert-${type} visible`;
+    el.textContent = msg;
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => el.classList.remove('visible'), 3500);
+  }
+  function inviteMember() {
+    const email = document.querySelector('.invite-row input').value.trim();
+    if (!email) return;
+    showAlert(`✓ Invitación enviada a ${email}`);
+    document.querySelector('.invite-row input').value = '';
+  }
+</script>
+</body>
+</html>

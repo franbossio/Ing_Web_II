@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Ofertas — TalentAI Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/company.css" />
+  <style>
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 20px; transition: all var(--transition); position: relative; overflow: hidden; }
+    .stat-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); }
+    .stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--clr-accent), transparent); opacity: 0; transition: opacity var(--transition); }
+    .stat-card:hover::after { opacity: 1; }
+    .stat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .stat-card-label { font-size: 0.73rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--clr-muted); }
+    .stat-card-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; background: rgba(201,168,76,0.1); }
+    .stat-card-value { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+    .stat-card-sub { font-size: 0.74rem; color: var(--clr-muted); }
+
+    .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-bar { position: relative; flex: 1; min-width: 200px; }
+    .search-bar input { width: 100%; background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 16px 10px 40px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); }
+    .search-bar input:focus { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--clr-muted); pointer-events: none; }
+    .filter-select { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.83rem; padding: 10px 30px 10px 12px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+    .filter-select:focus { border-color: var(--clr-accent); outline: none; }
+
+    /* Job cards grid */
+    .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap: 16px; }
+    .job-card {
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); overflow: hidden;
+      transition: all var(--transition);
+    }
+    .job-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
+    .job-card-head { padding: 20px 20px 14px; border-bottom: 1px solid var(--clr-border); }
+    .job-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .job-icon { width: 42px; height: 42px; background: rgba(201,168,76,0.1); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .job-title { font-family: var(--font-display); font-size: 0.98rem; font-weight: 600; margin-bottom: 3px; color: var(--clr-text); }
+    .job-sub { font-size: 0.76rem; color: var(--clr-muted); }
+    .job-card-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--clr-muted); }
+    .job-card-meta span { display: flex; align-items: center; gap: 3px; }
+
+    .job-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--clr-border); }
+    .job-stat { padding: 12px 14px; text-align: center; border-right: 1px solid var(--clr-border); }
+    .job-stat:last-child { border-right: none; }
+    .job-stat-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+    .job-stat-label { font-size: 0.68rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .job-card-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--clr-surface-2); gap: 8px; flex-wrap: wrap; }
+    .job-card-date { font-size: 0.74rem; color: var(--clr-muted); }
+
+    /* Status toggle */
+    .status-toggle {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: 100px; padding: 4px 12px; font-size: 0.75rem; font-weight: 500;
+      cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
+      color: var(--clr-muted);
+    }
+    .status-toggle.active { background: rgba(76,175,132,0.1); border-color: rgba(76,175,132,0.3); color: var(--clr-success); }
+    .status-toggle.paused { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent); }
+    .status-toggle.closed { background: var(--clr-surface-2); border-color: var(--clr-border); color: var(--clr-muted); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--clr-muted); display: none; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    .empty-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--clr-text); margin-bottom: 8px; }
+    .empty-desc { font-size: 0.85rem; max-width: 260px; margin: 0 auto 24px; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .jobs-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+    <div class="sidebar-company">
+      <div class="company-badge">
+        <div class="company-avatar">AC</div>
+        <div class="company-info">
+          <div class="company-name">Acme Corp S.A.</div>
+          <div class="company-role">Empresa</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
+      <span class="nav-section-label">Ofertas</span>
+      <a href="post-job.html" class="nav-item"><span class="nav-icon">➕</span> Publicar oferta</a>
+      <a href="my-jobs.html" class="nav-item active"><span class="nav-icon">📋</span> Mis ofertas</a>
+      <span class="nav-section-label">Gestión</span>
+      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
+      <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
+      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item"><span class="nav-icon">🚪</span> Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Mis ofertas</div>
+        <div class="topbar-subtitle">Administrá todas tus publicaciones laborales</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        <a href="post-job.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">➕ Nueva oferta</a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header"><span class="stat-card-label">Total publicadas</span><span class="stat-card-icon">📋</span></div>
+          <div class="stat-card-value">12</div>
+          <div class="stat-card-sub">Historial completo</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header"><span class="stat-card-label">Activas</span><span class="stat-card-icon">✅</span></div>
+          <div class="stat-card-value" style="color:var(--clr-success);">7</div>
+          <div class="stat-card-sub">Recibiendo postulaciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header"><span class="stat-card-label">Pausadas</span><span class="stat-card-icon">⏸</span></div>
+          <div class="stat-card-value" style="color:var(--clr-accent);">3</div>
+          <div class="stat-card-sub">Sin recibir postulaciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header"><span class="stat-card-label">Cerradas</span><span class="stat-card-icon">🔒</span></div>
+          <div class="stat-card-value" style="color:var(--clr-muted);">2</div>
+          <div class="stat-card-sub">Posición cubierta</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscá por nombre de puesto..." />
+        </div>
+        <select class="filter-select" id="filter-status">
+          <option value="all">Todas las ofertas</option>
+          <option value="active">Solo activas</option>
+          <option value="paused">Solo pausadas</option>
+          <option value="closed">Solo cerradas</option>
+        </select>
+        <select class="filter-select">
+          <option>Más recientes</option>
+          <option>Más postulaciones</option>
+          <option>Mayor match IA</option>
+        </select>
+      </div>
+
+      <div class="jobs-grid" id="jobs-grid">
+
+        <!-- Job 1 — Activa -->
+        <div class="job-card" data-status="active">
+          <div class="job-card-head">
+            <div class="job-card-top">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div class="job-icon">💻</div>
+                <div>
+                  <div class="job-title">Desarrollador Full Stack</div>
+                  <div class="job-sub">Publicada hace 2 días</div>
+                </div>
+              </div>
+              <button class="status-toggle active" onclick="cycleStatus(this)">
+                <span class="status-dot"></span> Activa
+              </button>
+            </div>
+            <div class="job-card-meta">
+              <span>🏠 Remoto</span>
+              <span>⏱ Full-time</span>
+              <span>💰 ARS 900k–1.2M</span>
+              <span>📅 Vence en 28 días</span>
+            </div>
+          </div>
+          <div class="job-card-stats">
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-accent);">34</div>
+              <div class="job-stat-label">Postulantes</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:#7aaee8;">142</div>
+              <div class="job-stat-label">Vistas</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-success);">87%</div>
+              <div class="job-stat-label">Match avg</div>
+            </div>
+          </div>
+          <div class="job-card-footer">
+            <span class="job-card-date">Publicada el 27 mar 2026</span>
+            <div style="display:flex;gap:6px;">
+              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
+              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 2 — Activa -->
+        <div class="job-card" data-status="active">
+          <div class="job-card-head">
+            <div class="job-card-top">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div class="job-icon">🎨</div>
+                <div>
+                  <div class="job-title">Diseñador UX/UI</div>
+                  <div class="job-sub">Publicada hace 5 días</div>
+                </div>
+              </div>
+              <button class="status-toggle active" onclick="cycleStatus(this)">
+                <span class="status-dot"></span> Activa
+              </button>
+            </div>
+            <div class="job-card-meta">
+              <span>🏢 Presencial</span>
+              <span>⏱ Full-time</span>
+              <span>💰 ARS 700k–950k</span>
+              <span>📅 Vence en 25 días</span>
+            </div>
+          </div>
+          <div class="job-card-stats">
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-accent);">21</div>
+              <div class="job-stat-label">Postulantes</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:#7aaee8;">98</div>
+              <div class="job-stat-label">Vistas</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-success);">91%</div>
+              <div class="job-stat-label">Match avg</div>
+            </div>
+          </div>
+          <div class="job-card-footer">
+            <span class="job-card-date">Publicada el 24 mar 2026</span>
+            <div style="display:flex;gap:6px;">
+              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
+              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 3 — Activa -->
+        <div class="job-card" data-status="active">
+          <div class="job-card-head">
+            <div class="job-card-top">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div class="job-icon">📊</div>
+                <div>
+                  <div class="job-title">Data Analyst</div>
+                  <div class="job-sub">Publicada hace 1 semana</div>
+                </div>
+              </div>
+              <button class="status-toggle active" onclick="cycleStatus(this)">
+                <span class="status-dot"></span> Activa
+              </button>
+            </div>
+            <div class="job-card-meta">
+              <span>🔀 Híbrido</span>
+              <span>⏱ Full-time</span>
+              <span>💰 ARS 800k–1.1M</span>
+              <span>📅 Vence en 21 días</span>
+            </div>
+          </div>
+          <div class="job-card-stats">
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-accent);">18</div>
+              <div class="job-stat-label">Postulantes</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:#7aaee8;">74</div>
+              <div class="job-stat-label">Vistas</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-success);">79%</div>
+              <div class="job-stat-label">Match avg</div>
+            </div>
+          </div>
+          <div class="job-card-footer">
+            <span class="job-card-date">Publicada el 22 mar 2026</span>
+            <div style="display:flex;gap:6px;">
+              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
+              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 4 — Pausada -->
+        <div class="job-card" data-status="paused" style="opacity:0.8;">
+          <div class="job-card-head">
+            <div class="job-card-top">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div class="job-icon">🔧</div>
+                <div>
+                  <div class="job-title">DevOps Engineer</div>
+                  <div class="job-sub">Publicada hace 2 semanas</div>
+                </div>
+              </div>
+              <button class="status-toggle paused" onclick="cycleStatus(this)">
+                <span class="status-dot"></span> Pausada
+              </button>
+            </div>
+            <div class="job-card-meta">
+              <span>🏠 Remoto</span>
+              <span>⏱ Full-time</span>
+              <span>💰 USD 2k–3k</span>
+              <span>📅 Vence en 14 días</span>
+            </div>
+          </div>
+          <div class="job-card-stats">
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-accent);">9</div>
+              <div class="job-stat-label">Postulantes</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:#7aaee8;">52</div>
+              <div class="job-stat-label">Vistas</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num" style="color:var(--clr-success);">82%</div>
+              <div class="job-stat-label">Match avg</div>
+            </div>
+          </div>
+          <div class="job-card-footer">
+            <span class="job-card-date">Publicada el 15 mar 2026</span>
+            <div style="display:flex;gap:6px;">
+              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
+              <a href="applications.html" class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 5 — Cerrada -->
+        <div class="job-card" data-status="closed" style="opacity:0.6;">
+          <div class="job-card-head">
+            <div class="job-card-top">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div class="job-icon">🤝</div>
+                <div>
+                  <div class="job-title">Product Manager</div>
+                  <div class="job-sub">Publicada hace 1 mes</div>
+                </div>
+              </div>
+              <button class="status-toggle closed" onclick="cycleStatus(this)">
+                <span class="status-dot"></span> Cerrada
+              </button>
+            </div>
+            <div class="job-card-meta">
+              <span>🔀 Híbrido</span>
+              <span>⏱ Full-time</span>
+              <span>💰 USD 3k–4k</span>
+              <span style="color:var(--clr-success);">✅ Posición cubierta</span>
+            </div>
+          </div>
+          <div class="job-card-stats">
+            <div class="job-stat">
+              <div class="job-stat-num">66</div>
+              <div class="job-stat-label">Postulantes</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num">312</div>
+              <div class="job-stat-label">Vistas</div>
+            </div>
+            <div class="job-stat">
+              <div class="job-stat-num">88%</div>
+              <div class="job-stat-label">Match avg</div>
+            </div>
+          </div>
+          <div class="job-card-footer">
+            <span class="job-card-date">Cerrada el 10 mar 2026</span>
+            <div style="display:flex;gap:6px;">
+              <button class="icon-btn" style="font-size:0.78rem;opacity:0.6;" disabled>✏️ Editar</button>
+              <a href="applications.html" class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;">Ver historial</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">Sin ofertas</div>
+        <div class="empty-desc">No hay ofertas con este filtro.</div>
+        <a href="post-job.html" class="btn btn-primary">Publicar oferta</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+  document.getElementById('search-input').addEventListener('input', function() {
+    let visible = 0;
+    document.querySelectorAll('.job-card').forEach(c => {
+      const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  });
+  document.getElementById('filter-status').addEventListener('change', function() {
+    const val = this.value;
+    let visible = 0;
+    document.querySelectorAll('.job-card').forEach(c => {
+      const show = val === 'all' || c.dataset.status === val;
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  });
+  const statusCycle = [
+    { key:'active',  cls:'active',  label:'Activa'  },
+    { key:'paused',  cls:'paused',  label:'Pausada' },
+    { key:'closed',  cls:'closed',  label:'Cerrada' },
+  ];
+  function cycleStatus(btn) {
+    const card = btn.closest('.job-card');
+    const cur = statusCycle.findIndex(s => s.key === card.dataset.status);
+    const next = statusCycle[(cur + 1) % statusCycle.length];
+    card.dataset.status = next.key;
+    btn.className = `status-toggle ${next.cls}`;
+    btn.innerHTML = `<span class="status-dot"></span> ${next.label}`;
+    card.style.opacity = next.key === 'closed' ? '0.6' : next.key === 'paused' ? '0.8' : '1';
+  }
+</script>
+</body>
+</html>
