@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Postulaciones — TalentAI</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <style>
+    /* ── Search & filters ─────────────────────── */
+    .search-bar {
+      position: relative; flex: 1;
+    }
+    .search-bar input {
+      width: 100%;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 11px 16px 11px 42px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-bar input:focus {
+      border-color: var(--clr-accent);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    }
+    .search-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--clr-muted); pointer-events: none;
+    }
+    .filter-select {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      padding: 10px 32px 10px 14px;
+      outline: none; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color var(--transition);
+    }
+    .filter-select:focus { border-color: var(--clr-accent); outline: none; }
+
+    .filters-bar {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .results-info { font-size: 0.82rem; color: var(--clr-muted); margin-left: auto; }
+
+    /* ── Status tabs ──────────────────────────── */
+    .status-tabs {
+      display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .status-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 16px;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: 100px;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--clr-muted); cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-body);
+    }
+    .status-tab:hover { border-color: var(--clr-accent); color: var(--clr-text); }
+    .status-tab.active {
+      background: rgba(201,168,76,0.1);
+      border-color: var(--clr-accent);
+      color: var(--clr-accent);
+    }
+    .status-tab-count {
+      background: var(--clr-surface-2);
+      border-radius: 100px;
+      padding: 1px 7px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .status-tab.active .status-tab-count {
+      background: rgba(201,168,76,0.2);
+      color: var(--clr-accent);
+    }
+
+    /* ── Application card ─────────────────────── */
+    .application-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all var(--transition);
+      margin-bottom: 14px;
+    }
+    .application-card:hover {
+      border-color: rgba(201,168,76,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .app-card-main {
+      display: flex; align-items: flex-start;
+      gap: 16px; padding: 20px 22px;
+    }
+    .app-company-logo {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .app-card-info { flex: 1; min-width: 0; }
+    .app-card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px; margin-bottom: 6px;
+    }
+    .app-job-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem; font-weight: 600; color: var(--clr-text);
+    }
+    .app-company { font-size: 0.85rem; color: var(--clr-muted); margin-bottom: 10px; }
+    .app-meta {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      font-size: 0.78rem; color: var(--clr-muted);
+    }
+    .app-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Timeline de estados */
+    .app-timeline {
+      border-top: 1px solid var(--clr-border);
+      padding: 16px 22px;
+      background: var(--clr-surface-2);
+    }
+    .timeline-label {
+      font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--clr-muted);
+      margin-bottom: 12px; font-weight: 500;
+    }
+    .timeline-steps {
+      display: flex; align-items: center; gap: 0;
+    }
+    .timeline-step {
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1; position: relative;
+    }
+    .timeline-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px; left: 50%; right: -50%;
+      height: 2px;
+      background: var(--clr-border);
+      z-index: 0;
+    }
+    .timeline-step.done:not(:last-child)::after,
+    .timeline-step.active:not(:last-child)::after {
+      background: var(--clr-accent);
+    }
+    .timeline-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--clr-surface);
+      border: 2px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; z-index: 1; position: relative;
+      transition: all var(--transition);
+    }
+    .timeline-step.done .timeline-dot {
+      background: rgba(201,168,76,0.15);
+      border-color: var(--clr-accent);
+      color: var(--clr-accent);
+    }
+    .timeline-step.active .timeline-dot {
+      background: var(--clr-accent);
+      border-color: var(--clr-accent);
+      color: #0d0f14;
+      box-shadow: 0 0 0 4px rgba(201,168,76,0.2);
+    }
+    .timeline-step.rejected .timeline-dot {
+      background: rgba(224,92,92,0.1);
+      border-color: var(--clr-error);
+      color: var(--clr-error);
+    }
+    .timeline-step-label {
+      font-size: 0.68rem; color: var(--clr-muted);
+      margin-top: 6px; text-align: center; white-space: nowrap;
+    }
+    .timeline-step.done .timeline-step-label,
+    .timeline-step.active .timeline-step-label { color: var(--clr-accent); }
+    .timeline-step.rejected .timeline-step-label { color: var(--clr-error); }
+
+    /* App card footer */
+    .app-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 22px;
+      border-top: 1px solid var(--clr-border);
+      flex-wrap: wrap; gap: 10px;
+    }
+    .app-card-footer-left { font-size: 0.78rem; color: var(--clr-muted); display: flex; align-items: center; gap: 6px; }
+    .app-card-footer-right { display: flex; gap: 8px; }
+
+    /* ── Stats row ────────────────────────────── */
+    .app-stats {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 12px; margin-bottom: 28px;
+    }
+    .app-stat {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      text-align: center;
+      transition: all var(--transition); cursor: pointer;
+    }
+    .app-stat:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-1px); }
+    .app-stat.active-filter { border-color: var(--clr-accent); background: rgba(201,168,76,0.06); }
+    .app-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.8rem; font-weight: 700; line-height: 1; margin-bottom: 5px;
+    }
+    .app-stat-label { font-size: 0.72rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Empty state ──────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 60px 24px; color: var(--clr-muted);
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    .empty-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--clr-text); margin-bottom: 8px; }
+    .empty-desc { font-size: 0.85rem; max-width: 280px; margin: 0 auto 24px; line-height: 1.6; }
+
+    @media (max-width: 860px) {
+      .app-stats { grid-template-columns: repeat(3, 1fr); }
+      .app-card-main { flex-direction: column; }
+      .timeline-steps { overflow-x: auto; padding-bottom: 4px; }
+    }
+    @media (max-width: 600px) {
+      .app-stats { grid-template-columns: 1fr 1fr; }
+      .filters-bar { flex-direction: column; align-items: stretch; }
+      .results-info { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">💼</div>
+      <span class="sidebar-logo-name">Talent<span>AI</span></span>
+    </a>
+
+    <div class="sidebar-profile">
+      <div class="profile-badge">
+        <div class="profile-avatar">JP</div>
+        <div class="profile-info">
+          <div class="profile-name">Juan Pérez</div>
+          <div class="profile-role">Candidato</div>
+        </div>
+      </div>
+    </div>
+    <nav id="sidebar"></nav>
+
+    <div class="sidebar-footer">
+      <a href="../../pages/login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Mis postulaciones</div>
+        <div class="topbar-subtitle">Seguí el estado de cada una de tus aplicaciones</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">
+          🔍 Ver ofertas
+        </a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ── Stats por estado ── -->
+      <div class="app-stats">
+        <div class="app-stat active-filter" data-filter="all" onclick="filterApps('all', this)">
+          <div class="app-stat-num">5</div>
+          <div class="app-stat-label">Total</div>
+        </div>
+        <div class="app-stat" data-filter="revision" onclick="filterApps('revision', this)">
+          <div class="app-stat-num" style="color:var(--clr-accent);">2</div>
+          <div class="app-stat-label">En revisión</div>
+        </div>
+        <div class="app-stat" data-filter="entrevista" onclick="filterApps('entrevista', this)">
+          <div class="app-stat-num" style="color:var(--clr-success);">1</div>
+          <div class="app-stat-label">Entrevista</div>
+        </div>
+        <div class="app-stat" data-filter="pendiente" onclick="filterApps('pendiente', this)">
+          <div class="app-stat-num" style="color:var(--clr-muted);">1</div>
+          <div class="app-stat-label">Pendiente</div>
+        </div>
+        <div class="app-stat" data-filter="rechazado" onclick="filterApps('rechazado', this)">
+          <div class="app-stat-num" style="color:var(--clr-error);">1</div>
+          <div class="app-stat-label">No seleccionado</div>
+        </div>
+      </div>
+
+      <!-- ── Filtros ── -->
+      <div class="filters-bar">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscá por empresa o puesto..." />
+        </div>
+        <select class="filter-select" id="filter-order">
+          <option>Más recientes primero</option>
+          <option>Más antiguas primero</option>
+          <option>Mayor match</option>
+        </select>
+        <select class="filter-select" id="filter-modality">
+          <option value="">Cualquier modalidad</option>
+          <option>Remoto</option>
+          <option>Presencial</option>
+          <option>Híbrido</option>
+        </select>
+        <span class="results-info" id="results-count">5 postulaciones</span>
+      </div>
+
+      <!-- ── Status tabs ── -->
+      <div class="status-tabs">
+        <button class="status-tab active" data-status="all" onclick="switchTab('all', this)">
+          Todas <span class="status-tab-count">5</span>
+        </button>
+        <button class="status-tab" data-status="revision" onclick="switchTab('revision', this)">
+          🟡 En revisión <span class="status-tab-count">2</span>
+        </button>
+        <button class="status-tab" data-status="entrevista" onclick="switchTab('entrevista', this)">
+          🟢 Entrevista <span class="status-tab-count">1</span>
+        </button>
+        <button class="status-tab" data-status="pendiente" onclick="switchTab('pendiente', this)">
+          ⚪ Pendiente <span class="status-tab-count">1</span>
+        </button>
+        <button class="status-tab" data-status="rechazado" onclick="switchTab('rechazado', this)">
+          🔴 No seleccionado <span class="status-tab-count">1</span>
+        </button>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           LISTA DE POSTULACIONES
+      ══════════════════════════════════════ -->
+      <div id="applications-list">
+
+        <!-- ── 1. Entrevista ── -->
+        <div class="application-card" data-status="entrevista">
+          <div class="app-card-main">
+            <div class="app-company-logo">🚀</div>
+            <div class="app-card-info">
+              <div class="app-card-top">
+                <div>
+                  <div class="app-job-title">Backend Developer</div>
+                  <div class="app-company">StartupXYZ · Buenos Aires</div>
+                </div>
+                <span class="badge badge-green"><span class="badge-dot"></span> Entrevista agendada</span>
+              </div>
+              <div class="app-meta">
+                <span>🏠 Remoto</span>
+                <span>💰 USD 2.000 – 2.500</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Postulado hace 5 días</span>
+                <span>🤖 Match: <strong style="color:var(--clr-accent);">85%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-label">Progreso de la postulación</div>
+            <div class="timeline-steps">
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">Postulado</div>
+              </div>
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">CV revisado</div>
+              </div>
+              <div class="timeline-step active">
+                <div class="timeline-dot">📅</div>
+                <div class="timeline-step-label">Entrevista</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">⭐</div>
+                <div class="timeline-step-label">Oferta</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">✅</div>
+                <div class="timeline-step-label">Contratado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card-footer">
+            <div class="app-card-footer-left">
+              📅 Entrevista: <strong style="color:var(--clr-text);">Lunes 23 mar — 10:00 hs</strong>
+              &nbsp;·&nbsp; Google Meet
+            </div>
+            <div class="app-card-footer-right">
+              <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
+              <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-success);border-color:rgba(76,175,132,0.3);">
+                📅 Ver detalle
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 2. En revisión ── -->
+        <div class="application-card" data-status="revision">
+          <div class="app-card-main">
+            <div class="app-company-logo">🏢</div>
+            <div class="app-card-info">
+              <div class="app-card-top">
+                <div>
+                  <div class="app-job-title">Desarrollador Full Stack</div>
+                  <div class="app-company">Acme Corp S.A. · Buenos Aires</div>
+                </div>
+                <span class="badge badge-gold"><span class="badge-dot"></span> En revisión</span>
+              </div>
+              <div class="app-meta">
+                <span>🔀 Híbrido</span>
+                <span>💰 ARS 900k – 1.2M</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Postulado hace 2 días</span>
+                <span>🤖 Match: <strong style="color:var(--clr-accent);">87%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-label">Progreso de la postulación</div>
+            <div class="timeline-steps">
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">Postulado</div>
+              </div>
+              <div class="timeline-step active">
+                <div class="timeline-dot">👁</div>
+                <div class="timeline-step-label">CV revisado</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">📅</div>
+                <div class="timeline-step-label">Entrevista</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">⭐</div>
+                <div class="timeline-step-label">Oferta</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">✅</div>
+                <div class="timeline-step-label">Contratado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card-footer">
+            <div class="app-card-footer-left">
+              👁 La empresa revisó tu CV el 16 mar 2026
+            </div>
+            <div class="app-card-footer-right">
+              <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
+              <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="confirmRetract(this)">
+                Retirar postulación
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 3. En revisión ── -->
+        <div class="application-card" data-status="revision">
+          <div class="app-card-main">
+            <div class="app-company-logo">📊</div>
+            <div class="app-card-info">
+              <div class="app-card-top">
+                <div>
+                  <div class="app-job-title">Frontend Developer Senior</div>
+                  <div class="app-company">DataCorp · Córdoba</div>
+                </div>
+                <span class="badge badge-gold"><span class="badge-dot"></span> En revisión</span>
+              </div>
+              <div class="app-meta">
+                <span>🏠 Remoto</span>
+                <span>💰 USD 1.800 – 2.200</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Postulado hace 3 días</span>
+                <span>🤖 Match: <strong style="color:var(--clr-accent);">81%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-label">Progreso de la postulación</div>
+            <div class="timeline-steps">
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">Postulado</div>
+              </div>
+              <div class="timeline-step active">
+                <div class="timeline-dot">👁</div>
+                <div class="timeline-step-label">CV revisado</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">📅</div>
+                <div class="timeline-step-label">Entrevista</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">⭐</div>
+                <div class="timeline-step-label">Oferta</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">✅</div>
+                <div class="timeline-step-label">Contratado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card-footer">
+            <div class="app-card-footer-left">
+              🤖 IA analizó tu compatibilidad: 81% de match con la oferta
+            </div>
+            <div class="app-card-footer-right">
+              <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
+              <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="confirmRetract(this)">
+                Retirar postulación
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 4. Pendiente ── -->
+        <div class="application-card" data-status="pendiente">
+          <div class="app-card-main">
+            <div class="app-company-logo">💻</div>
+            <div class="app-card-info">
+              <div class="app-card-top">
+                <div>
+                  <div class="app-job-title">React Developer</div>
+                  <div class="app-company">TechSolutions · Remoto</div>
+                </div>
+                <span class="badge badge-gray">Pendiente</span>
+              </div>
+              <div class="app-meta">
+                <span>🏠 Remoto</span>
+                <span>💰 ARS 750k – 950k</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Postulado hace 1 semana</span>
+                <span>🤖 Match: <strong style="color:var(--clr-accent);">76%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-label">Progreso de la postulación</div>
+            <div class="timeline-steps">
+              <div class="timeline-step active">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">Postulado</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">👁</div>
+                <div class="timeline-step-label">CV revisado</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">📅</div>
+                <div class="timeline-step-label">Entrevista</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">⭐</div>
+                <div class="timeline-step-label">Oferta</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">✅</div>
+                <div class="timeline-step-label">Contratado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card-footer">
+            <div class="app-card-footer-left">
+              ⏳ Esperando que la empresa revise tu postulación
+            </div>
+            <div class="app-card-footer-right">
+              <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
+              <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="confirmRetract(this)">
+                Retirar postulación
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 5. No seleccionado ── -->
+        <div class="application-card" data-status="rechazado" style="opacity:0.7;">
+          <div class="app-card-main">
+            <div class="app-company-logo">🏦</div>
+            <div class="app-card-info">
+              <div class="app-card-top">
+                <div>
+                  <div class="app-job-title">Node.js Developer</div>
+                  <div class="app-company">FinBank Digital · Buenos Aires</div>
+                </div>
+                <span class="badge badge-red">No seleccionado</span>
+              </div>
+              <div class="app-meta">
+                <span>🏢 Presencial</span>
+                <span>💰 ARS 600k – 800k</span>
+                <span>⏱ Full-time</span>
+                <span>📅 Postulado hace 2 semanas</span>
+                <span>🤖 Match: <strong style="color:var(--clr-muted);">62%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-label">Progreso de la postulación</div>
+            <div class="timeline-steps">
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">Postulado</div>
+              </div>
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-step-label">CV revisado</div>
+              </div>
+              <div class="timeline-step rejected">
+                <div class="timeline-dot">✕</div>
+                <div class="timeline-step-label">No seleccionado</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">⭐</div>
+                <div class="timeline-step-label">Oferta</div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">✅</div>
+                <div class="timeline-step-label">Contratado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card-footer">
+            <div class="app-card-footer-left">
+              ❌ La empresa no seleccionó tu perfil para esta posición
+            </div>
+            <div class="app-card-footer-right">
+              <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
+              <button class="icon-btn" style="font-size:0.8rem;">Ver ofertas similares →</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /applications-list -->
+
+      <!-- Empty state (oculto por defecto) -->
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">Sin postulaciones en este estado</div>
+        <div class="empty-desc">No tenés postulaciones con este filtro aplicado.</div>
+        <a href="jobs.html" class="btn btn-primary">Explorar ofertas</a>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div>
+
+<script>
+  // ── Filtro por estado (cards stats) ──────────────
+  function filterApps(status, el) {
+    document.querySelectorAll('.app-stat').forEach(s => s.classList.remove('active-filter'));
+    el.classList.add('active-filter');
+
+    // Sincronizar con tabs
+    document.querySelectorAll('.status-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.status === status);
+    });
+
+    applyFilter(status);
+  }
+
+  // ── Tabs de estado ────────────────────────────────
+  function switchTab(status, el) {
+    document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+
+    // Sincronizar con stat cards
+    document.querySelectorAll('.app-stat').forEach(s => {
+      s.classList.toggle('active-filter', s.dataset.filter === status);
+    });
+
+    applyFilter(status);
+  }
+
+  function applyFilter(status) {
+    const cards = document.querySelectorAll('.application-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const show = status === 'all' || card.dataset.status === status;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('results-count').textContent =
+      `${visible} postulación${visible !== 1 ? 'es' : ''}`;
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  // ── Búsqueda por texto ────────────────────────────
+  document.getElementById('search-input').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.application-card').forEach(card => {
+      const match = !q || card.textContent.toLowerCase().includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('results-count').textContent =
+      `${visible} postulación${visible !== 1 ? 'es' : ''}`;
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  });
+
+  // ── Retirar postulación ───────────────────────────
+  function confirmRetract(btn) {
+    const card = btn.closest('.application-card');
+    const title = card.querySelector('.app-job-title').textContent;
+    if (confirm(`¿Retirás tu postulación a "${title}"?`)) {
+      card.style.transition = 'all 0.4s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        card.remove();
+        // Actualizar conteo
+        const visible = document.querySelectorAll('.application-card').length;
+        document.getElementById('results-count').textContent =
+          `${visible} postulación${visible !== 1 ? 'es' : ''}`;
+        if (visible === 0) document.getElementById('empty-state').style.display = 'block';
+      }, 400);
+    }
+  }
+</script>
+<script src="../../js/rutaDeAcceso2.js"></script>
+</body>
+</html>
