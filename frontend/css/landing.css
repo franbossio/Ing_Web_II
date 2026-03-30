@@ -202,11 +202,10 @@ w
   font-style: italic;
   color: var(--clr-accent);
 }
-.hero-title .line-muted { color: var(--clr-muted); font-weight: 400; }
 
 .hero-desc {
   font-size: 1.1rem;
-  color: var(--clr-muted);
+  color: #c7bdb9;
   max-width: 560px;
   margin: 0 auto 44px;
   line-height: 1.75;
@@ -221,6 +220,7 @@ w
   animation: fadeUp 0.5s 0.3s ease both;
 }
 .hero-cta .btn { padding: 15px 32px; font-size: 0.95rem; }
+
 .btn-outline {
   background: transparent;
   color: var(--clr-text);
