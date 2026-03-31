@@ -622,3 +622,134 @@ footer {
   .hero-cta .btn { width: 100%; max-width: 300px; }
   .hero-stats { flex-direction: column; gap: 20px; }
 }
+
+/* ============================================ */
+/* ESTILOS DE LA SECCIÓN IA-FEATURES           */
+/* ============================================ */
+
+.ia-features {
+  padding: 100px 24px; /* Espaciado generoso arriba y abajo */
+  background-color: var(--bg-main); /* Fondo blanco o principal */
+}
+
+.ia-features-container {
+  max-width: var(--container-width, 1200px); /* Ancho máximo de la sección */
+  margin: 0 auto;
+}
+
+.ia-features-title {
+  text-align: center;
+  font-size: 2.5rem; /* Tamaño de título grande */
+  font-weight: 700;
+  color: var(--text-main); /* Texto oscuro principal */
+  margin-bottom: 60px; /* Espacio antes de las tarjetas */
+  position: relative;
+}
+
+/* El grid para organizar las 3 tarjetas */
+.ia-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+  gap: 32px; /* Espacio entre tarjetas */
+}
+
+/* Estilo individual de cada tarjeta (Glassmorphism azul + luz dorada) */
+.ia-feature-card {
+  /* 1. Fondo difuminado azul oscuro y luz tenue amarilla arriba a la derecha */
+  background: 
+    radial-gradient(circle at top right, rgba(201, 168, 76, 0.12) 0%, transparent 60%), /* Luz amarilla */
+    linear-gradient(145deg, rgba(26, 34, 56, 0.6), rgba(13, 15, 20, 0.8)); /* Fondo azulado */
+  
+  /* Efecto de cristal difuminado (blur) */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Borde dorado muy sutil para delimitar el cristal */
+  border: 1px solid rgba(201, 168, 76, 0.2); 
+  border-radius: var(--radius-md, 12px);
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  /* Sombra amarilla base (suave) */
+  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.05);
+
+  /* Animaciones fluidas */
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efecto hover: la tarjeta se eleva, el borde brilla y la sombra amarilla se intensifica */
+.ia-feature-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--clr-accent, #c9a84c);
+  /* Esta es la sombra dorada/amarilla más intensa que ya tenías en tus variables */
+  box-shadow: var(--shadow-glow, 0 12px 40px rgba(201, 168, 76, 0.2));
+}
+
+/* Contenedor del icono dorado */
+.ia-feature-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  color: var(--gold-light, #c9a84c); /* Color dorado para el icono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ia-feature-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Título interno de la tarjeta */
+.ia-feature-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+/* Descripción interna de la tarjeta */
+.ia-feature-desc {
+  font-size: 1rem;
+  color: var(--text-desc, #576071); /* Texto gris para descripciones */
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ============================================ */
+/* MEDIA QUERIES (RESPONSIVE DESIGN)           */
+/* ============================================ */
+
+/* En tablets y pantallas medianas, bajamos a 2 columnas */
+@media (max-width: 992px) {
+  .ia-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+/* En móviles, las tarjetas se apilan en una sola columna */
+@media (max-width: 768px) {
+  .ia-features {
+    padding: 60px 16px;
+  }
+  
+  .ia-features-title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .ia-features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .ia-feature-card {
+    padding: 30px 24px;
+  }
+}
