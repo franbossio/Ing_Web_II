@@ -33,7 +33,7 @@ export function logout() {
   localStorage.removeItem('talentai_token');
   localStorage.removeItem('talentai_user');
   sessionStorage.removeItem('talentai_token');
-  window.location.href = '/pages/login.html';
+  window.location.href = '../../login.html';
 }
 
 export function isAuthenticated() {
