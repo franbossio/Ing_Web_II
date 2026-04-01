@@ -1,18 +1,24 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+// users/users.controller.ts
+import { Controller, Get, Patch, Body, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { UpdateProfileDto } from '../auth/dto/update-profile.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  /** Solo admin puede listar todos los usuarios */
-  @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  findAll() {
-    return this.usersService.findAll();
+  // GET /users/me — devuelve el perfil completo del usuario logueado
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@Req() req: any) {
+    return this.usersService.findById(req.user.sub);
+  }
+
+  // PATCH /users/profile — actualiza el perfil
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  updateProfile(@Req() req: any, @Body() dto: UpdateProfileDto) {
+    return this.usersService.updateProfile(req.user.sub, dto);
   }
 }
