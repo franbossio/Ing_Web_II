@@ -1,12 +1,4 @@
-/**
- * TalentAI — Auth helper
- * Copiar en: frontend/js/auth.js
- * Incluir en login.html y register.html con: <script src="../js/auth.js" type="module"></script>
- */
-
 const API_BASE = 'http://localhost:3001/api';
-
-// ─── Utilidades ──────────────────────────────────────────────────────────────
 
 export function getToken() {
   return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
@@ -33,24 +25,24 @@ export function logout() {
   localStorage.removeItem('talentai_token');
   localStorage.removeItem('talentai_user');
   sessionStorage.removeItem('talentai_token');
-  window.location.href = '../../login.html';
+  // Ruta absoluta desde la raíz del sitio — funciona desde cualquier página
+  const base = window.location.pathname.split('/frontend/')[0];
+  window.location.href = base + '/frontend/pages/index.html';
 }
 
 export function isAuthenticated() {
   return !!getToken();
 }
 
-/** Redirige al dashboard correcto según el rol */
 export function redirectToDashboard(role) {
+  const base = window.location.pathname.split('/frontend/')[0];
   const routes = {
-    candidate: '../pages/candidate/dashboard.html',
-    company:   '../pages/company/dashboard.html',
-    admin:     '../pages/candidate/dashboard.html', // ajustar si hay panel admin
+    candidate: base + '/frontend/pages/candidate/dashboard.html',
+    company:   base + '/frontend/pages/company/dashboard.html',
+    admin:     base + '/frontend/pages/candidate/dashboard.html',
   };
-  window.location.href = routes[role] || '/pages/login.html';
+  window.location.href = routes[role] || base + '/frontend/pages/login.html';
 }
-
-// ─── Petición con auth ───────────────────────────────────────────────────────
 
 export async function authFetch(path, options = {}) {
   const token = getToken();
@@ -64,27 +56,18 @@ export async function authFetch(path, options = {}) {
   });
 }
 
-// ─── Login ───────────────────────────────────────────────────────────────────
-
 export async function loginUser({ email, password, remember }) {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, remember }),
   });
-
   const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || 'Error al iniciar sesión');
-  }
-
+  if (!res.ok) throw new Error(data.message || 'Error al iniciar sesión');
   saveToken(data.access_token, remember);
   saveUser(data.user);
   return data;
 }
-
-// ─── Register ────────────────────────────────────────────────────────────────
 
 export async function registerUser(payload) {
   const res = await fetch(`${API_BASE}/auth/register`, {
@@ -92,16 +75,11 @@ export async function registerUser(payload) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-
   const data = await res.json();
-
   if (!res.ok) {
-    const msg = Array.isArray(data.message)
-      ? data.message.join(', ')
-      : data.message || 'Error al registrarse';
+    const msg = Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Error al registrarse';
     throw new Error(msg);
   }
-
   saveToken(data.access_token, false);
   saveUser(data.user);
   return data;
