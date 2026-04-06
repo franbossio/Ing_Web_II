@@ -5,6 +5,7 @@
  */
 
 import { getUser, isAuthenticated, logout } from './auth.js';
+import { calcProfilePercent, updateProgressRing } from './profile.js';
 
 // ─── Guard ────────────────────────────────────────────────────
 if (!isAuthenticated()) {
@@ -170,9 +171,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+
   // ══════════════════════════════════════════════════════════
   // 7. DATA ATTRIBUTES en body para uso futuro en CSS/JS
   // ══════════════════════════════════════════════════════════
+  if (isCandidate) {
+    // Calculamos el % basado en el objeto 'user' que ya tienes cargado
+    const percent = calcProfilePercent(user);
+    
+    // Esta función busca los elementos '.ring-fill' y '.ring-pct'
+    // Solo actuará si existen en la página actual (como en dashboard.html)
+    updateProgressRing(percent);
+
+    // Opcional: si tienes un texto extra en el Dashboard para el porcentaje
+    const dashboardPct = document.getElementById('dashboard-pct-value');
+    if (dashboardPct) {
+      dashboardPct.textContent = `${percent}%`;
+    }
+  }
   document.body.dataset.role   = user.role;
   document.body.dataset.userId = user.id ?? '';
+  
 });

@@ -1,10 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JWT_SECRET } from './strategies/jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -13,8 +12,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // ─── Login ───────────────────────────────────────────────────────
   async login(dto: LoginDto) {
+    // findByEmail trae passwordHash explícitamente (select: false en entity)
     const user = await this.usersService.findByEmail(dto.email);
 
     if (!user) {
@@ -25,16 +24,15 @@ export class AuthService {
       throw new UnauthorizedException('La cuenta está desactivada');
     }
 
+    // El campo en la entity es passwordHash (columna: password_hash)
     const passwordOk = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordOk) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
-    // Duración del token: 7 días si "recordarme", si no 8 horas
     const expiresIn = dto.remember ? '7d' : '8h';
-
     const payload = { sub: user.id, email: user.email, role: user.role };
-    const token = this.jwtService.sign(payload, { expiresIn, secret: JWT_SECRET });
+    const token = this.jwtService.sign(payload, { expiresIn });
 
     const safeUser = this.usersService.sanitize(user);
 
@@ -46,9 +44,7 @@ export class AuthService {
     };
   }
 
-  // ─── Register ────────────────────────────────────────────────────
   async register(dto: RegisterDto) {
-    // Validaciones extra según rol
     if (dto.role === 'candidate' && (!dto.firstName || !dto.lastName)) {
       throw new BadRequestException('Nombre y apellido son requeridos para candidatos');
     }
@@ -56,27 +52,31 @@ export class AuthService {
       throw new BadRequestException('El nombre de la empresa es requerido');
     }
 
-    const newUser = await this.usersService.create({
-      email: dto.email,
-      password: dto.password,
-      role: dto.role,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      companyName: dto.companyName,
-    });
+    try {
+      const newUser = await this.usersService.create({
+        email: dto.email,
+        password: dto.password,
+        role: dto.role,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        companyName: dto.companyName,
+      });
 
-    const payload = { sub: newUser.id, email: newUser.email, role: newUser.role };
-    const token = this.jwtService.sign(payload, { expiresIn: '8h', secret: JWT_SECRET });
+      const payload = { sub: newUser.id, email: newUser.email, role: newUser.role };
+      const token = this.jwtService.sign(payload, { expiresIn: '8h' });
 
-    return {
-      access_token: token,
-      token_type: 'Bearer',
-      expires_in: 28800,
-      user: newUser,
-    };
+      return {
+        access_token: token,
+        token_type: 'Bearer',
+        expires_in: 28800,
+        user: newUser,
+      };
+    } catch (error) {
+      if (error instanceof ConflictException) throw error;
+      throw new BadRequestException('Error al crear el usuario');
+    }
   }
 
-  // ─── Me (perfil del usuario autenticado) ─────────────────────────
   async getMe(userId: string) {
     return this.usersService.findById(userId);
   }

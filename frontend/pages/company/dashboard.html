@@ -15,7 +15,7 @@
        SIDEBAR
   ══════════════════════════════════════════ -->
   <aside class="sidebar">
-    <a href="#" onclick="cerrarSesion()" class="nav-item">
+    <a href="#" onclick="cerrarSesion()" class="nav-item">Cerrar sesión
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
         </div>
     </a>
@@ -383,8 +383,12 @@
 <script src="../../js/rutaDeAcceso.js"></script>
 <script type="module">
   import { logout } from '../../js/auth.js';
+  import { initDashboard } from '../../js/profile.js';
+
   window.cerrarSesion = logout;
+
+  // Actualizar hero y ring con datos reales del usuario
+  initDashboard();
 </script>
-  <script src="../../js/user-loader.js" type="module"></script>
 </body>
 </html>

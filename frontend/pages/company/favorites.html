@@ -72,7 +72,7 @@
 <div class="app-layout">
 
   <aside class="sidebar">
-    <a href="#" onclick="cerrarSesion()" class="nav-item">
+    <a href="#" onclick="cerrarSesion()" class="nav-item">Cerrar sesión
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
         </div>
     </a>
@@ -289,7 +289,13 @@
 </div>
 <script type="module">
   import { logout } from '../../js/auth.js';
+  import { updateDashboardHero } from '../../js/profile.js';
+
   window.cerrarSesion = logout;
+
+  // Actualizar sidebar con datos reales del usuario
+  const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+  if (u) updateDashboardHero(u);
 </script>
 <script>
   document.getElementById('search-input').addEventListener('input', function() {
@@ -318,6 +324,5 @@
     if (name && name.trim()) alert(`Lista "${name}" creada.`);
   }
 </script>
-  <script src="../../js/user-loader.js" type="module"></script>
 </body>
 </html>

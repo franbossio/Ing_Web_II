@@ -1,269 +1,275 @@
 /**
- * profile.js
- * Maneja el guardado del perfil, cálculo de % completado
- * y actualización en tiempo real del anillo de progreso.
+ * TalentAI — profile.js
  */
+import { getToken, getUser, saveUser } from './auth.js';
 
-import { authFetch, getUser, saveUser } from './auth.js';
+const API = 'http://localhost:3001/api';
 
-// ─── Definición de secciones para calcular el % ──────────────
-// Cada sección tiene un peso y una función que devuelve true si está completa
-const PROFILE_SECTIONS = [
-  {
-    key: 'basicInfo',
-    label: 'Datos personales',
-    weight: 20,
-    check: (u) => !!(u.firstName && u.lastName && u.email && u.phone),
-  },
-  {
-    key: 'jobTitle',
-    label: 'Título profesional',
-    weight: 10,
-    check: (u) => !!(u.jobTitle && u.location),
-  },
-  {
-    key: 'bio',
-    label: 'Sobre mí',
-    weight: 10,
-    check: (u) => !!(u.bio && u.bio.length > 20),
-  },
-  {
-    key: 'experience',
-    label: 'Experiencia laboral',
-    weight: 20,
-    check: (u) => Array.isArray(u.experience) && u.experience.length > 0,
-  },
-  {
-    key: 'education',
-    label: 'Educación',
-    weight: 15,
-    check: (u) => Array.isArray(u.education) && u.education.length > 0,
-  },
-  {
-    key: 'skills',
-    label: 'Habilidades',
-    weight: 15,
-    check: (u) => Array.isArray(u.skills) && u.skills.length >= 3,
-  },
-  {
-    key: 'cv',
-    label: 'CV subido',
-    weight: 10,
-    check: (u) => !!(u.cvFileName || u.cvUrl),
-  },
-];
+// ─── Calcular completitud por sección ────────────────────────────────────────
+export function calcSections(u) {
+  return {
+    personal:   !!(u.firstName && u.lastName && u.email && u.phone && u.jobTitle && u.location && u.bio),
+    experience: !!(u.experience?.length),
+    education:  !!(u.education?.length),
+    skills:     !!(u.skills?.length && u.softSkills?.length),
+    languages:  !!(u.languages?.length),
+    cv:         !!(u.cvUrl || u.cvFileName),
+  };
+}
 
-// ─── Calcular porcentaje ──────────────────────────────────────
-export function calcProfilePercent(user) {
-  let total = 0;
-  PROFILE_SECTIONS.forEach(section => {
-    if (section.check(user)) total += section.weight;
+export function calcCandidatePercent(u) {
+  const s = calcSections(u);
+  const vals = Object.values(s);
+  return Math.round((vals.filter(Boolean).length / vals.length) * 100);
+}
+
+export function calcCompanyPercent(u) {
+  const fields = [u.companyName, u.email, u.industry, u.companySize, u.location, u.website, u.bio, u.linkedin];
+  return Math.round((fields.filter(Boolean).length / fields.length) * 100);
+}
+
+// ─── Actualizar steps de progreso en profile.html ────────────────────────────
+function updateSteps(u) {
+  const s = calcSections(u);
+  const map = {
+    'Datos personales':  s.personal,
+    'Experiencia laboral': s.experience,
+    'CV subido':         s.cv,
+    'Educación':         s.education,
+    'Idiomas':           s.languages,
+    'Habilidades':       s.skills,
+  };
+  document.querySelectorAll('.step-item').forEach(item => {
+    const label = item.querySelector('span')?.textContent?.trim();
+    if (!(label in map)) return;
+    const done = map[label];
+    item.classList.remove('done', 'pending');
+    item.classList.add(done ? 'done' : 'pending');
+    const dot = item.querySelector('.step-dot');
+    if (dot) dot.textContent = done ? '✓' : '!';
+    item.style.color = '';
   });
-  return Math.min(total, 100);
 }
 
-// ─── Actualizar el anillo SVG en el DOM ───────────────────────
-export function updateProgressRing(percent) {
-  // El anillo tiene r=30, circunferencia = 2 * PI * 30 ≈ 188
-  const circumference = 188;
-  const offset = circumference - (percent / 100) * circumference;
+// ─── Actualizar badges de cada panel ─────────────────────────────────────────
+function updatePanelBadges(u) {
+  const s = calcSections(u);
 
-  const fill = document.querySelector('.ring-fill');
-  const pct  = document.querySelector('.ring-pct');
-
-  if (fill) fill.style.strokeDashoffset = offset;
-  if (pct)  pct.textContent = `${percent}%`;
-
-  // Actualizar los steps del progreso en profile.html
-  updateProgressSteps();
-}
-
-// ─── Actualizar los pasos visuales ────────────────────────────
-function updateProgressSteps() {
-  const user = getUser();
-  if (!user) return;
-
-  const stepMap = {
-    'Datos personales':    () => !!(user.firstName && user.lastName && user.email),
-    'Experiencia laboral': () => Array.isArray(user.experience) && user.experience.length > 0,
-    'CV subido':           () => !!(user.cvFileName || user.cvUrl),
-    'Educación':           () => Array.isArray(user.education) && user.education.length > 0,
-    'Idiomas':             () => Array.isArray(user.languages) && user.languages.length > 0,
-    'Habilidades':         () => Array.isArray(user.skills) && user.skills.length >= 3,
+  const badgeMap = {
+    'badge-personal':   { done: s.personal,   doneText: '✓ Completado',     pendText: '⚠ Incompleto' },
+    'badge-experience': { done: s.experience, doneText: '✓ Completada',     pendText: '⚠ Sin experiencia' },
+    'badge-education':  { done: s.education,  doneText: '✓ Completada',     pendText: '⚠ Sin educación' },
+    'badge-skills':     { done: s.skills,     doneText: '✓ Completas',      pendText: '⚠ Sin habilidades' },
+    'badge-cv':         { done: s.cv,         doneText: '✓ CV cargado',     pendText: '⚠ Sin CV' },
   };
 
-  document.querySelectorAll('.step-item').forEach(item => {
-    const label = item.textContent.trim();
-    const checkFn = stepMap[label];
-    if (!checkFn) return;
-
-    const isDone = checkFn();
-    item.classList.toggle('done',    isDone);
-    item.classList.toggle('pending', !isDone);
-
-    const dot = item.querySelector('.step-dot');
-    if (dot) dot.textContent = isDone ? '✓' : '!';
+  Object.entries(badgeMap).forEach(([id, cfg]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = `badge ${cfg.done ? 'badge-green' : 'badge-gold'}`;
+    el.textContent = cfg.done ? cfg.doneText : cfg.pendText;
   });
 }
 
-// ─── Guardar sección en el backend ───────────────────────────
-async function saveProfile(data) {
-  const res = await authFetch('/users/profile', {
-    method:  'PATCH',
-    body:    JSON.stringify(data),
-  });
+// ─── Actualizar avatar y nombre en el perfil ─────────────────────────────────
+function updateProfileHero(u) {
+  const name = `${u.firstName || ''} ${u.lastName || ''}`.trim();
 
+  const avatarLarge = document.querySelector('.avatar-large');
+  if (avatarLarge) {
+    avatarLarge.textContent = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase() || '?';
+  }
+  const avatarName = document.querySelector('.avatar-name');
+  if (avatarName) avatarName.textContent = name;
+
+  const avatarSub = document.querySelector('.avatar-sub');
+  if (avatarSub) {
+    const parts = [u.jobTitle, u.location].filter(Boolean);
+    avatarSub.textContent = parts.join(' · ');
+  }
+}
+
+// ─── Actualizar ring del dashboard ───────────────────────────────────────────
+export function updateRing(pct) {
+  const ring  = document.querySelector('.ring-fill');
+  const label = document.querySelector('.ring-pct');
+  if (!ring || !label) return;
+  const r = 30;
+  const circ = 2 * Math.PI * r;
+  ring.style.strokeDasharray  = circ;
+  ring.style.strokeDashoffset = circ * (1 - pct / 100);
+  label.textContent = pct + '%';
+}
+
+// ─── Actualizar hero del dashboard ───────────────────────────────────────────
+export function updateDashboardHero(u) {
+  const nombre = u.role === 'company'
+    ? (u.companyName || '')
+    : `${u.firstName || ''} ${u.lastName || ''}`.trim();
+
+  const iniciales = u.role === 'company'
+    ? (u.companyName || 'E').substring(0,2).toUpperCase()
+    : `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase();
+
+  // ── Sidebar (presente en todas las páginas) ──
+  const sidebarAvatar = document.getElementById('sidebar-avatar');
+  const sidebarName   = document.getElementById('sidebar-name');
+  const sidebarRole   = document.getElementById('sidebar-role');
+  if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
+  if (sidebarName)   sidebarName.textContent   = nombre;
+  if (sidebarRole)   sidebarRole.textContent   = u.role === 'company' ? 'Empresa' : 'Candidato';
+
+  // ── Topbar bienvenida ──
+  const subtitle = document.querySelector('.topbar-subtitle');
+  if (subtitle) {
+    const primerNombre = u.role === 'company' ? u.companyName : u.firstName;
+    subtitle.textContent = `Bienvenido de vuelta, ${primerNombre || ''} 👋`;
+  }
+
+  // ── Hero del dashboard ──
+  const heroName = document.querySelector('.hero-name');
+  if (heroName) heroName.textContent = nombre;
+
+  const heroAvatar = document.querySelector('.hero-avatar');
+  if (heroAvatar) heroAvatar.textContent = iniciales;
+
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle && u.role === 'candidate' && u.jobTitle) {
+    heroTitle.textContent = u.jobTitle;
+  }
+
+  const metas = document.querySelectorAll('.hero-meta span');
+  if (metas[0] && u.location)     metas[0].textContent = `📍 ${u.location}`;
+  if (metas[2] && u.availability) metas[2].textContent = `💼 ${u.availability}`;
+}
+
+// ─── Llenar inputs del formulario ────────────────────────────────────────────
+export function fillProfileForm(u) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el || val == null) return;
+    if (el.tagName === 'SELECT') {
+      [...el.options].forEach(o => { o.selected = o.value === String(val) || o.text === String(val); });
+    } else {
+      el.value = val;
+    }
+  };
+
+  if (u.role === 'candidate' || !u.role) {
+    set('firstName', u.firstName);
+    set('lastName',  u.lastName);
+    set('email',     u.email);
+    set('phone',     u.phone);
+    set('jobTitle',  u.jobTitle);
+    set('location',  u.location);
+    set('bio',       u.bio);
+    set('linkedin',  u.linkedin);
+    set('github',    u.github);
+    set('portfolio', u.portfolio);
+    set('salary',    u.salary);
+    set('availability', u.availability);
+    set('modality',  u.modality);
+    fillTags('tech-wrapper', 'tech-input', u.skills || []);
+    fillTags('soft-wrapper', 'soft-input', u.softSkills || []);
+  } else {
+    set('companyName', u.companyName);
+    set('industry',    u.industry);
+    set('companySize', u.companySize);
+    set('location',    u.location);
+    set('website',     u.website);
+    set('linkedin',    u.linkedin);
+    set('bio',         u.bio);
+  }
+}
+
+function fillTags(wrapperId, inputId, items) {
+  const wrapper = document.getElementById(wrapperId);
+  const input   = document.getElementById(inputId);
+  if (!wrapper || !input) return;
+  wrapper.querySelectorAll('.tag').forEach(t => t.remove());
+  items.forEach(skill => {
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `${skill} <button class="tag-remove" onclick="this.parentElement.remove()">×</button>`;
+    wrapper.insertBefore(tag, input);
+  });
+}
+
+// ─── Leer formulario candidato ────────────────────────────────────────────────
+export function readCandidateForm() {
+  const get = id => document.getElementById(id)?.value?.trim() || null;
+  const getSel = id => { const el = document.getElementById(id); return el?.options[el.selectedIndex]?.text || null; };
+  const getTags = wid => [...document.querySelectorAll(`#${wid} .tag`)]
+    .map(t => t.textContent.replace('×','').trim()).filter(Boolean);
+
+  return {
+    firstName:    get('firstName'),
+    lastName:     get('lastName'),
+    phone:        get('phone'),
+    jobTitle:     get('jobTitle'),
+    location:     get('location'),
+    bio:          get('bio'),
+    linkedin:     get('linkedin'),
+    github:       get('github'),
+    portfolio:    get('portfolio'),
+    salary:       get('salary') ? Number(get('salary')) : null,
+    availability: getSel('availability'),
+    modality:     getSel('modality'),
+    skills:       getTags('tech-wrapper'),
+    softSkills:   getTags('soft-wrapper'),
+  };
+}
+
+// ─── Leer formulario empresa ──────────────────────────────────────────────────
+export function readCompanyForm() {
+  const get = id => document.getElementById(id)?.value?.trim() || null;
+  const getSel = id => { const el = document.getElementById(id); return el?.options[el.selectedIndex]?.text || null; };
+  return {
+    companyName: get('companyName'),
+    industry:    getSel('industry'),
+    companySize: getSel('companySize'),
+    location:    get('location'),
+    website:     get('website'),
+    linkedin:    get('linkedin'),
+    bio:         get('bio'),
+  };
+}
+
+// ─── Guardar en backend ───────────────────────────────────────────────────────
+export async function saveProfile(data) {
+  const token = getToken();
+  const res = await fetch(`${API}/users/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
   if (!res.ok) {
     const err = await res.json();
     throw new Error(err.message || 'Error al guardar');
   }
-
-  const updatedUser = await res.json();
-
-  // Actualizar localStorage con los nuevos datos
-  const current = getUser() || {};
-  const merged  = { ...current, ...updatedUser };
-  saveUser(merged);
-
-  // Recalcular y actualizar el anillo
-  const percent = calcProfilePercent(merged);
-  updateProgressRing(percent);
-
-  return updatedUser;
+  const updated = await res.json();
+  saveUser(updated);
+  return updated;
 }
 
-// ─── Leer tags del DOM ────────────────────────────────────────
-function readTags(wrapperId) {
-  const wrapper = document.getElementById(wrapperId);
-  if (!wrapper) return [];
-  return Array.from(wrapper.querySelectorAll('.tag-pill'))
-    .map(tag => tag.childNodes[0]?.textContent?.trim())
-    .filter(Boolean);
+// ─── Init página de perfil ────────────────────────────────────────────────────
+export function initProfile() {
+  const u = getUser();
+  if (!u) return;
+  fillProfileForm(u);
+  updateProfileHero(u);
+  updateSteps(u);
+  updatePanelBadges(u);
 }
 
-// ─── Botón guardar con spinner ────────────────────────────────
-function setLoading(btn, loading) {
-  btn.disabled = loading;
-  btn.innerHTML = loading
-    ? '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;margin-right:6px;"></div> Guardando...'
-    : '💾 Guardar cambios';
+// ─── Init dashboard ───────────────────────────────────────────────────────────
+export function initDashboard() {
+  const u = getUser();
+  if (!u) return;
+  updateDashboardHero(u);
+  const pct = u.role === 'company' ? calcCompanyPercent(u) : calcCandidatePercent(u);
+  updateRing(pct);
 }
-
-function showAlert(msg, type = 'success') {
-  const el = document.getElementById('global-alert');
-  if (!el) return;
-  el.className = `alert alert-${type} visible`;
-  el.textContent = msg;
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  setTimeout(() => el.classList.remove('visible'), 3500);
-}
-
-// ─── Inicializar cuando carga la página ──────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const user = getUser();
-  if (!user) return;
-
-  // Mostrar % actual al cargar
-  const percent = calcProfilePercent(user);
-  updateProgressRing(percent);
-
-  // ── Tab: Datos personales ──────────────────────────────────
-  document.querySelectorAll('.tab-panel .btn-primary').forEach(btn => {
-    if (!btn.textContent.includes('Guardar')) return;
-
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const panel = btn.closest('.tab-panel');
-      if (!panel) return;
-      const panelId = panel.id;
-
-      setLoading(btn, true);
-      try {
-        let data = {};
-
-        if (panelId === 'panel-personal') {
-          data = {
-            firstName:  document.getElementById('firstName')?.value?.trim(),
-            lastName:   document.getElementById('lastName')?.value?.trim(),
-            email:      document.getElementById('email')?.value?.trim(),
-            phone:      document.getElementById('phone')?.value?.trim(),
-            jobTitle:   document.getElementById('jobTitle')?.value?.trim(),
-            location:   document.getElementById('location')?.value?.trim(),
-            bio:        document.getElementById('bio')?.value?.trim(),
-            linkedin:   document.getElementById('linkedin')?.value?.trim(),
-            github:     document.getElementById('github')?.value?.trim(),
-            portfolio:  document.getElementById('portfolio')?.value?.trim(),
-            salary:     Number(document.getElementById('salary')?.value) || undefined,
-            availability: document.getElementById('availability')?.value,
-            modality:     document.getElementById('modality')?.value,
-          };
-        }
-
-        else if (panelId === 'panel-skills') {
-          data = {
-            skills:    readTags('tech-wrapper'),
-            softSkills: readTags('soft-wrapper'),
-            languages: Array.from(document.querySelectorAll('.lang-row')).map(row => ({
-              name:  row.querySelector('input, .lang-name')?.value
-                     || row.querySelector('.lang-name')?.textContent?.trim(),
-              level: row.querySelector('select')?.value,
-            })).filter(l => l.name),
-          };
-        }
-
-        else if (panelId === 'panel-experience') {
-          data = {
-            experience: Array.from(document.querySelectorAll('#exp-list .exp-item')).map(item => {
-              const inputs = item.querySelectorAll('input');
-              const textarea = item.querySelector('textarea');
-              const currentCheck = item.querySelector('input[type="checkbox"]');
-              return {
-                title:       inputs[0]?.value?.trim(),
-                company:     inputs[1]?.value?.trim(),
-                startDate:   inputs[2]?.value,
-                endDate:     currentCheck?.checked ? null : inputs[3]?.value,
-                current:     !!currentCheck?.checked,
-                description: textarea?.value?.trim(),
-              };
-            }).filter(e => e.title && e.company),
-          };
-        }
-
-        else if (panelId === 'panel-education') {
-          data = {
-            education: Array.from(document.querySelectorAll('#edu-list .exp-item')).map(item => {
-              const inputs   = item.querySelectorAll('input');
-              const statusEl = item.querySelector('select');
-              return {
-                degree:      inputs[0]?.value?.trim(),
-                institution: inputs[1]?.value?.trim(),
-                startYear:   Number(inputs[2]?.value),
-                endYear:     Number(inputs[3]?.value) || null,
-                status:      statusEl?.value,
-              };
-            }).filter(e => e.degree && e.institution),
-          };
-        }
-
-        await saveProfile(data);
-        showAlert('✓ Cambios guardados correctamente.');
-
-        // Actualizar nombre en sidebar/topbar si cambió
-        const updated = getUser();
-        const newName = `${updated.firstName ?? ''} ${updated.lastName ?? ''}`.trim();
-        document.querySelectorAll('.profile-name').forEach(el => el.textContent = newName);
-        document.querySelectorAll('.profile-avatar').forEach(el => {
-          const words = newName.split(' ');
-          el.textContent = words.length > 1
-            ? (words[0][0] + words[1][0]).toUpperCase()
-            : newName.slice(0, 2).toUpperCase();
-        });
-
-      } catch (err) {
-        showAlert(err.message || 'Error al guardar. Intentá de nuevo.', 'error');
-      } finally {
-        setLoading(btn, false);
-      }
-    });
-  });
-});

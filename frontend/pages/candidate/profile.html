@@ -24,10 +24,10 @@
 
     <div class="sidebar-profile">
       <div class="profile-badge">
-        <div class="profile-avatar">JP</div>
+        <div class="profile-avatar" id="sidebar-avatar">JP</div>
         <div class="profile-info">
-          <div class="profile-name">Juan Pérez</div>
-          <div class="profile-role">Candidato</div>
+          <div class="profile-name" id="sidebar-name">Juan Pérez</div>
+          <div class="profile-role" id="sidebar-role">Candidato</div>
         </div>
       </div>
     </div>
@@ -119,7 +119,7 @@
               <div class="panel-title">Información personal</div>
               <div class="panel-subtitle">Datos básicos de tu perfil público</div>
             </div>
-            <span class="badge badge-green">✓ Completado</span>
+            <span class="badge badge-green" id="badge-personal">✓ Completado</span>
           </div>
           <div class="panel-body">
 
@@ -237,7 +237,7 @@
               <div class="panel-title">Experiencia laboral</div>
               <div class="panel-subtitle">Tus trabajos anteriores y actuales</div>
             </div>
-            <span class="badge badge-green">✓ 2 cargadas</span>
+            <span class="badge badge-gold" id="badge-experience">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
             <div class="exp-list" id="exp-list">
@@ -339,7 +339,7 @@
               <div class="panel-title">Educación</div>
               <div class="panel-subtitle">Tu formación académica</div>
             </div>
-            <span class="badge badge-gold">! Pendiente</span>
+            <span class="badge badge-gold" id="badge-education">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
             <div class="exp-list" id="edu-list">
@@ -406,7 +406,7 @@
               <div class="panel-title">Habilidades y herramientas</div>
               <div class="panel-subtitle">La IA las usa para matchearte con ofertas relevantes</div>
             </div>
-            <span class="badge badge-blue">🤖 Usado por IA</span>
+            <span class="badge badge-gold" id="badge-skills">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
 
@@ -473,7 +473,7 @@
               <div class="panel-title">Mi currículum</div>
               <div class="panel-subtitle">Subí tu CV en PDF para que la IA lo analice</div>
             </div>
-            <span class="badge badge-green">✓ CV cargado</span>
+            <span class="badge badge-gold" id="badge-cv">⚠ Sin CV</span>
           </div>
           <div class="panel-body">
 
@@ -703,9 +703,35 @@
 </script>
 <script type="module">
   import { logout } from '../../js/auth.js';
+  import { initProfile, readCandidateForm, saveProfile, calcCandidatePercent, updateDashboardHero } from '../../js/profile.js';
+
   window.cerrarSesion = logout;
+
+  // Actualizar sidebar y cargar datos
+  const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+  if (_u) updateDashboardHero(_u);
+  initProfile();
+
+  // Guardar sección al hacer click en "Guardar cambios"
+  window.saveSection = async function(section) {
+    const btn = event.target;
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
+    try {
+      const data = readCandidateForm();
+      const updated = await saveProfile(data);
+      const pct = calcCandidatePercent(updated);
+      // Refrescar steps, badges y hero con los datos nuevos
+      initProfile();
+      showAlert(`✓ Guardado correctamente — perfil al ${pct}%`);
+    } catch (err) {
+      showAlert('✗ ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  };
 </script>
-  <script src="../../js/profile.js" type="module"></script>
-  <script src="../../js/user-loader.js" type="module"></script>
 </body>
 </html>

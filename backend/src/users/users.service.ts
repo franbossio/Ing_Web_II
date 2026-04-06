@@ -1,47 +1,120 @@
-// users/users.service.ts
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
-import { UpdateProfileDto } from '../auth/dto/update-profile.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
+import { User, SafeUser, UserRole } from './user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   constructor(
-    @InjectRepository(User) private usersRepo: Repository<User>,
+    @InjectRepository(User)
+    private readonly repo: Repository<User>,
   ) {}
 
-  findByEmail(email: string) {
-    return this.usersRepo.findOneBy({ email });
+  async onModuleInit() {
+    const count = await this.repo.count();
+    if (count === 0) {
+      console.log('🌱 Creando usuarios de prueba...');
+      await this.seedUsers();
+      console.log('✅ Usuarios de prueba creados');
+    }
   }
 
-  async findById(id: number) {
-    const user = await this.usersRepo.findOneBy({ id });
+  private async seedUsers() {
+    const password = await bcrypt.hash('Test1234!', 10);
+    await this.repo.save([
+      {
+        email: 'candidate@test.com',
+        passwordHash: password,
+        role: 'candidate' as UserRole,
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        isActive: true,
+      },
+      {
+        email: 'company@test.com',
+        passwordHash: password,
+        role: 'company' as UserRole,
+        companyName: 'Acme S.A.',
+        isActive: true,
+      },
+      {
+        email: 'admin@test.com',
+        passwordHash: password,
+        role: 'admin' as UserRole,
+        firstName: 'Admin',
+        lastName: 'TalentAI',
+        isActive: true,
+      },
+    ]);
+  }
+
+  async findByEmail(email: string): Promise<User | undefined> {
+    // Traer passwordHash explícitamente (tiene select: false en la entity)
+    return this.repo
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.email = :email', { email: email.toLowerCase() })
+      .getOne();
+  }
+
+  async findById(id: string): Promise<SafeUser> {
+    const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    // No devolver la contraseña
-    const { password, ...result } = user;
-    return result;
+    return this.sanitize(user);
   }
 
-  async create(data: Partial<User>) {
-    const exists = await this.findByEmail(data.email);
-    if (exists) throw new ConflictException('El email ya está registrado');
-    const hashed = await bcrypt.hash(data.password, 10);
-    const user = this.usersRepo.create({ ...data, password: hashed });
-    return this.usersRepo.save(user);
-  }
-
-  async updateProfile(id: number, dto: UpdateProfileDto) {
-    const user = await this.usersRepo.findOneBy({ id });
+  // ─── Actualizar perfil ───────────────────────────────────────────
+  async update(id: string, dto: UpdateUserDto): Promise<SafeUser> {
+    const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Mergear solo los campos enviados
+    // Merge solo los campos enviados
     Object.assign(user, dto);
-    const saved = await this.usersRepo.save(user);
+    user.updatedAt = new Date();
 
-    // Devolver sin contraseña
-    const { password, ...result } = saved;
-    return result;
+    const saved = await this.repo.save(user);
+    return this.sanitize(saved);
+  }
+
+  async create(data: {
+    email: string;
+    password: string;
+    role: UserRole;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
+  }): Promise<SafeUser> {
+    const exists = await this.findByEmail(data.email);
+    if (exists) throw new ConflictException('Ya existe una cuenta con ese correo electrónico');
+
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const newUser = this.repo.create({
+      email: data.email.toLowerCase().trim(),
+      passwordHash,
+      role: data.role,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      companyName: data.companyName,
+      isActive: true,
+    });
+    const saved = await this.repo.save(newUser);
+    return this.sanitize(saved);
+  }
+
+  async findAll(): Promise<SafeUser[]> {
+    const users = await this.repo.find({ order: { createdAt: 'DESC' } });
+    return users.map(u => this.sanitize(u));
+  }
+
+  sanitize(user: User): SafeUser {
+    const { passwordHash, ...safe } = user;
+    return safe as SafeUser;
   }
 }
