@@ -75,8 +75,13 @@ export class UsersService implements OnModuleInit {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Merge solo los campos enviados
-    Object.assign(user, dto);
+    // Iteramos explícitamente para que "" y null también se guarden.
+    // Object.assign descarta undefined pero sí pisa con "" y null.
+    for (const [key, value] of Object.entries(dto)) {
+      if (value !== undefined) {
+        (user as any)[key] = value;
+      }
+    }
     user.updatedAt = new Date();
 
     const saved = await this.repo.save(user);

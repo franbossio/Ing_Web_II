@@ -197,10 +197,19 @@ function fillTags(wrapperId, inputId, items) {
 
 // ─── Leer formulario candidato ────────────────────────────────────────────────
 export function readCandidateForm() {
-  const get = id => document.getElementById(id)?.value?.trim() || null;
-  const getSel = id => { const el = document.getElementById(id); return el?.options[el.selectedIndex]?.text || null; };
-  const getTags = wid => [...document.querySelectorAll(`#${wid} .tag`)]
-    .map(t => t.textContent.replace('×','').trim()).filter(Boolean);
+  // IMPORTANTE: usamos ?? '' en vez de || null
+  // Si el usuario borra un campo y guarda, se envía "" al backend
+  // para que lo pise con string vacío y no ignore el cambio.
+  const get    = id => document.getElementById(id)?.value?.trim() ?? '';
+  const getSel = id => {
+    const el = document.getElementById(id);
+    return el?.options[el.selectedIndex]?.value ?? '';
+  };
+  const getTags = wid => [...document.querySelectorAll(`#${wid} .tag-pill, #${wid} .tag`)]
+    .map(t => t.childNodes[0]?.textContent?.trim() || t.textContent.replace('×','').trim())
+    .filter(Boolean);
+
+  const salaryRaw = document.getElementById('salary')?.value?.trim();
 
   return {
     firstName:    get('firstName'),
@@ -212,7 +221,7 @@ export function readCandidateForm() {
     linkedin:     get('linkedin'),
     github:       get('github'),
     portfolio:    get('portfolio'),
-    salary:       get('salary') ? Number(get('salary')) : null,
+    salary:       salaryRaw ? Number(salaryRaw) : null,
     availability: getSel('availability'),
     modality:     getSel('modality'),
     skills:       getTags('tech-wrapper'),
