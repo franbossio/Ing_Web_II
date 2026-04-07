@@ -712,19 +712,22 @@
   if (_u) updateDashboardHero(_u);
   initProfile();
 
-  // Guardar sección al hacer click en "Guardar cambios"
+  // Guardar sección — lee TODOS los datos del formulario (personal + exp + edu + skills + idiomas)
   window.saveSection = async function(section) {
     const btn = event.target;
     const orig = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
     try {
+      // readCandidateForm() ahora lee TODAS las secciones juntas
       const data = readCandidateForm();
       const updated = await saveProfile(data);
       const pct = calcCandidatePercent(updated);
-      // Refrescar steps, badges y hero con los datos nuevos
-      initProfile();
+      // Actualizar badges, steps y sidebar con los datos guardados
+      updateDashboardHero(updated);
       showAlert(`✓ Guardado correctamente — perfil al ${pct}%`);
+      // Refrescar badges y steps sin recargar el DOM
+      await initProfile();
     } catch (err) {
       showAlert('✗ ' + err.message, 'error');
     } finally {

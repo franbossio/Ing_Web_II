@@ -19,8 +19,7 @@ export function calcSections(u) {
 
 export function calcCandidatePercent(u) {
   const s = calcSections(u);
-  const vals = Object.values(s);
-  return Math.round((vals.filter(Boolean).length / vals.length) * 100);
+  return Math.round((Object.values(s).filter(Boolean).length / Object.values(s).length) * 100);
 }
 
 export function calcCompanyPercent(u) {
@@ -28,122 +27,212 @@ export function calcCompanyPercent(u) {
   return Math.round((fields.filter(Boolean).length / fields.length) * 100);
 }
 
-// ─── Actualizar steps de progreso en profile.html ────────────────────────────
-function updateSteps(u) {
-  const s = calcSections(u);
-  const map = {
-    'Datos personales':  s.personal,
-    'Experiencia laboral': s.experience,
-    'CV subido':         s.cv,
-    'Educación':         s.education,
-    'Idiomas':           s.languages,
-    'Habilidades':       s.skills,
-  };
-  document.querySelectorAll('.step-item').forEach(item => {
-    const label = item.querySelector('span')?.textContent?.trim();
-    if (!(label in map)) return;
-    const done = map[label];
-    item.classList.remove('done', 'pending');
-    item.classList.add(done ? 'done' : 'pending');
-    const dot = item.querySelector('.step-dot');
-    if (dot) dot.textContent = done ? '✓' : '!';
-    item.style.color = '';
-  });
+// ─── Leer experiencia del DOM ─────────────────────────────────────────────────
+function readExperience() {
+  return [...document.querySelectorAll('#exp-list .exp-item')].map(item => {
+    const inputs   = item.querySelectorAll('input[type="text"]');
+    const months   = item.querySelectorAll('input[type="month"]');
+    const textarea = item.querySelector('textarea');
+    const current  = item.querySelector('input[type="checkbox"]')?.checked ?? false;
+    return {
+      title:       inputs[0]?.value?.trim() || '',
+      company:     inputs[1]?.value?.trim() || '',
+      startDate:   months[0]?.value || '',
+      endDate:     current ? 'Presente' : (months[1]?.value || ''),
+      current,
+      description: textarea?.value?.trim() || '',
+    };
+  }).filter(e => e.title || e.company);
 }
 
-// ─── Actualizar badges de cada panel ─────────────────────────────────────────
-function updatePanelBadges(u) {
-  const s = calcSections(u);
+// ─── Leer educación del DOM ───────────────────────────────────────────────────
+function readEducation() {
+  return [...document.querySelectorAll('#edu-list .exp-item')].map(item => {
+    const inputs  = item.querySelectorAll('input[type="text"]');
+    const numbers = item.querySelectorAll('input[type="number"]');
+    const select  = item.querySelector('select');
+    return {
+      career:      inputs[0]?.value?.trim() || '',
+      institution: inputs[1]?.value?.trim() || '',
+      startYear:   numbers[0]?.value || '',
+      endYear:     numbers[1]?.value || '',
+      status:      select?.value || select?.options[select?.selectedIndex]?.text || '',
+    };
+  }).filter(e => e.career || e.institution);
+}
 
-  const badgeMap = {
-    'badge-personal':   { done: s.personal,   doneText: '✓ Completado',     pendText: '⚠ Incompleto' },
-    'badge-experience': { done: s.experience, doneText: '✓ Completada',     pendText: '⚠ Sin experiencia' },
-    'badge-education':  { done: s.education,  doneText: '✓ Completada',     pendText: '⚠ Sin educación' },
-    'badge-skills':     { done: s.skills,     doneText: '✓ Completas',      pendText: '⚠ Sin habilidades' },
-    'badge-cv':         { done: s.cv,         doneText: '✓ CV cargado',     pendText: '⚠ Sin CV' },
-  };
+// ─── Leer idiomas del DOM ─────────────────────────────────────────────────────
+function readLanguages() {
+  return [...document.querySelectorAll('#lang-list .lang-row')].map(row => {
+    const input  = row.querySelector('input[type="text"]');
+    const select = row.querySelector('select');
+    return {
+      name:  input?.value?.trim() || '',
+      level: select?.value || select?.options[select?.selectedIndex]?.text || '',
+    };
+  }).filter(l => l.name);
+}
 
-  Object.entries(badgeMap).forEach(([id, cfg]) => {
+// ─── Leer datos personales del DOM ───────────────────────────────────────────
+export function readCandidateForm() {
+  const get    = id => document.getElementById(id)?.value?.trim() ?? '';
+  const getSel = id => {
     const el = document.getElementById(id);
-    if (!el) return;
-    el.className = `badge ${cfg.done ? 'badge-green' : 'badge-gold'}`;
-    el.textContent = cfg.done ? cfg.doneText : cfg.pendText;
+    return el?.options[el.selectedIndex]?.value || el?.options[el.selectedIndex]?.text || '';
+  };
+  const getTags = wid => [...document.querySelectorAll(`#${wid} .tag-pill, #${wid} .tag`)]
+    .map(t => t.childNodes[0]?.textContent?.trim() || t.textContent.replace('×','').trim())
+    .filter(Boolean);
+
+  return {
+    firstName:    get('firstName'),
+    lastName:     get('lastName'),
+    phone:        get('phone'),
+    jobTitle:     get('jobTitle'),
+    location:     get('location'),
+    bio:          get('bio'),
+    linkedin:     get('linkedin'),
+    github:       get('github'),
+    portfolio:    get('portfolio'),
+    salary:       get('salary') ? Number(get('salary')) : null,
+    availability: getSel('availability'),
+    modality:     getSel('modality'),
+    skills:       getTags('tech-wrapper'),
+    softSkills:   getTags('soft-wrapper'),
+    languages:    readLanguages(),
+    experience:   readExperience(),
+    education:    readEducation(),
+  };
+}
+
+// ─── Leer formulario empresa ──────────────────────────────────────────────────
+export function readCompanyForm() {
+  const get    = id => document.getElementById(id)?.value?.trim() || null;
+  const getSel = id => { const el = document.getElementById(id); return el?.options[el.selectedIndex]?.text || null; };
+  return {
+    companyName: get('companyName'),
+    industry:    getSel('industry'),
+    companySize: getSel('companySize'),
+    location:    get('location'),
+    website:     get('website'),
+    linkedin:    get('linkedin'),
+    bio:         get('bio'),
+  };
+}
+
+// ─── Llenar experiencia en el DOM ─────────────────────────────────────────────
+function fillExperience(list) {
+  const container = document.getElementById('exp-list');
+  if (!container || !list?.length) return;
+  // Limpiar items hardcodeados
+  container.innerHTML = '';
+  list.forEach(exp => {
+    const item = document.createElement('div');
+    item.className = 'exp-item';
+    const endVal   = exp.current || exp.endDate === 'Presente' ? '' : (exp.endDate || '');
+    const isCurrent = exp.current || exp.endDate === 'Presente';
+    item.innerHTML = `
+      <div class="exp-item-header">
+        <div>
+          <div class="exp-item-title">${exp.title || 'Sin título'}</div>
+          <div class="exp-item-sub">🏢 ${exp.company || ''} · ${exp.startDate || ''} – ${isCurrent ? 'Presente' : (exp.endDate || '')}</div>
+        </div>
+        <div class="exp-item-actions">
+          <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-bottom:14px;">
+        <div class="form-group"><label>Cargo</label><input type="text" value="${exp.title || ''}" /></div>
+        <div class="form-group"><label>Empresa</label><input type="text" value="${exp.company || ''}" /></div>
+        <div class="form-group"><label>Fecha inicio</label><input type="month" value="${exp.startDate || ''}" /></div>
+        <div class="form-group">
+          <label>Fecha fin</label>
+          <input type="month" value="${endVal}" ${isCurrent ? 'disabled' : ''} />
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-top:6px;cursor:pointer;">
+            <input type="checkbox" ${isCurrent ? 'checked' : ''} onchange="this.closest('.form-group').querySelector('input[type=month]').disabled=this.checked" />
+            Trabajo actual
+          </label>
+        </div>
+        <div class="form-group col-span-2"><label>Descripción</label><textarea rows="3">${exp.description || ''}</textarea></div>
+      </div>`;
+    container.appendChild(item);
   });
 }
 
-// ─── Actualizar avatar y nombre en el perfil ─────────────────────────────────
-function updateProfileHero(u) {
-  const name = `${u.firstName || ''} ${u.lastName || ''}`.trim();
-
-  const avatarLarge = document.querySelector('.avatar-large');
-  if (avatarLarge) {
-    avatarLarge.textContent = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase() || '?';
-  }
-  const avatarName = document.querySelector('.avatar-name');
-  if (avatarName) avatarName.textContent = name;
-
-  const avatarSub = document.querySelector('.avatar-sub');
-  if (avatarSub) {
-    const parts = [u.jobTitle, u.location].filter(Boolean);
-    avatarSub.textContent = parts.join(' · ');
-  }
+// ─── Llenar educación en el DOM ───────────────────────────────────────────────
+function fillEducation(list) {
+  const container = document.getElementById('edu-list');
+  if (!container || !list?.length) return;
+  container.innerHTML = '';
+  list.forEach(edu => {
+    const item = document.createElement('div');
+    item.className = 'exp-item';
+    item.innerHTML = `
+      <div class="exp-item-header">
+        <div>
+          <div class="exp-item-title">${edu.career || 'Sin título'}</div>
+          <div class="exp-item-sub">🎓 ${edu.institution || ''} · ${edu.startYear || ''} – ${edu.endYear || ''}</div>
+        </div>
+        <div class="exp-item-actions">
+          <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Título / Carrera</label><input type="text" value="${edu.career || ''}" /></div>
+        <div class="form-group"><label>Institución</label><input type="text" value="${edu.institution || ''}" /></div>
+        <div class="form-group"><label>Año inicio</label><input type="number" value="${edu.startYear || ''}" min="1990" max="2030" /></div>
+        <div class="form-group"><label>Año fin</label><input type="number" value="${edu.endYear || ''}" min="1990" max="2030" /></div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select>
+            <option ${edu.status === 'Graduado' ? 'selected' : ''}>Graduado</option>
+            <option ${edu.status === 'En curso' ? 'selected' : ''}>En curso</option>
+            <option ${edu.status === 'Incompleto' ? 'selected' : ''}>Incompleto</option>
+          </select>
+        </div>
+      </div>`;
+    container.appendChild(item);
+  });
 }
 
-// ─── Actualizar ring del dashboard ───────────────────────────────────────────
-export function updateRing(pct) {
-  const ring  = document.querySelector('.ring-fill');
-  const label = document.querySelector('.ring-pct');
-  if (!ring || !label) return;
-  const r = 30;
-  const circ = 2 * Math.PI * r;
-  ring.style.strokeDasharray  = circ;
-  ring.style.strokeDashoffset = circ * (1 - pct / 100);
-  label.textContent = pct + '%';
+// ─── Llenar idiomas en el DOM ─────────────────────────────────────────────────
+function fillLanguages(list) {
+  const container = document.getElementById('lang-list');
+  if (!container || !list?.length) return;
+  container.innerHTML = '';
+  list.forEach(lang => {
+    const row = document.createElement('div');
+    row.className = 'lang-row';
+    row.innerHTML = `
+      <input type="text" style="background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-sm);color:var(--clr-text);font-family:var(--font-body);font-size:0.85rem;padding:6px 10px;outline:none;min-width:100px;" value="${lang.name || ''}" placeholder="Idioma" />
+      <div class="lang-level">
+        <select>
+          <option ${lang.level === 'Nativo' ? 'selected' : ''}>Nativo</option>
+          <option ${lang.level === 'Avanzado' ? 'selected' : ''}>Avanzado</option>
+          <option ${lang.level === 'Intermedio' ? 'selected' : ''}>Intermedio</option>
+          <option ${lang.level === 'Básico' ? 'selected' : ''}>Básico</option>
+        </select>
+      </div>
+      <button class="lang-remove" onclick="this.parentElement.remove()">×</button>`;
+    container.appendChild(row);
+  });
 }
 
-// ─── Actualizar hero del dashboard ───────────────────────────────────────────
-export function updateDashboardHero(u) {
-  const nombre = u.role === 'company'
-    ? (u.companyName || '')
-    : `${u.firstName || ''} ${u.lastName || ''}`.trim();
-
-  const iniciales = u.role === 'company'
-    ? (u.companyName || 'E').substring(0,2).toUpperCase()
-    : `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase();
-
-  // ── Sidebar (presente en todas las páginas) ──
-  const sidebarAvatar = document.getElementById('sidebar-avatar');
-  const sidebarName   = document.getElementById('sidebar-name');
-  const sidebarRole   = document.getElementById('sidebar-role');
-  if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
-  if (sidebarName)   sidebarName.textContent   = nombre;
-  if (sidebarRole)   sidebarRole.textContent   = u.role === 'company' ? 'Empresa' : 'Candidato';
-
-  // ── Topbar bienvenida ──
-  const subtitle = document.querySelector('.topbar-subtitle');
-  if (subtitle) {
-    const primerNombre = u.role === 'company' ? u.companyName : u.firstName;
-    subtitle.textContent = `Bienvenido de vuelta, ${primerNombre || ''} 👋`;
-  }
-
-  // ── Hero del dashboard ──
-  const heroName = document.querySelector('.hero-name');
-  if (heroName) heroName.textContent = nombre;
-
-  const heroAvatar = document.querySelector('.hero-avatar');
-  if (heroAvatar) heroAvatar.textContent = iniciales;
-
-  const heroTitle = document.querySelector('.hero-title');
-  if (heroTitle && u.role === 'candidate' && u.jobTitle) {
-    heroTitle.textContent = u.jobTitle;
-  }
-
-  const metas = document.querySelectorAll('.hero-meta span');
-  if (metas[0] && u.location)     metas[0].textContent = `📍 ${u.location}`;
-  if (metas[2] && u.availability) metas[2].textContent = `💼 ${u.availability}`;
+// ─── Llenar tags ──────────────────────────────────────────────────────────────
+function fillTags(wrapperId, inputId, items) {
+  const wrapper = document.getElementById(wrapperId);
+  const input   = document.getElementById(inputId);
+  if (!wrapper || !input) return;
+  wrapper.querySelectorAll('.tag, .tag-pill').forEach(t => t.remove());
+  (items || []).forEach(skill => {
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `${skill} <button class="tag-remove" onclick="this.parentElement.remove()">×</button>`;
+    wrapper.insertBefore(tag, input);
+  });
 }
 
-// ─── Llenar inputs del formulario ────────────────────────────────────────────
+// ─── Llenar inputs simples ────────────────────────────────────────────────────
 export function fillProfileForm(u) {
   const set = (id, val) => {
     const el = document.getElementById(id);
@@ -171,6 +260,9 @@ export function fillProfileForm(u) {
     set('modality',  u.modality);
     fillTags('tech-wrapper', 'tech-input', u.skills || []);
     fillTags('soft-wrapper', 'soft-input', u.softSkills || []);
+    fillExperience(u.experience || []);
+    fillEducation(u.education || []);
+    fillLanguages(u.languages || []);
   } else {
     set('companyName', u.companyName);
     set('industry',    u.industry);
@@ -182,66 +274,93 @@ export function fillProfileForm(u) {
   }
 }
 
-function fillTags(wrapperId, inputId, items) {
-  const wrapper = document.getElementById(wrapperId);
-  const input   = document.getElementById(inputId);
-  if (!wrapper || !input) return;
-  wrapper.querySelectorAll('.tag').forEach(t => t.remove());
-  items.forEach(skill => {
-    const tag = document.createElement('span');
-    tag.className = 'tag';
-    tag.innerHTML = `${skill} <button class="tag-remove" onclick="this.parentElement.remove()">×</button>`;
-    wrapper.insertBefore(tag, input);
+// ─── Actualizar steps ─────────────────────────────────────────────────────────
+function updateSteps(u) {
+  const s = calcSections(u);
+  const map = {
+    'Datos personales':    s.personal,
+    'Experiencia laboral': s.experience,
+    'CV subido':           s.cv,
+    'Educación':           s.education,
+    'Idiomas':             s.languages,
+    'Habilidades':         s.skills,
+  };
+  document.querySelectorAll('.step-item').forEach(item => {
+    const label = item.querySelector('span')?.textContent?.trim();
+    if (!(label in map)) return;
+    const done = map[label];
+    item.classList.toggle('done', done);
+    item.classList.toggle('pending', !done);
+    const dot = item.querySelector('.step-dot');
+    if (dot) dot.textContent = done ? '✓' : '!';
+    item.style.color = '';
   });
 }
 
-// ─── Leer formulario candidato ────────────────────────────────────────────────
-export function readCandidateForm() {
-  // IMPORTANTE: usamos ?? '' en vez de || null
-  // Si el usuario borra un campo y guarda, se envía "" al backend
-  // para que lo pise con string vacío y no ignore el cambio.
-  const get    = id => document.getElementById(id)?.value?.trim() ?? '';
-  const getSel = id => {
+// ─── Actualizar badges de panel ───────────────────────────────────────────────
+function updatePanelBadges(u) {
+  const s = calcSections(u);
+  const map = {
+    'badge-personal':   { done: s.personal,   ok: '✓ Completado',     no: '⚠ Incompleto' },
+    'badge-experience': { done: s.experience, ok: '✓ Completada',     no: '⚠ Sin experiencia' },
+    'badge-education':  { done: s.education,  ok: '✓ Completada',     no: '⚠ Sin educación' },
+    'badge-skills':     { done: s.skills,     ok: '✓ Completas',      no: '⚠ Sin habilidades' },
+    'badge-cv':         { done: s.cv,         ok: '✓ CV cargado',     no: '⚠ Sin CV' },
+  };
+  Object.entries(map).forEach(([id, cfg]) => {
     const el = document.getElementById(id);
-    return el?.options[el.selectedIndex]?.value ?? '';
-  };
-  const getTags = wid => [...document.querySelectorAll(`#${wid} .tag-pill, #${wid} .tag`)]
-    .map(t => t.childNodes[0]?.textContent?.trim() || t.textContent.replace('×','').trim())
-    .filter(Boolean);
-
-  const salaryRaw = document.getElementById('salary')?.value?.trim();
-
-  return {
-    firstName:    get('firstName'),
-    lastName:     get('lastName'),
-    phone:        get('phone'),
-    jobTitle:     get('jobTitle'),
-    location:     get('location'),
-    bio:          get('bio'),
-    linkedin:     get('linkedin'),
-    github:       get('github'),
-    portfolio:    get('portfolio'),
-    salary:       salaryRaw ? Number(salaryRaw) : null,
-    availability: getSel('availability'),
-    modality:     getSel('modality'),
-    skills:       getTags('tech-wrapper'),
-    softSkills:   getTags('soft-wrapper'),
-  };
+    if (!el) return;
+    el.className = `badge ${cfg.done ? 'badge-green' : 'badge-gold'}`;
+    el.textContent = cfg.done ? cfg.ok : cfg.no;
+  });
 }
 
-// ─── Leer formulario empresa ──────────────────────────────────────────────────
-export function readCompanyForm() {
-  const get = id => document.getElementById(id)?.value?.trim() || null;
-  const getSel = id => { const el = document.getElementById(id); return el?.options[el.selectedIndex]?.text || null; };
-  return {
-    companyName: get('companyName'),
-    industry:    getSel('industry'),
-    companySize: getSel('companySize'),
-    location:    get('location'),
-    website:     get('website'),
-    linkedin:    get('linkedin'),
-    bio:         get('bio'),
-  };
+// ─── Actualizar hero del perfil ───────────────────────────────────────────────
+function updateProfileHero(u) {
+  const avatarLarge = document.querySelector('.avatar-large');
+  if (avatarLarge) avatarLarge.textContent =
+    `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase() || '?';
+  const avatarName = document.querySelector('.avatar-name');
+  if (avatarName) avatarName.textContent = `${u.firstName||''} ${u.lastName||''}`.trim();
+  const avatarSub = document.querySelector('.avatar-sub');
+  if (avatarSub) avatarSub.textContent = [u.jobTitle, u.location].filter(Boolean).join(' · ');
+}
+
+// ─── Actualizar ring ──────────────────────────────────────────────────────────
+export function updateRing(pct) {
+  const ring  = document.querySelector('.ring-fill');
+  const label = document.querySelector('.ring-pct');
+  if (!ring || !label) return;
+  const circ = 2 * Math.PI * 30;
+  ring.style.strokeDasharray  = circ;
+  ring.style.strokeDashoffset = circ * (1 - pct / 100);
+  label.textContent = pct + '%';
+}
+
+// ─── Actualizar sidebar y hero del dashboard ──────────────────────────────────
+export function updateDashboardHero(u) {
+  const nombre   = u.role === 'company' ? (u.companyName||'') : `${u.firstName||''} ${u.lastName||''}`.trim();
+  const iniciales = u.role === 'company'
+    ? (u.companyName||'E').substring(0,2).toUpperCase()
+    : `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase();
+
+  const sid = id => document.getElementById(id);
+  if (sid('sidebar-avatar')) sid('sidebar-avatar').textContent = iniciales;
+  if (sid('sidebar-name'))   sid('sidebar-name').textContent   = nombre;
+  if (sid('sidebar-role'))   sid('sidebar-role').textContent   = u.role === 'company' ? 'Empresa' : 'Candidato';
+
+  const sub = document.querySelector('.topbar-subtitle');
+  if (sub) sub.textContent = `Bienvenido de vuelta, ${u.role==='company'?u.companyName:u.firstName||''} 👋`;
+
+  const heroName = document.querySelector('.hero-name');
+  if (heroName) heroName.textContent = nombre;
+  const heroAvatar = document.querySelector('.hero-avatar');
+  if (heroAvatar) heroAvatar.textContent = iniciales;
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle && u.jobTitle) heroTitle.textContent = u.jobTitle;
+  const metas = document.querySelectorAll('.hero-meta span');
+  if (metas[0] && u.location)     metas[0].textContent = `📍 ${u.location}`;
+  if (metas[2] && u.availability) metas[2].textContent = `💼 ${u.availability}`;
 }
 
 // ─── Guardar en backend ───────────────────────────────────────────────────────
@@ -249,10 +368,7 @@ export async function saveProfile(data) {
   const token = getToken();
   const res = await fetch(`${API}/users/me`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify(data),
   });
   if (!res.ok) {
@@ -264,21 +380,51 @@ export async function saveProfile(data) {
   return updated;
 }
 
-// ─── Init página de perfil ────────────────────────────────────────────────────
-export function initProfile() {
-  const u = getUser();
-  if (!u) return;
-  fillProfileForm(u);
-  updateProfileHero(u);
-  updateSteps(u);
-  updatePanelBadges(u);
+// ─── Traer datos frescos del backend ─────────────────────────────────────────
+async function fetchFreshUser() {
+  try {
+    const token = getToken();
+    if (!token) return null;
+    const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return null;
+    const fresh = await res.json();
+    saveUser(fresh);
+    return fresh;
+  } catch { return null; }
+}
+
+// ─── Init perfil ──────────────────────────────────────────────────────────────
+export async function initProfile() {
+  // 1. Mostrar datos cacheados inmediatamente
+  const cached = getUser();
+  if (cached) {
+    fillProfileForm(cached);
+    updateProfileHero(cached);
+    updateSteps(cached);
+    updatePanelBadges(cached);
+    updateDashboardHero(cached);
+  }
+  // 2. Refrescar desde el backend
+  const fresh = await fetchFreshUser();
+  if (fresh) {
+    fillProfileForm(fresh);
+    updateProfileHero(fresh);
+    updateSteps(fresh);
+    updatePanelBadges(fresh);
+    updateDashboardHero(fresh);
+  }
 }
 
 // ─── Init dashboard ───────────────────────────────────────────────────────────
-export function initDashboard() {
-  const u = getUser();
-  if (!u) return;
-  updateDashboardHero(u);
-  const pct = u.role === 'company' ? calcCompanyPercent(u) : calcCandidatePercent(u);
-  updateRing(pct);
+export async function initDashboard() {
+  const cached = getUser();
+  if (cached) {
+    updateDashboardHero(cached);
+    updateRing(cached.role==='company' ? calcCompanyPercent(cached) : calcCandidatePercent(cached));
+  }
+  const fresh = await fetchFreshUser();
+  if (fresh) {
+    updateDashboardHero(fresh);
+    updateRing(fresh.role==='company' ? calcCompanyPercent(fresh) : calcCandidatePercent(fresh));
+  }
 }
