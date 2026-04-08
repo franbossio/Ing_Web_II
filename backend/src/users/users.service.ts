@@ -35,6 +35,8 @@ export class UsersService implements OnModuleInit {
         role: 'candidate' as UserRole,
         firstName: 'Juan',
         lastName: 'Pérez',
+        // Arrays vacíos para que el perfil empiece limpio
+        skills: [], softSkills: [], languages: [], experience: [], education: [],
         isActive: true,
       },
       {
@@ -56,7 +58,6 @@ export class UsersService implements OnModuleInit {
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    // Traer passwordHash explícitamente (tiene select: false en la entity)
     return this.repo
       .createQueryBuilder('user')
       .addSelect('user.passwordHash')
@@ -70,19 +71,17 @@ export class UsersService implements OnModuleInit {
     return this.sanitize(user);
   }
 
-  // ─── Actualizar perfil ───────────────────────────────────────────
   async update(id: string, dto: UpdateUserDto): Promise<SafeUser> {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Iteramos explícitamente para que "" y null también se guarden.
-    // Object.assign descarta undefined pero sí pisa con "" y null.
+    // Mergear campo por campo — arrays siempre se reemplazan (incluso vacíos)
+    // ya que el frontend manda el estado actual completo del formulario
     for (const [key, value] of Object.entries(dto)) {
       if (value !== undefined) {
         (user as any)[key] = value;
       }
     }
-    user.updatedAt = new Date();
 
     const saved = await this.repo.save(user);
     return this.sanitize(saved);
@@ -107,6 +106,8 @@ export class UsersService implements OnModuleInit {
       firstName: data.firstName,
       lastName: data.lastName,
       companyName: data.companyName,
+      // Empezar con arrays vacíos — el usuario los llena desde el perfil
+      skills: [], softSkills: [], languages: [], experience: [], education: [],
       isActive: true,
     });
     const saved = await this.repo.save(newUser);
