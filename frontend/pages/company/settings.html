@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuración — CONECTA IA Empresa</title>
+  <title>Configuración — TalentAI Empresa</title>
   <link rel="stylesheet" href="../../css/global.css" />
   <link rel="stylesheet" href="../../css/company.css" />
 
@@ -105,10 +105,10 @@
 
     <div class="sidebar-company">
       <div class="company-badge">
-        <div class="company-avatar">AC</div>
+        <div class="company-avatar" id="sidebar-avatar">AC</div>
         <div class="company-info">
-          <div class="company-name">Acme Corp S.A.</div>
-          <div class="company-role">Empresa</div>
+          <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
+          <div class="company-role" id="sidebar-role">Empresa</div>
         </div>
       </div>
     </div>
@@ -178,7 +178,7 @@
                 <div class="form-grid" style="margin-bottom:18px;">
                   <div class="form-group">
                     <label>Nombre de la empresa *</label>
-                    <input type="text" id="companyName" value="Acme Corp S.A." />
+                    <input type="text" id="companyName" value="" />
                   </div>
                   <div class="form-group">
                     <label>Industria</label>
@@ -193,7 +193,7 @@
                   </div>
                   <div class="form-group">
                     <label>Tamaño de la empresa</label>
-                    <select>
+                    <select id="companySize">
                       <option>1-10 empleados</option>
                       <option selected>11-50 empleados</option>
                       <option>51-200 empleados</option>
@@ -203,19 +203,19 @@
                   </div>
                   <div class="form-group">
                     <label>Ubicación</label>
-                    <input type="text" id="location" value="Buenos Aires, Argentina" />
+                    <input type="text" id="location" value="" />
                   </div>
                   <div class="form-group">
                     <label>Sitio web</label>
-                    <input type="url" id="website" value="https://acmecorp.com" />
+                    <input type="url" id="website" value="" />
                   </div>
                   <div class="form-group">
                     <label>LinkedIn</label>
-                    <input type="url" placeholder="linkedin.com/company/..." value="linkedin.com/company/acmecorp" />
+                    <input type="url" id="linkedin" placeholder="linkedin.com/company/..." value="" />
                   </div>
                   <div class="form-group col-span-2">
                     <label>Descripción de la empresa</label>
-                    <textarea rows="4" id="bio">Acme Corp es una empresa de tecnología especializada en soluciones digitales para el sector financiero. Fundada en 2018, contamos con más de 40 empleados distribuidos en Argentina y Uruguay.</textarea>
+                    <textarea rows="4" id="bio"></textarea>
                   </div>
                 </div>
               </div>
@@ -471,7 +471,7 @@
 
   const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (_u) updateDashboardHero(_u);
-  initProfile();
+  await initProfile();
 
   // Sobreescribir saveSettings para llamar al backend real
   window.saveSettings = async function(btn) {
@@ -482,6 +482,7 @@
       const data = readCompanyForm();
       const updated = await saveProfile(data);
       const pct = calcCompanyPercent(updated);
+      updateDashboardHero(updated);
       showAlert(`✓ Configuración guardada — perfil al ${pct}%`);
     } catch (err) {
       showAlert('✗ ' + err.message, 'error');

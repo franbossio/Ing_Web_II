@@ -79,10 +79,10 @@
 
     <div class="sidebar-company">
       <div class="company-badge">
-        <div class="company-avatar">AC</div>
+        <div class="company-avatar" id="sidebar-avatar">AC</div>
         <div class="company-info">
-          <div class="company-name">Acme Corp S.A.</div>
-          <div class="company-role">Empresa</div>
+          <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
+          <div class="company-role" id="sidebar-role">Empresa</div>
         </div>
       </div>
     </div>
@@ -287,6 +287,7 @@
     </div>
   </main>
 </div>
+<script src="../../js/profile.js"></script>
 <script type="module">
   import { logout } from '../../js/auth.js';
   import { updateDashboardHero } from '../../js/profile.js';

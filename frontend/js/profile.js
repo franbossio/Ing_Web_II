@@ -125,7 +125,8 @@ export function readCompanyForm() {
   const get    = id => document.getElementById(id)?.value?.trim() || null;
   const getSel = id => {
     const el = document.getElementById(id);
-    return el?.options[el?.selectedIndex]?.text || null;
+    if (!el) return null;
+    return el.options[el.selectedIndex]?.value || el.options[el.selectedIndex]?.text || null;
   };
   return {
     companyName: get('companyName'),
@@ -285,6 +286,12 @@ export function fillProfileForm(u) {
     fillEducation(u.education   || []);
     fillLanguages(u.languages   || []);
   } else {
+    // Empresa — limpiar primero para no mostrar hardcodeados
+    const compFields = ['companyName','location','website','linkedin','bio'];
+    compFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
     setVal('companyName', u.companyName);
     setVal('industry',    u.industry);
     setVal('companySize', u.companySize);
@@ -292,6 +299,11 @@ export function fillProfileForm(u) {
     setVal('website',     u.website);
     setVal('linkedin',    u.linkedin);
     setVal('bio',         u.bio);
+    // Actualizar nombre en el logo info
+    const logoName = document.querySelector('.logo-info-name');
+    if (logoName && u.companyName) logoName.textContent = u.companyName;
+    const logoSub = document.querySelector('.logo-info-sub');
+    if (logoSub && u.location) logoSub.textContent = u.location;
   }
 }
 
