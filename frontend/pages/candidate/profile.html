@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Perfil — CONECTA IA</title>
+  <title>Mi Perfil — TalentAI</title>
   <link rel="stylesheet" href="../../css/global.css" />
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/profile.css" />
@@ -300,13 +300,6 @@
             <div class="form-section">
               <div class="form-section-title">💻 Habilidades técnicas</div>
               <div class="tags-input-wrapper" id="tech-wrapper">
-                <span class="tag-pill">React <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">Node.js <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">TypeScript <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">PostgreSQL <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">Docker <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">Git <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">REST APIs <button class="tag-remove" onclick="removeTag(this)">×</button></span>
                 <input class="tags-input" id="tech-input" placeholder="Agregá una tecnología y presioná Enter..." />
               </div>
             </div>
@@ -314,9 +307,6 @@
             <div class="form-section">
               <div class="form-section-title">🤝 Habilidades blandas</div>
               <div class="tags-input-wrapper" id="soft-wrapper">
-                <span class="tag-pill">Trabajo en equipo <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">Comunicación <button class="tag-remove" onclick="removeTag(this)">×</button></span>
-                <span class="tag-pill">Resolución de problemas <button class="tag-remove" onclick="removeTag(this)">×</button></span>
                 <input class="tags-input" id="soft-input" placeholder="Agregá una habilidad y presioná Enter..." />
               </div>
             </div>
@@ -434,15 +424,10 @@
     setTimeout(() => el.classList.remove('visible'), 3000);
   }
 
+  // saveSection es definida por el módulo ES6 más abajo
+  // Esta función vacía evita errores si el módulo tarda en cargar
   function saveSection(section) {
-    const btn = event.target;
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '💾 Guardar cambios';
-      showAlert('✓ Cambios guardados correctamente.');
-    }, 900);
+    showAlert('⏳ Iniciando...'); 
   }
 
   // ── Add experience ────────────────────────────────
@@ -625,36 +610,82 @@
 </script>
 <script type="module">
   import { logout } from '../../js/auth.js';
-  import { initProfile, readCandidateForm, saveProfile, calcCandidatePercent, updateDashboardHero, refreshUI } from '../../js/profile.js';
+  import {
+    initProfile,
+    readCandidateForm,
+    saveProfile,
+    calcCandidatePercent,
+    updateDashboardHero,
+    refreshUI,
+  } from '../../js/profile.js';
 
   window.cerrarSesion = logout;
 
-  // Actualizar sidebar y cargar datos
+  // Cargar datos al inicio
   const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (_u) updateDashboardHero(_u);
   await initProfile();
+
   // Mostrar estado del CV con datos frescos
   const _fresh = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-  renderCvState(_fresh);
+  if (_fresh) renderCvState(_fresh);
 
-  // Guardar sección — lee TODOS los datos del formulario (personal + exp + edu + skills + idiomas)
+  // ── saveSection: guarda SOLO los datos de la sección activa ──────────
+  // IMPORTANTE: NO llama fillProfileForm después de guardar para no
+  // borrar lo que el usuario recién ingresó en otras secciones.
   window.saveSection = async function(section) {
-    const btn = event.target;
+    const btn  = event.target;
     const orig = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...';
+
     try {
-      const data = readCandidateForm();
+      let data = {};
+
+      if (section === 'personal') {
+        // Solo los campos personales
+        const f = readCandidateForm();
+        data = {
+          firstName:    f.firstName,
+          lastName:     f.lastName,
+          phone:        f.phone,
+          jobTitle:     f.jobTitle,
+          location:     f.location,
+          bio:          f.bio,
+          linkedin:     f.linkedin,
+          github:       f.github,
+          portfolio:    f.portfolio,
+          salary:       f.salary,
+          availability: f.availability,
+          modality:     f.modality,
+        };
+      } else if (section === 'experience') {
+        const f = readCandidateForm();
+        data = { experience: f.experience };
+      } else if (section === 'education') {
+        const f = readCandidateForm();
+        data = { education: f.education };
+      } else if (section === 'skills') {
+        const f = readCandidateForm();
+        data = {
+          skills:     f.skills,
+          softSkills: f.softSkills,
+          languages:  f.languages,
+        };
+      }
+
       const updated = await saveProfile(data);
-      const pct = calcCandidatePercent(updated);
-      // refreshUI actualiza badges/steps/sidebar SIN tocar el DOM del formulario
-      // Así no se borra lo que el usuario acaba de ingresar
+      const pct     = calcCandidatePercent(updated);
+
+      // refreshUI actualiza badges, steps y sidebar
+      // SIN tocar los inputs/listas del formulario
       refreshUI(updated);
-      showAlert(`✓ Guardado — perfil al ${pct}%`);
+      showAlert(`✓ Guardado correctamente — perfil al ${pct}%`);
+
     } catch (err) {
-      showAlert('✗ ' + err.message, 'error');
+      showAlert('✗ ' + (err.message || 'Error al guardar'), 'error');
     } finally {
-      btn.disabled = false;
+      btn.disabled  = false;
       btn.innerHTML = orig;
     }
   };

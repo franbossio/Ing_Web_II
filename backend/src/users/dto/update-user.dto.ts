@@ -1,4 +1,5 @@
 import { IsOptional, IsString, IsNumber, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateUserDto {
   @IsOptional() @IsString() firstName?: string;
@@ -10,21 +11,28 @@ export class UpdateUserDto {
   @IsOptional() @IsString() linkedin?: string;
   @IsOptional() @IsString() github?: string;
   @IsOptional() @IsString() portfolio?: string;
-  @IsOptional() @IsNumber() salary?: number;
+  @IsOptional() @IsNumber() @Type(() => Number) salary?: number;
   @IsOptional() @IsString() availability?: string;
   @IsOptional() @IsString() modality?: string;
-  @IsOptional() @IsArray()  skills?: string[];
-  @IsOptional() @IsArray()  softSkills?: string[];
-  @IsOptional() @IsArray()  languages?: any[];
-  @IsOptional() @IsArray()  experience?: any[];
-  @IsOptional() @IsArray()  education?: any[];
+
+  // Arrays de strings
+  @IsOptional() @IsArray() skills?: string[];
+  @IsOptional() @IsArray() softSkills?: string[];
+
+  // Arrays de objetos — usar any[] sin validación anidada
+  // para que el ValidationPipe no los filtre
+  @IsOptional() experience?: any[];
+  @IsOptional() education?: any[];
+  @IsOptional() languages?: any[];
+
   // Company
   @IsOptional() @IsString() companyName?: string;
   @IsOptional() @IsString() industry?: string;
   @IsOptional() @IsString() companySize?: string;
   @IsOptional() @IsString() website?: string;
-  // CV — cvData guarda el PDF en base64
+
+  // CV
   @IsOptional() @IsString() cvFileName?: string;
-  @IsOptional() @IsString() cvUrl?: string;      // base64 data URL
+  @IsOptional() @IsString() cvUrl?: string;
   @IsOptional() @IsString() cvAnalysis?: string;
 }

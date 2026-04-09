@@ -1,6 +1,5 @@
 import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -9,11 +8,11 @@ import { Roles } from '../common/decorators/roles.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  /** PATCH /api/users/me — actualizar perfil del usuario autenticado */
+  /** PATCH /api/users/me */
   @Patch('me')
   @UseGuards(JwtAuthGuard)
-  async updateMe(@Request() req, @Body() dto: UpdateUserDto) {
-    return this.usersService.update(req.user.id, dto);
+  async updateMe(@Request() req, @Body() body: any) {
+    return this.usersService.update(req.user.id, body);
   }
 
   /** GET /api/users — solo admin */

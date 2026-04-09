@@ -1,8 +1,5 @@
 import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-  OnModuleInit,
+  Injectable, ConflictException, NotFoundException, OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -30,29 +27,18 @@ export class UsersService implements OnModuleInit {
     const password = await bcrypt.hash('Test1234!', 10);
     await this.repo.save([
       {
-        email: 'candidate@test.com',
-        passwordHash: password,
-        role: 'candidate' as UserRole,
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        // Arrays vacíos para que el perfil empiece limpio
+        email: 'candidate@test.com', passwordHash: password,
+        role: 'candidate' as UserRole, firstName: 'Juan', lastName: 'Pérez',
         skills: [], softSkills: [], languages: [], experience: [], education: [],
         isActive: true,
       },
       {
-        email: 'company@test.com',
-        passwordHash: password,
-        role: 'company' as UserRole,
-        companyName: 'Acme S.A.',
-        isActive: true,
+        email: 'company@test.com', passwordHash: password,
+        role: 'company' as UserRole, companyName: 'Acme S.A.', isActive: true,
       },
       {
-        email: 'admin@test.com',
-        passwordHash: password,
-        role: 'admin' as UserRole,
-        firstName: 'Admin',
-        lastName: 'TalentAI',
-        isActive: true,
+        email: 'admin@test.com', passwordHash: password,
+        role: 'admin' as UserRole, firstName: 'Admin', lastName: 'TalentAI', isActive: true,
       },
     ]);
   }
@@ -71,42 +57,44 @@ export class UsersService implements OnModuleInit {
     return this.sanitize(user);
   }
 
-  async update(id: string, dto: UpdateUserDto): Promise<SafeUser> {
+  async update(id: string, body: any): Promise<SafeUser> {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Mergear campo por campo — arrays siempre se reemplazan (incluso vacíos)
-    // ya que el frontend manda el estado actual completo del formulario
-    for (const [key, value] of Object.entries(dto)) {
-      if (value !== undefined) {
-        (user as any)[key] = value;
+    // Campos permitidos para actualizar
+    const allowed = [
+      'firstName','lastName','phone','jobTitle','location','bio',
+      'linkedin','github','portfolio','salary','availability','modality',
+      'skills','softSkills','experience','education','languages',
+      'companyName','industry','companySize','website',
+      'cvFileName','cvUrl','cvAnalysis',
+    ];
+
+    for (const key of allowed) {
+      if (body[key] !== undefined) {
+        (user as any)[key] = body[key];
       }
     }
+
+    console.log(`📝 Actualizando usuario ${id}:`);
+    console.log(`   experience: ${JSON.stringify(body.experience)?.substring(0,80)}`);
+    console.log(`   education: ${JSON.stringify(body.education)?.substring(0,80)}`);
+    console.log(`   skills: ${JSON.stringify(body.skills)?.substring(0,80)}`);
 
     const saved = await this.repo.save(user);
     return this.sanitize(saved);
   }
 
   async create(data: {
-    email: string;
-    password: string;
-    role: UserRole;
-    firstName?: string;
-    lastName?: string;
-    companyName?: string;
+    email: string; password: string; role: UserRole;
+    firstName?: string; lastName?: string; companyName?: string;
   }): Promise<SafeUser> {
     const exists = await this.findByEmail(data.email);
     if (exists) throw new ConflictException('Ya existe una cuenta con ese correo electrónico');
-
     const passwordHash = await bcrypt.hash(data.password, 10);
     const newUser = this.repo.create({
-      email: data.email.toLowerCase().trim(),
-      passwordHash,
-      role: data.role,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      companyName: data.companyName,
-      // Empezar con arrays vacíos — el usuario los llena desde el perfil
+      email: data.email.toLowerCase().trim(), passwordHash, role: data.role,
+      firstName: data.firstName, lastName: data.lastName, companyName: data.companyName,
       skills: [], softSkills: [], languages: [], experience: [], education: [],
       isActive: true,
     });
