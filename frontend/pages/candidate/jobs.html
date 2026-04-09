@@ -17,7 +17,7 @@
        SIDEBAR
   ══════════════════════════════════════════ -->
   <aside class="sidebar">
-    <a href="../../index.html" class="logo-container">
+    <a href="dashboard.html" class="logo-container">
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
         </div>
     </a>
@@ -673,11 +673,32 @@
   import { logout } from '../../js/auth.js';
   import { updateDashboardHero } from '../../js/profile.js';
 
-  window.cerrarSesion = logout;
+  window.cerrarSesion = function(event) {
+    if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+    
+    // El navegador mostrará una alerta genérica preguntando esto:
+    const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+    
+    if (seguro) {
+      logout(); // Si hace clic en "Aceptar", cierra la sesión
+    }
+  }
 
   // Actualizar sidebar con datos reales del usuario
   const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (u) updateDashboardHero(u);
 </script>
+
+<div id="modal-logout" class="modal-overlay">
+  <div class="modal-content">
+    <h3>Cerrar sesión</h3>
+    <p>¿Estás seguro de que deseas salir de tu cuenta?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarCartelLogout()">Cancelar</button>
+      <button class="btn" style="background: var(--clr-error); color: white;" onclick="confirmarLogout()">Sí, salir</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
