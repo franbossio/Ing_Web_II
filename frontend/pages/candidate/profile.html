@@ -17,17 +17,17 @@
        SIDEBAR
   ══════════════════════════════════════════ -->
   <aside class="sidebar">
-    <a href="../../index.html" class="logo-container">
+    <a href="#" onclick="cerrarSesion()" class="nav-item">Cerrar sesión
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
         </div>
     </a>
 
     <div class="sidebar-profile">
       <div class="profile-badge">
-        <div class="profile-avatar">JP</div>
+        <div class="profile-avatar" id="sidebar-avatar">JP</div>
         <div class="profile-info">
-          <div class="profile-name">Juan Pérez</div>
-          <div class="profile-role">Candidato</div>
+          <div class="profile-name" id="sidebar-name">Juan Pérez</div>
+          <div class="profile-role" id="sidebar-role">Candidato</div>
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <a href="../../pages/login.html" class="nav-item">
+      <a href="#" onclick="cerrarSesion()" class="nav-item">
         <span class="nav-icon">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
         </span> Cerrar sesión
@@ -119,7 +119,7 @@
               <div class="panel-title">Información personal</div>
               <div class="panel-subtitle">Datos básicos de tu perfil público</div>
             </div>
-            <span class="badge badge-green">✓ Completado</span>
+            <span class="badge badge-green" id="badge-personal">✓ Completado</span>
           </div>
           <div class="panel-body">
 
@@ -237,84 +237,10 @@
               <div class="panel-title">Experiencia laboral</div>
               <div class="panel-subtitle">Tus trabajos anteriores y actuales</div>
             </div>
-            <span class="badge badge-green">✓ 2 cargadas</span>
+            <span class="badge badge-gold" id="badge-experience">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
             <div class="exp-list" id="exp-list">
-
-              <div class="exp-item">
-                <div class="exp-item-header">
-                  <div>
-                    <div class="exp-item-title">Full Stack Developer</div>
-                    <div class="exp-item-sub">🏢 TechSolutions · Ene 2023 – Presente · 2 años</div>
-                  </div>
-                  <div class="exp-item-actions">
-                    <button class="exp-action-btn">✏️ Editar</button>
-                    <button class="exp-action-btn danger">🗑</button>
-                  </div>
-                </div>
-                <div class="form-grid" style="margin-bottom:14px;">
-                  <div class="form-group">
-                    <label>Cargo</label>
-                    <input type="text" value="Full Stack Developer" />
-                  </div>
-                  <div class="form-group">
-                    <label>Empresa</label>
-                    <input type="text" value="TechSolutions" />
-                  </div>
-                  <div class="form-group">
-                    <label>Fecha inicio</label>
-                    <input type="month" value="2023-01" />
-                  </div>
-                  <div class="form-group">
-                    <label>Fecha fin</label>
-                    <input type="month" placeholder="Presente" disabled />
-                    <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;margin-top:6px;cursor:pointer;">
-                      <input type="checkbox" checked onchange="this.closest('.form-group').querySelector('input[type=month]').disabled=this.checked" />
-                      Trabajo actual
-                    </label>
-                  </div>
-                  <div class="form-group col-span-2">
-                    <label>Descripción</label>
-                    <textarea rows="3">Desarrollo de aplicaciones web con React y Node.js. Integración con APIs REST y bases de datos PostgreSQL. Trabajo en equipo ágil con metodología Scrum.</textarea>
-                  </div>
-                </div>
-              </div>
-
-              <div class="exp-item">
-                <div class="exp-item-header">
-                  <div>
-                    <div class="exp-item-title">Frontend Developer Jr.</div>
-                    <div class="exp-item-sub">🚀 StartupABC · Mar 2021 – Dic 2022 · 1 año 9 meses</div>
-                  </div>
-                  <div class="exp-item-actions">
-                    <button class="exp-action-btn">✏️ Editar</button>
-                    <button class="exp-action-btn danger">🗑</button>
-                  </div>
-                </div>
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label>Cargo</label>
-                    <input type="text" value="Frontend Developer Jr." />
-                  </div>
-                  <div class="form-group">
-                    <label>Empresa</label>
-                    <input type="text" value="StartupABC" />
-                  </div>
-                  <div class="form-group">
-                    <label>Fecha inicio</label>
-                    <input type="month" value="2021-03" />
-                  </div>
-                  <div class="form-group">
-                    <label>Fecha fin</label>
-                    <input type="month" value="2022-12" />
-                  </div>
-                  <div class="form-group col-span-2">
-                    <label>Descripción</label>
-                    <textarea rows="3">Desarrollo de interfaces con React y CSS. Colaboración en el diseño de componentes reutilizables y optimización de performance.</textarea>
-                  </div>
-                </div>
-              </div>
 
             </div>
 
@@ -339,49 +265,10 @@
               <div class="panel-title">Educación</div>
               <div class="panel-subtitle">Tu formación académica</div>
             </div>
-            <span class="badge badge-gold">! Pendiente</span>
+            <span class="badge badge-gold" id="badge-education">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
             <div class="exp-list" id="edu-list">
-
-              <div class="exp-item">
-                <div class="exp-item-header">
-                  <div>
-                    <div class="exp-item-title">Ingeniería en Sistemas de Información</div>
-                    <div class="exp-item-sub">🎓 UTN — Facultad Regional Buenos Aires · 2018 – 2023</div>
-                  </div>
-                  <div class="exp-item-actions">
-                    <button class="exp-action-btn">✏️ Editar</button>
-                    <button class="exp-action-btn danger">🗑</button>
-                  </div>
-                </div>
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label>Título / Carrera</label>
-                    <input type="text" value="Ingeniería en Sistemas de Información" />
-                  </div>
-                  <div class="form-group">
-                    <label>Institución</label>
-                    <input type="text" value="UTN — Facultad Regional Buenos Aires" />
-                  </div>
-                  <div class="form-group">
-                    <label>Año inicio</label>
-                    <input type="number" value="2018" min="1990" max="2030" />
-                  </div>
-                  <div class="form-group">
-                    <label>Año fin</label>
-                    <input type="number" value="2023" min="1990" max="2030" />
-                  </div>
-                  <div class="form-group">
-                    <label>Estado</label>
-                    <select>
-                      <option selected>Graduado</option>
-                      <option>En curso</option>
-                      <option>Incompleto</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
 
             </div>
 
@@ -406,7 +293,7 @@
               <div class="panel-title">Habilidades y herramientas</div>
               <div class="panel-subtitle">La IA las usa para matchearte con ofertas relevantes</div>
             </div>
-            <span class="badge badge-blue">🤖 Usado por IA</span>
+            <span class="badge badge-gold" id="badge-skills">⚠ Incompleto</span>
           </div>
           <div class="panel-body">
 
@@ -437,20 +324,7 @@
             <div class="form-section">
               <div class="form-section-title">🌍 Idiomas</div>
               <div class="lang-list" id="lang-list">
-                <div class="lang-row">
-                  <span class="lang-name">🇦🇷 Español</span>
-                  <div class="lang-level">
-                    <select><option selected>Nativo</option><option>Avanzado</option><option>Intermedio</option><option>Básico</option></select>
-                  </div>
-                  <button class="lang-remove" title="Eliminar">×</button>
-                </div>
-                <div class="lang-row">
-                  <span class="lang-name">🇺🇸 Inglés</span>
-                  <div class="lang-level">
-                    <select><option>Nativo</option><option selected>Avanzado</option><option>Intermedio</option><option>Básico</option></select>
-                  </div>
-                  <button class="lang-remove" title="Eliminar">×</button>
-                </div>
+
               </div>
               <button class="add-item-btn" id="add-lang-btn">➕ Agregar idioma</button>
             </div>
@@ -471,67 +345,38 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">Mi currículum</div>
-              <div class="panel-subtitle">Subí tu CV en PDF para que la IA lo analice</div>
+              <div class="panel-subtitle">Subí tu CV en PDF para guardarlo en tu perfil</div>
             </div>
-            <span class="badge badge-green">✓ CV cargado</span>
+            <span class="badge badge-gold" id="badge-cv">⚠ Sin CV</span>
           </div>
           <div class="panel-body">
 
-            <!-- CV actual -->
-            <div class="cv-current">
+            <!-- CV guardado (se muestra cuando hay CV) -->
+            <div class="cv-current" id="cv-current" style="display:none;">
               <span class="cv-file-icon">📄</span>
               <div style="flex:1;">
-                <div class="cv-file-name">CV_Juan_Perez_2026.pdf</div>
-                <div class="cv-file-meta">Subido el 10 mar 2026 · 1.2 MB · Analizado por IA ✓</div>
+                <div class="cv-file-name" id="cv-file-name">—</div>
+                <div class="cv-file-meta" id="cv-file-meta">—</div>
               </div>
               <div class="cv-file-actions">
-                <a href="#" class="icon-btn" style="font-size:0.8rem;">⬇ Descargar</a>
+                <a id="cv-download-btn" href="#" class="icon-btn" style="font-size:0.8rem;" download>⬇ Descargar</a>
                 <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="removeCv()">🗑 Eliminar</button>
               </div>
             </div>
 
-            <!-- Drop area para reemplazar -->
+            <!-- Drop area (siempre visible para subir/reemplazar) -->
             <div class="cv-drop-area" id="drop-area"
               onclick="document.getElementById('cv-input').click()"
               ondragover="event.preventDefault();this.classList.add('drag-over')"
               ondragleave="this.classList.remove('drag-over')"
               ondrop="handleDrop(event)">
               <span class="cv-drop-icon">📤</span>
-              <div class="cv-drop-title">Reemplazar CV</div>
+              <div class="cv-drop-title" id="drop-title">Subir CV</div>
               <div class="cv-drop-sub">Arrastrá tu archivo acá o hacé clic para seleccionar</div>
               <button class="btn btn-ghost" style="pointer-events:none;">Seleccionar archivo</button>
               <div class="cv-drop-formats">Formatos aceptados: PDF · Máximo 5 MB</div>
             </div>
             <input type="file" id="cv-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
-
-            <!-- Resultado análisis IA -->
-            <div class="ai-result" id="ai-result">
-              <div class="ai-result-header">
-                <div class="ai-result-title">🤖 Análisis de IA — completado</div>
-                <div class="ai-result-date">Analizado el 10 mar 2026</div>
-              </div>
-              <div class="ai-tags">
-                <span class="ai-tag">React</span>
-                <span class="ai-tag">Node.js</span>
-                <span class="ai-tag">TypeScript</span>
-                <span class="ai-tag">PostgreSQL</span>
-                <span class="ai-tag">Docker</span>
-                <span class="ai-tag">Git</span>
-                <span class="ai-tag">REST APIs</span>
-                <span class="ai-tag">Scrum</span>
-              </div>
-              <div class="ai-summary-text">
-                "Desarrollador con sólida experiencia en stack MERN y TypeScript.
-                Demuestra capacidad para trabajar en proyectos de escala media-alta
-                con foco en buenas prácticas, código limpio y metodologías ágiles.
-                Perfil orientado al backend con conocimientos de frontend."
-              </div>
-              <div class="ai-reanalyze">
-                <button class="btn btn-ghost" style="font-size:0.82rem;padding:8px 16px;" onclick="reanalyze()">
-                  🔄 Re-analizar con IA
-                </button>
-              </div>
-            </div>
 
           </div>
         </div>
@@ -671,6 +516,33 @@
   });
 
   // ── CV upload ─────────────────────────────────────
+
+  // Mostrar/ocultar sección de CV según si hay archivo guardado
+  function renderCvState(user) {
+    const current   = document.getElementById('cv-current');
+    const nameEl    = document.getElementById('cv-file-name');
+    const metaEl    = document.getElementById('cv-file-meta');
+    const downloadBtn = document.getElementById('cv-download-btn');
+    const dropTitle = document.getElementById('drop-title');
+
+    if (user && user.cvFileName && user.cvUrl) {
+      // Hay CV guardado → mostrar info y botón descargar
+      if (current)   current.style.display = 'flex';
+      if (nameEl)    nameEl.textContent = user.cvFileName;
+      if (metaEl)    metaEl.textContent = `Guardado en tu perfil · PDF`;
+      if (dropTitle) dropTitle.textContent = 'Reemplazar CV';
+      // Configurar botón de descarga con el base64
+      if (downloadBtn) {
+        downloadBtn.href     = user.cvUrl;
+        downloadBtn.download = user.cvFileName;
+      }
+    } else {
+      // No hay CV
+      if (current)   current.style.display = 'none';
+      if (dropTitle) dropTitle.textContent = 'Subir CV';
+    }
+  }
+
   function handleFileSelect(input) {
     if (input.files[0]) processFile(input.files[0]);
   }
@@ -681,25 +553,111 @@
     if (file && file.type === 'application/pdf') processFile(file);
     else showAlert('Solo se aceptan archivos PDF.', 'error');
   }
-  function processFile(file) {
+
+  async function processFile(file) {
     if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
-    const name = document.querySelector('.cv-file-name');
-    const meta = document.querySelector('.cv-file-meta');
-    if (name) name.textContent = file.name;
-    if (meta) meta.textContent = `Subido ahora · ${(file.size/1024/1024).toFixed(1)} MB · Analizando con IA...`;
-    showAlert('✓ CV cargado. La IA lo está analizando...');
-    setTimeout(() => {
-      if (meta) meta.textContent = meta.textContent.replace('Analizando con IA...', 'Analizado por IA ✓');
-      showAlert('🤖 Análisis de IA completado.');
-    }, 2500);
+
+    showAlert('⏳ Guardando CV...');
+
+    // Convertir PDF a base64
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const base64 = e.target.result; // data:application/pdf;base64,....
+
+      try {
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const res = await fetch('http://localhost:3001/api/users/me', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            cvFileName: file.name,
+            cvUrl:      base64,
+          }),
+        });
+
+        if (!res.ok) throw new Error('Error al guardar el CV');
+
+        const updated = await res.json();
+        // Guardar en localStorage
+        localStorage.setItem('talentai_user', JSON.stringify(updated));
+
+        // Actualizar UI
+        renderCvState(updated);
+        showAlert('✓ CV guardado correctamente');
+
+        // Refrescar badge y steps
+        const { refreshUI } = await import('../../js/profile.js');
+        refreshUI(updated);
+
+      } catch(err) {
+        showAlert('✗ ' + err.message, 'error');
+      }
+    };
+    reader.readAsDataURL(file);
   }
-  function removeCv() {
-    if (confirm('¿Seguro que querés eliminar tu CV?')) showAlert('CV eliminado.', 'error');
+
+  async function removeCv() {
+    if (!confirm('¿Seguro que querés eliminar tu CV?')) return;
+    try {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const res = await fetch('http://localhost:3001/api/users/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cvFileName: null, cvUrl: null }),
+      });
+      if (!res.ok) throw new Error('Error al eliminar el CV');
+      const updated = await res.json();
+      localStorage.setItem('talentai_user', JSON.stringify(updated));
+      renderCvState(updated);
+      showAlert('CV eliminado', 'error');
+      const { refreshUI } = await import('../../js/profile.js');
+      refreshUI(updated);
+    } catch(err) {
+      showAlert('✗ ' + err.message, 'error');
+    }
   }
-  function reanalyze() {
-    showAlert('🤖 Re-analizando CV con IA...');
-    setTimeout(() => showAlert('✓ Análisis actualizado correctamente.'), 2000);
-  }
+</script>
+<script type="module">
+  import { logout } from '../../js/auth.js';
+  import { initProfile, readCandidateForm, saveProfile, calcCandidatePercent, updateDashboardHero, refreshUI } from '../../js/profile.js';
+
+  window.cerrarSesion = logout;
+
+  // Actualizar sidebar y cargar datos
+  const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+  if (_u) updateDashboardHero(_u);
+  await initProfile();
+  // Mostrar estado del CV con datos frescos
+  const _fresh = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+  renderCvState(_fresh);
+
+  // Guardar sección — lee TODOS los datos del formulario (personal + exp + edu + skills + idiomas)
+  window.saveSection = async function(section) {
+    const btn = event.target;
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;"></div> Guardando...';
+    try {
+      const data = readCandidateForm();
+      const updated = await saveProfile(data);
+      const pct = calcCandidatePercent(updated);
+      // refreshUI actualiza badges/steps/sidebar SIN tocar el DOM del formulario
+      // Así no se borra lo que el usuario acaba de ingresar
+      refreshUI(updated);
+      showAlert(`✓ Guardado — perfil al ${pct}%`);
+    } catch (err) {
+      showAlert('✗ ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  };
 </script>
 </body>
 </html>

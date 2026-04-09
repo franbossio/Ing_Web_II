@@ -15,7 +15,7 @@
        SIDEBAR
   ══════════════════════════════════════════ -->
   <aside class="sidebar">
-    <a href="../../index.html" class="logo-container">
+    <a href="#" onclick="cerrarSesion()" class="nav-item">Cerrar sesión
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
         </div>
     </a>
@@ -46,7 +46,7 @@
     
 
     <div class="sidebar-footer">
-      <a href="../../pages/login.html" class="nav-item">
+      <a href="#" onclick="cerrarSesion()" class="nav-item">
         <span class="nav-icon">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
         </span> Cerrar sesión
@@ -381,5 +381,14 @@
 
 </div><!-- /app-layout -->
 <script src="../../js/rutaDeAcceso.js"></script>
+<script type="module">
+  import { logout } from '../../js/auth.js';
+  import { initDashboard } from '../../js/profile.js';
+
+  window.cerrarSesion = logout;
+
+  // Actualizar hero y ring con datos reales del usuario
+  initDashboard();
+</script>
 </body>
 </html>

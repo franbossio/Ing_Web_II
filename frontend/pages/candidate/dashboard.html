@@ -22,13 +22,13 @@
 
     <div class="sidebar-profile">
       <div class="profile-badge">
-        <div class="profile-avatar">JP</div>
+        <div class="profile-avatar" id="sidebar-avatar">JP</div>
         <div class="profile-info">
-          <div class="profile-name">Juan Pérez</div>
-          <div class="profile-role">Candidato</div>
+          <div class="profile-name" id="sidebar-name">Juan Pérez</div>
+          <div class="profile-role" id="sidebar-role">Candidato</div>
+        </div>
         </div>
       </div>
-    </div>
 
     <nav class="sidebar-nav">
       <span class="nav-section-label">Principal</span>
@@ -44,7 +44,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <a href="../../pages/login.html" class="nav-item">
+     <a href="#" onclick="cerrarSesion()" class="nav-item">Cerrar sesión
         <span class="nav-icon">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
         </span> Cerrar sesión
@@ -404,6 +404,18 @@
   </main>
 
 </div><!-- /app-layout -->
+<script type="module">
+  import { logout } from '../../js/auth.js';
+  import { initDashboard } from '../../js/profile.js';
 
+  window.cerrarSesion = logout;
+
+  // Esperar a que el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboard);
+  } else {
+    initDashboard();
+  }
+</script>
 </body>
 </html>
