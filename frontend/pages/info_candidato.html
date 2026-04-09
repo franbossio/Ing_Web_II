@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONECTA IA — Plataforma Inteligente de Selección de Personal</title>
+  <meta name="description" content="Conectamos talento con oportunidad mediante inteligencia artificial. Subí tu CV y encontrá el trabajo ideal." />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/landing.css" />
+</head>
+
+<body> 
+      <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+
+  <nav class="navbar" >
+
+    <a href="index.html" class="logo-container" id="navbar">
+            <img src="../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
+            <div> <span class="logo-main-text">CONECTA</span><span class="logo-main-text2">IA</span> </div>
+            <span class="logo-sub-text">Plataforma de IA para reclutamiento & empleo</span>
+        </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Beneficios</a></li>
+      <li><a href="index.html">Para quién</a></li>
+      <li class="nav-item-dropdown">
+        <a href="#how" class="nav-link-dropdown">Cómo funciona <span class="arrow">▾</span></a>
+        
+        <div class="dropdown-menu">
+          <a href="info_candidato.html">Para candidatos</a>
+          <a href="info_empresa.html">Para empresas</a>
+        </div>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="login.html"    class="btn btn-ghost">Iniciar sesión</a>
+      <a href="register.html" class="btn btn-primary">Registrarse</a>
+    </div>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">☰</button>
+  </nav>
+
+    <section class="how-section">
+        <div class="how-inner">
+        <div class="how-header reveal">
+            <div class="section-label">Eficiencia y simplicidad</div>
+            <h2 class="section-title">Solo para <em>candidatos</em></h2>
+            <p class="section-desc">
+            Tres pasos para conectar al candidato ideal con la empresa que lo está buscando.
+            </p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card reveal">
+            <div class="step-number">01</div>
+            <span class="step-icon">
+                <img width="48" height="48" src="https://img.icons8.com/fluency/48/user-male-circle--v1.png" alt="user-male-circle--v1"/>
+            </span>
+            <h3 class="step-title">Cargá tu perfil</h3>
+            <p class="step-desc">
+                Candidatos completan su perfil profesional y suben su CV en PDF.
+                Empresas publican sus ofertas con los requisitos del puesto.
+            </p>
+            </div>
+
+            <div class="step-card reveal" style="transition-delay:0.1s">
+            <div class="step-number">02</div>
+            <span class="step-icon">
+                <img width="48" height="48" src="https://img.icons8.com/fluency/48/bard.png" alt="bard"/>
+            </span>
+            <h3 class="step-title">La IA analiza</h3>
+            <p class="step-desc">
+                Nuestro motor de IA extrae habilidades, experiencia y tecnologías de cada CV,
+                generando un perfil estructurado automáticamente.
+            </p>
+            </div>
+
+            <div class="step-card reveal" style="transition-delay:0.2s">
+            <div class="step-number">03</div>
+            <span class="step-icon">
+                <img width="48" height="48" src="https://img.icons8.com/parakeet/48/offer-hot-price.png" alt="offer-hot-price"/>
+            </span>
+            <h3 class="step-title">Match perfecto</h3>
+            <p class="step-desc">
+                El sistema sugiere los candidatos más compatibles para cada vacante,
+                y recomienda ofertas relevantes a cada candidato.
+            </p>
+            </div>
+        </div>
+        </div>
+    </section>
+
+ <footer>
+    <a href="index.html" class="footer-brand">
+      <span class="footer-brand-name">CONECTA<span>IA</span></span>
+    </a>
+    <span class="footer-copy">© 2026 CONECTA IA — Ingeniería Web II · UNDEF</span>
+    <div class="footer-links">
+      <a href="#">Términos</a>
+      <a href="#">Privacidad</a>
+      <a href="login.html">Iniciar sesión</a>
+    </div>
+  </footer>
+
+<script>
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+
+
+</html>

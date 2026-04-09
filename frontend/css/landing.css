@@ -232,29 +232,6 @@ w
   background: rgba(201,168,76,0.05);
 }
 
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  margin-top: 72px;
-  padding-top: 40px;
-  border-top: 1px solid var(--clr-border);
-  animation: fadeUp 0.5s 0.4s ease both;
-}
-.hero-stat-num {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--clr-accent);
-}
-.hero-stat-label {
-  font-size: 0.78rem;
-  color: var(--clr-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 4px;
-}
-
 /* ─── Section base ───────────────────────────────────────── */
 section { padding: 100px 60px; }
 .section-label {
@@ -281,7 +258,11 @@ section { padding: 100px 60px; }
 }
 
 /* ─── Cómo funciona ──────────────────────────────────────── */
-.how-section { background: var(--clr-surface); }
+.how-section { 
+  padding: 150px 60px 120px; /* Más espacio arriba*/
+  background: var(--clr-surface);
+}
+
 .how-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -534,7 +515,7 @@ section { padding: 100px 60px; }
 
 /* ─── CTA Final ──────────────────────────────────────────── */
 .cta-section {
-  background: var(--clr-bg);
+ 
   text-align: center;
   padding: 120px 60px;
   position: relative;
@@ -613,14 +594,12 @@ footer {
   .steps-grid { grid-template-columns: 1fr; gap: 2px; }
   .features-grid { grid-template-columns: 1fr; }
   .roles-grid { grid-template-columns: 1fr; }
-  .hero-stats { gap: 28px; }
   footer { flex-direction: column; text-align: center; padding: 32px 24px; }
   .cta-section { padding: 80px 24px; }
 }
 @media (max-width: 480px) {
   .hero-cta { flex-direction: column; align-items: center; }
   .hero-cta .btn { width: 100%; max-width: 300px; }
-  .hero-stats { flex-direction: column; gap: 20px; }
 }
 
 /* ============================================ */
@@ -753,3 +732,75 @@ footer {
     padding: 30px 24px;
   }
 }
+
+/* ─── Dropdown Menu ──────────────────────────────────────── */
+
+/* Contenedor principal del enlace */
+.nav-item-dropdown {
+  position: relative;
+  /* El padding ayuda a que el mouse no "pierda" el foco al bajar al menú */
+  padding: 10px 0; 
+}
+
+/* El enlace que siempre se ve */
+.nav-link-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link-dropdown .arrow {
+  font-size: 0.7rem;
+  transition: transform var(--transition);
+}
+
+/* Gira la flecha al pasar el mouse */
+.nav-item-dropdown:hover .nav-link-dropdown .arrow {
+  transform: rotate(180deg);
+  color: var(--clr-accent);
+}
+
+/* La caja del submenú (Oculta por defecto) */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(15px); /* Movido un poco hacia abajo */
+  background: var(--clr-surface); /* Fondo oscuro de tus tarjetas */
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 0;
+  min-width: 170px;
+  box-shadow: var(--shadow-card);
+  
+  /* Truco para ocultarlo con animación suave */
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition);
+  z-index: 1000;
+}
+
+/* Cuando pasas el mouse por el contenedor, el menú aparece */
+.nav-item-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0); /* Sube suavemente a su posición original */
+}
+
+/* Estilos de los enlaces dentro del menú */
+.dropdown-menu a {
+  display: block;
+  padding: 10px 20px;
+  color: var(--clr-muted); /* Gris clarito */
+  font-size: 0.85rem;
+  transition: background var(--transition), color var(--transition);
+  text-align: left; /* Alineamos a la izquierda para mejor lectura */
+}
+
+/* Efecto hover en las opciones del menú */
+.dropdown-menu a:hover {
+  background: rgba(201, 168, 76, 0.08); /* Fondo dorado casi transparente */
+  color: var(--clr-accent); /* Letra dorada */
+}
+
+
