@@ -7,6 +7,26 @@
   <link rel="stylesheet" href="../../css/global.css" />
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/settings.css"/>
+  <style>
+    /* Campo de solo lectura — muestra datos del perfil sin editar */
+    .readonly-field {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      color: var(--clr-text);
+      min-height: 42px;
+      line-height: 1.4;
+      cursor: default;
+      user-select: text;
+    }
+    .readonly-field:empty::before,
+    .readonly-field.empty::before {
+      content: '—';
+      color: var(--clr-muted);
+    }
+  </style>
 </head>
 <body>
 
@@ -85,83 +105,89 @@
 
           <!-- ══ CUENTA ══ -->
           <div class="settings-panel active" id="panel-cuenta">
+
+            <!-- Tarjeta de perfil — solo lectura -->
             <div class="settings-block">
               <div class="settings-block-header">
-                <div class="settings-block-title">👤 Información de la cuenta</div>
+                <div class="settings-block-title">👤 Mi perfil</div>
+                <a href="profile.html" class="btn btn-ghost" style="font-size:0.82rem;padding:7px 16px;">
+                  ✏️ Editar perfil
+                </a>
               </div>
               <div class="settings-block-body">
-                <div class="form-grid" style="margin-bottom:18px;">
-                  <div class="form-group">
-                    <label>Nombre</label>
-                    <input type="text" value="Juan" />
-                  </div>
-                  <div class="form-group">
-                    <label>Apellido</label>
-                    <input type="text" value="Pérez" />
-                  </div>
-                  <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" value="juan.perez@email.com" />
-                  </div>
-                  <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="tel" value="+54 11 4567-8901" />
+
+                <!-- Avatar + nombre -->
+                <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;padding:18px;
+                            background:var(--clr-surface-2);border:1px solid var(--clr-border);
+                            border-radius:var(--radius-md);">
+                  <div id="settings-avatar"
+                    style="width:60px;height:60px;border-radius:50%;
+                           background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim));
+                           display:flex;align-items:center;justify-content:center;
+                           font-family:var(--font-display);font-size:1.4rem;font-weight:700;
+                           color:#0d0f14;flex-shrink:0;">?</div>
+                  <div>
+                    <div id="settings-fullname"
+                      style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:3px;">
+                      —
+                    </div>
+                    <div id="settings-jobtitle" style="font-size:0.85rem;color:var(--clr-muted);margin-bottom:3px;">—</div>
+                    <div id="settings-location" style="font-size:0.78rem;color:var(--clr-muted);">—</div>
                   </div>
                 </div>
+
+                <!-- Datos del perfil en modo solo lectura -->
+                <div class="form-grid" style="margin-bottom:16px;">
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Email</label>
+                    <div class="readonly-field" id="settings-email">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Teléfono</label>
+                    <div class="readonly-field" id="settings-phone">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Modalidad preferida</label>
+                    <div class="readonly-field" id="settings-modality">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Disponibilidad</label>
+                    <div class="readonly-field" id="settings-availability">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">LinkedIn</label>
+                    <div class="readonly-field" id="settings-linkedin">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">GitHub</label>
+                    <div class="readonly-field" id="settings-github">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Expectativa salarial</label>
+                    <div class="readonly-field" id="settings-salary">—</div>
+                  </div>
+                  <div class="form-group">
+                    <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Portfolio</label>
+                    <div class="readonly-field" id="settings-portfolio">—</div>
+                  </div>
+                </div>
+
+                <!-- Bio -->
                 <div class="form-group">
-                  <label>Título profesional</label>
-                  <input type="text" value="Desarrollador Full Stack" />
+                  <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--clr-muted);">Sobre mí</label>
+                  <div class="readonly-field" id="settings-bio" style="min-height:60px;line-height:1.6;">—</div>
                 </div>
-              </div>
-              <div class="settings-block-footer">
-                <button class="btn btn-ghost">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
+
+                <div style="margin-top:16px;padding:12px 16px;background:rgba(201,168,76,0.06);
+                            border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-sm);
+                            font-size:0.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:8px;">
+                  ℹ️ Para editar tu información personal andá a
+                  <a href="profile.html" style="color:var(--clr-accent);">Editar perfil →</a>
+                </div>
+
               </div>
             </div>
 
-            <div class="settings-block">
-              <div class="settings-block-header">
-                <div class="settings-block-title">🌍 Preferencias de búsqueda</div>
-              </div>
-              <div class="settings-block-body">
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label>Modalidad preferida</label>
-                    <select>
-                      <option>Remoto</option>
-                      <option selected>Híbrido</option>
-                      <option>Presencial</option>
-                      <option>Indiferente</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label>Disponibilidad</label>
-                    <select>
-                      <option selected>Inmediata</option>
-                      <option>En 2 semanas</option>
-                      <option>En 1 mes</option>
-                      <option>Solo pasivo</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label>Moneda preferida</label>
-                    <select>
-                      <option selected>USD</option>
-                      <option>ARS</option>
-                      <option>Indiferente</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label>Expectativa salarial (USD)</label>
-                    <input type="number" value="2500" />
-                  </div>
-                </div>
-              </div>
-              <div class="settings-block-footer">
-                <button class="btn btn-ghost">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveSettings(this)">💾 Guardar</button>
-              </div>
-            </div>
           </div>
 
           <!-- ══ NOTIFICACIONES ══ -->
@@ -601,23 +627,78 @@
 </script>
 
 <script type="module">
-  import { logout } from '../../js/auth.js';
+  import { logout, getToken } from '../../js/auth.js';
   import { updateDashboardHero } from '../../js/profile.js';
 
   window.cerrarSesion = function(event) {
-    if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-    
-    // El navegador mostrará una alerta genérica preguntando esto:
+    if (event) event.preventDefault();
     const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-    
-    if (seguro) {
-      logout(); // Si hace clic en "Aceptar", cierra la sesión
-    }
+    if (seguro) logout();
   }
 
-  // Actualizar sidebar con datos reales del usuario
-  const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-  if (u) updateDashboardHero(u);
+  // ── Cargar datos del usuario en los campos de solo lectura ──
+  async function loadUserData() {
+    // 1. Mostrar caché inmediatamente
+    let u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (u) {
+      updateDashboardHero(u);
+      fillReadonlyFields(u);
+    }
+
+    // 2. Refrescar desde el backend para tener datos actualizados
+    try {
+      const token = getToken();
+      if (!token) return;
+      const res = await fetch('http://localhost:3001/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const fresh = await res.json();
+        localStorage.setItem('talentai_user', JSON.stringify(fresh));
+        updateDashboardHero(fresh);
+        fillReadonlyFields(fresh);
+      }
+    } catch (e) { /* sin conexión, usa caché */ }
+  }
+
+  function fillReadonlyFields(u) {
+    const set = (id, val, suffix = '') => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (val) {
+        el.textContent = val + suffix;
+        el.classList.remove('empty');
+      } else {
+        el.textContent = '';
+        el.classList.add('empty');
+      }
+    };
+
+    // Avatar e iniciales
+    const avatar = document.getElementById('settings-avatar');
+    if (avatar) {
+      const ini = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase();
+      avatar.textContent = ini || '?';
+    }
+
+    // Nombre completo, título, ubicación
+    set('settings-fullname',     [u.firstName, u.lastName].filter(Boolean).join(' '));
+    set('settings-jobtitle',     u.jobTitle);
+    set('settings-location',     u.location ? `📍 ${u.location}` : null);
+
+    // Campos del grid
+    set('settings-email',        u.email);
+    set('settings-phone',        u.phone);
+    set('settings-modality',     u.modality);
+    set('settings-availability', u.availability);
+    set('settings-linkedin',     u.linkedin);
+    set('settings-github',       u.github);
+    set('settings-salary',       u.salary ? `USD ${u.salary.toLocaleString()}/mes` : null);
+    set('settings-portfolio',    u.portfolio);
+    set('settings-bio',          u.bio);
+  }
+
+  loadUserData();
 </script>
 
   <div id="modal-logout" class="modal-overlay">
