@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuración — TalentAI Empresa</title>
   <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
   <link rel="stylesheet" href="../../css/company.css" />
 
   <style>
@@ -92,6 +93,33 @@
       .form-grid { grid-template-columns: 1fr; }
       .col-span-2 { grid-column: span 1; }
     }
+
+    /* Theme cards */
+    .theme-options { display: flex; gap: 16px; flex-wrap: wrap; }
+    .theme-card { cursor: pointer; border: 2px solid var(--clr-border); border-radius: var(--radius-md); padding: 12px; width: 120px; text-align: center; transition: all var(--transition); }
+    .theme-card:hover { border-color: var(--clr-accent); }
+    .theme-card.active { border-color: var(--clr-accent); background: rgba(201,168,76,0.08); }
+    .theme-preview { height: 60px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+    .theme-preview-bar { height: 12px; }
+    .theme-preview-content { display: flex; height: 48px; }
+    .theme-preview-side { width: 30%; }
+    .theme-preview-main { flex: 1; }
+    .theme-name { font-size: 0.78rem; color: var(--clr-text); font-weight: 500; }
+    /* Dark preview */
+    .theme-dark .theme-preview { background: #0d0f14; }
+    .theme-dark .theme-preview-bar { background: #13161e; }
+    .theme-dark .theme-preview-side { background: #13161e; border-right: 1px solid #464e64; }
+    .theme-dark .theme-preview-main { background: #1a1e2a; }
+    /* Light preview */
+    .theme-light .theme-preview { background: #f0f2f5; }
+    .theme-light .theme-preview-bar { background: #ffffff; }
+    .theme-light .theme-preview-side { background: #ffffff; border-right: 1px solid #d0d4de; }
+    .theme-light .theme-preview-main { background: #f5f6fa; }
+    /* System preview (mitad oscuro, mitad claro) */
+    .theme-system .theme-preview { background: linear-gradient(90deg, #0d0f14 50%, #f0f2f5 50%); }
+    .theme-system .theme-preview-bar { background: linear-gradient(90deg, #13161e 50%, #ffffff 50%); }
+    .theme-system .theme-preview-side { background: linear-gradient(#13161e, #13161e) left/50% 100%, linear-gradient(#ffffff, #ffffff) right/50% 100%; background-repeat: no-repeat; }
+    .theme-system .theme-preview-main { background: linear-gradient(90deg, #1a1e2a 50%, #f5f6fa 50%); }
   </style>
 </head>
 <body>
@@ -155,6 +183,7 @@
           <button class="settings-nav-item" onclick="showPanel('seguridad',this)">🛡 Seguridad</button>
           <button class="settings-nav-item" onclick="showPanel('plan',this)">💳 Plan y facturación</button>
           <div class="settings-nav-divider"></div>
+          <button class="settings-nav-item" onclick="showPanel('apariencia',this)">🎨 Apariencia</button>
           <button class="settings-nav-item" onclick="showPanel('peligro',this)" style="color:var(--clr-error);">⚠️ Zona de peligro</button>
         </nav>
 
@@ -413,6 +442,69 @@
           </div>
 
           <!-- ══ PELIGRO ══ -->
+          <!-- PANEL APARIENCIA -->
+          <div class="settings-panel" id="panel-apariencia">
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🎨 Tema de la interfaz</div>
+              </div>
+              <div class="settings-block-body">
+                <div class="theme-options">
+                  <div class="theme-card theme-dark" onclick="selectTheme(this, 'dark')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">🌙 Oscuro</div>
+                  </div>
+                  <div class="theme-card theme-light" onclick="selectTheme(this, 'light')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">☀️ Claro</div>
+                  </div>
+                  <div class="theme-card theme-system" onclick="selectTheme(this, 'system')">
+                    <div class="theme-preview">
+                      <div class="theme-preview-bar"></div>
+                      <div class="theme-preview-content">
+                        <div class="theme-preview-side"></div>
+                        <div class="theme-preview-main"></div>
+                      </div>
+                    </div>
+                    <div class="theme-name">💻 Sistema</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🕐 Fecha y hora actual</div>
+              </div>
+              <div class="settings-block-body">
+                <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+                  <div style="text-align:center;">
+                    <div id="clock-time" style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--clr-accent);letter-spacing:2px;">00:00:00</div>
+                    <div id="clock-date" style="font-size:0.85rem;color:var(--clr-muted);margin-top:4px;">—</div>
+                  </div>
+                  <div style="flex:1;min-width:160px;">
+                    <div style="font-size:0.8rem;color:var(--clr-muted);margin-bottom:4px;">Zona horaria</div>
+                    <div id="clock-timezone" style="font-size:0.88rem;color:var(--clr-text);">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
           <div class="settings-panel" id="panel-peligro">
             <div class="danger-block">
               <div class="danger-title">⚠️ Zona de peligro</div>
@@ -463,6 +555,34 @@
     showAlert(`✓ Invitación enviada a ${email}`);
     document.querySelector('.invite-row input').value = '';
   }
+
+  // Inicializar cards de tema
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.ThemeManager) window.ThemeManager.initCards();
+  });
+
+  // Reloj en tiempo real
+  function updateClock() {
+    const now  = new Date();
+    const hh   = String(now.getHours()).padStart(2,'0');
+    const mm   = String(now.getMinutes()).padStart(2,'0');
+    const ss   = String(now.getSeconds()).padStart(2,'0');
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const dia   = dias[now.getDay()];
+    const fecha = `${dia} ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+    const tz    = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const offset = -now.getTimezoneOffset() / 60;
+    const offsetStr = `UTC${offset >= 0 ? '+' : ''}${offset}`;
+    const timeEl = document.getElementById('clock-time');
+    const dateEl = document.getElementById('clock-date');
+    const tzEl   = document.getElementById('clock-timezone');
+    if (timeEl) timeEl.textContent = `${hh}:${mm}:${ss}`;
+    if (dateEl) dateEl.textContent = fecha;
+    if (tzEl)   tzEl.textContent   = `${tz} (${offsetStr})`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
 </script>
 <script type="module">
   import { logout } from '../../js/auth.js';

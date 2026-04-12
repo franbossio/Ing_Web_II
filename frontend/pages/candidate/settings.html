@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuración — CONECTA IA</title>
   <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/settings.css"/>
   <style>
@@ -380,6 +381,25 @@
               </div>
             </div>
 
+            <!-- Reloj en tiempo real -->
+            <div class="settings-block">
+              <div class="settings-block-header">
+                <div class="settings-block-title">🕐 Fecha y hora actual</div>
+              </div>
+              <div class="settings-block-body">
+                <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+                  <div style="text-align:center;">
+                    <div id="clock-time" style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--clr-accent);letter-spacing:2px;">00:00:00</div>
+                    <div id="clock-date" style="font-size:0.85rem;color:var(--clr-muted);margin-top:4px;">—</div>
+                  </div>
+                  <div style="flex:1;min-width:160px;">
+                    <div style="font-size:0.8rem;color:var(--clr-muted);margin-bottom:4px;">Zona horaria</div>
+                    <div id="clock-timezone" style="font-size:0.88rem;color:var(--clr-text);">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="settings-block">
               <div class="settings-block-header">
                 <div class="settings-block-title">🌐 Idioma y región</div>
@@ -607,10 +627,39 @@
   }
 
   // ── Tema ──────────────────────────────────────────
-  function selectTheme(card, theme) {
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
+  // selectTheme ya está definida en theme.js
+  // Inicializar cards con el tema guardado
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.ThemeManager) window.ThemeManager.initCards();
+  });
+
+  // ── Reloj en tiempo real ───────────────────────────
+  function updateClock() {
+    const now  = new Date();
+    const hh   = String(now.getHours()).padStart(2,'0');
+    const mm   = String(now.getMinutes()).padStart(2,'0');
+    const ss   = String(now.getSeconds()).padStart(2,'0');
+
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const dia   = dias[now.getDay()];
+    const fecha = `${dia} ${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const offset = -now.getTimezoneOffset() / 60;
+    const offsetStr = `UTC${offset >= 0 ? '+' : ''}${offset}`;
+
+    const timeEl = document.getElementById('clock-time');
+    const dateEl = document.getElementById('clock-date');
+    const tzEl   = document.getElementById('clock-timezone');
+
+    if (timeEl) timeEl.textContent = `${hh}:${mm}:${ss}`;
+    if (dateEl) dateEl.textContent = fecha;
+    if (tzEl)   tzEl.textContent   = `${tz} (${offsetStr})`;
   }
+
+  updateClock();
+  setInterval(updateClock, 1000);
 
   // ── Password strength ─────────────────────────────
   document.getElementById('new-pass').addEventListener('input', function() {
