@@ -25,6 +25,41 @@
   --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
 }
 
+
+/* ─── Tema Claro ─────────────────────────────────────────── */
+[data-theme="light"] {
+  --clr-bg:        #f0f2f5;
+  --clr-surface:   #ffffff;
+  --clr-surface-2: #f5f6fa;
+  --clr-border:    #d0d4de;
+  --clr-accent:    #b8920a;
+  --clr-accent-dim:#c9a84c;
+  --clr-text:      #1a1d27;
+  --clr-muted:     #6b7280;
+  --clr-error:     #dc2626;
+  --clr-success:   #16a34a;
+  --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
+  --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
+}
+
+/* Sistema: si el usuario prefiere claro y el tema es sistema */
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    --clr-bg:        #f0f2f5;
+    --clr-surface:   #ffffff;
+    --clr-surface-2: #f5f6fa;
+    --clr-border:    #d0d4de;
+    --clr-accent:    #b8920a;
+    --clr-accent-dim:#c9a84c;
+    --clr-text:      #1a1d27;
+    --clr-muted:     #6b7280;
+    --clr-error:     #dc2626;
+    --clr-success:   #16a34a;
+    --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
+    --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
+  }
+}
+
 /* ─── Reset ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }

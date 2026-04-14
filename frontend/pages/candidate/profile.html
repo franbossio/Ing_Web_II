@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Perfil — TalentAI</title>
   <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/profile.css" />
 
@@ -335,13 +336,13 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">Mi currículum</div>
-              <div class="panel-subtitle">Subí tu CV en PDF para guardarlo en tu perfil</div>
+              <div class="panel-subtitle">Subí tu CV y la IA completará tu perfil automáticamente</div>
             </div>
             <span class="badge badge-gold" id="badge-cv">⚠ Sin CV</span>
           </div>
           <div class="panel-body">
 
-            <!-- CV guardado (se muestra cuando hay CV) -->
+            <!-- CV guardado -->
             <div class="cv-current" id="cv-current" style="display:none;">
               <span class="cv-file-icon">📄</span>
               <div style="flex:1;">
@@ -354,7 +355,7 @@
               </div>
             </div>
 
-            <!-- Drop area (siempre visible para subir/reemplazar) -->
+            <!-- Drop area -->
             <div class="cv-drop-area" id="drop-area"
               onclick="document.getElementById('cv-input').click()"
               ondragover="event.preventDefault();this.classList.add('drag-over')"
@@ -362,11 +363,41 @@
               ondrop="handleDrop(event)">
               <span class="cv-drop-icon">📤</span>
               <div class="cv-drop-title" id="drop-title">Subir CV</div>
-              <div class="cv-drop-sub">Arrastrá tu archivo acá o hacé clic para seleccionar</div>
+              <div class="cv-drop-sub">La IA analizará tu CV y completará tu perfil automáticamente</div>
               <button class="btn btn-ghost" style="pointer-events:none;">Seleccionar archivo</button>
               <div class="cv-drop-formats">Formatos aceptados: PDF · Máximo 5 MB</div>
             </div>
             <input type="file" id="cv-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
+
+            <!-- Progreso del análisis IA -->
+            <div id="ai-progress" style="display:none; margin-top:20px; padding:20px; background:var(--clr-surface-2); border-radius:var(--radius-md); border:1px solid var(--clr-border);">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <div class="spinner" style="width:20px;height:20px;border-width:2px;flex-shrink:0;"></div>
+                <div>
+                  <div style="font-weight:600;font-size:0.95rem;" id="ai-step-title">Analizando CV...</div>
+                  <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-step-sub">La IA está leyendo tu CV</div>
+                </div>
+              </div>
+              <div style="background:var(--clr-border);border-radius:100px;height:4px;overflow:hidden;">
+                <div id="ai-progress-bar" style="height:100%;background:var(--clr-accent);border-radius:100px;transition:width 0.4s ease;width:0%"></div>
+              </div>
+            </div>
+
+            <!-- Resultado del análisis -->
+            <div id="ai-result" style="display:none; margin-top:20px; padding:20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2);">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <span style="font-size:1.3rem;">🤖</span>
+                <div>
+                  <div style="font-weight:600;color:var(--clr-success);">¡Perfil completado automáticamente!</div>
+                  <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-result-summary">La IA extrajo tus datos del CV</div>
+                </div>
+              </div>
+              <div id="ai-extracted-fields" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+              <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-primary" onclick="confirmAiData()" style="font-size:0.85rem;padding:8px 18px;">✅ Confirmar y guardar</button>
+                <button class="btn btn-ghost" onclick="discardAiData()" style="font-size:0.85rem;padding:8px 18px;">✏️ Editar manualmente</button>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -561,49 +592,234 @@
     else showAlert('Solo se aceptan archivos PDF.', 'error');
   }
 
+  // Datos extraídos por la IA (pendiente de confirmación)
+  let pendingAiData = null;
+  let pendingBase64 = null;
+  let pendingFileName = null;
+
+  function setProgress(pct, title, sub) {
+    const bar   = document.getElementById('ai-progress-bar');
+    const tEl   = document.getElementById('ai-step-title');
+    const sEl   = document.getElementById('ai-step-sub');
+    if (bar) bar.style.width = pct + '%';
+    if (tEl) tEl.textContent = title;
+    if (sEl) sEl.textContent = sub;
+  }
+
   async function processFile(file) {
     if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
 
-    showAlert('⏳ Guardando CV...');
+    // Ocultar resultados anteriores
+    document.getElementById('ai-progress').style.display = 'none';
+    document.getElementById('ai-result').style.display   = 'none';
 
-    // Convertir PDF a base64
+    // Leer PDF como base64
     const reader = new FileReader();
     reader.onload = async function(e) {
-      const base64 = e.target.result; // data:application/pdf;base64,....
+      const dataUrl = e.target.result;
+      const base64Only = dataUrl.split(',')[1]; // solo los bytes, sin el prefijo
+      pendingBase64   = dataUrl;
+      pendingFileName = file.name;
+
+      // Mostrar progreso
+      document.getElementById('ai-progress').style.display = 'block';
+      setProgress(10, 'Leyendo el PDF...', 'Preparando el archivo para análisis');
 
       try {
-        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('http://localhost:3001/api/users/me', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+        setProgress(30, 'Analizando con IA...', 'Claude está extrayendo la información de tu CV');
+
+        // Llamar a Claude API con el PDF
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            cvFileName: file.name,
-            cvUrl:      base64,
-          }),
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1500,
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'document',
+                  source: { type: 'base64', media_type: 'application/pdf', data: base64Only }
+                },
+                {
+                  type: 'text',
+                  text: `Analizá este CV y extraé la información. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown, sin backticks. El JSON debe tener exactamente esta estructura:
+{
+  "firstName": "nombre",
+  "lastName": "apellido",
+  "phone": "teléfono o null",
+  "jobTitle": "título profesional actual o más reciente",
+  "location": "ciudad, país",
+  "bio": "resumen profesional de 2-3 oraciones basado en el CV",
+  "linkedin": "url de linkedin o null",
+  "github": "url de github o null",
+  "portfolio": "url de portfolio o null",
+  "salary": null,
+  "skills": ["skill1", "skill2"],
+  "softSkills": ["habilidad1", "habilidad2"],
+  "languages": [{"name": "Español", "level": "Nativo"}, {"name": "Inglés", "level": "Avanzado"}],
+  "experience": [
+    {
+      "title": "cargo",
+      "company": "empresa",
+      "startDate": "YYYY-MM",
+      "endDate": "Presente o YYYY-MM",
+      "current": true,
+      "description": "descripción breve"
+    }
+  ],
+  "education": [
+    {
+      "career": "título o carrera",
+      "institution": "institución",
+      "startYear": "2018",
+      "endYear": "2023",
+      "status": "Graduado"
+    }
+  ]
+}
+Para levels de idiomas usá solo: Nativo, Avanzado, Intermedio, Básico.
+Para status de educación usá solo: Graduado, En curso, Incompleto.`
+                }
+              ]
+            }]
+          })
         });
 
-        if (!res.ok) throw new Error('Error al guardar el CV');
+        setProgress(70, 'Procesando resultados...', 'Organizando la información extraída');
 
-        const updated = await res.json();
-        // Guardar en localStorage
-        localStorage.setItem('talentai_user', JSON.stringify(updated));
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error?.message || 'Error al analizar con IA');
+        }
 
-        // Actualizar UI
-        renderCvState(updated);
-        showAlert('✓ CV guardado correctamente');
+        const aiData = await response.json();
+        const rawText = aiData.content?.[0]?.text || '';
 
-        // Refrescar badge y steps
-        const { refreshUI } = await import('../../js/profile.js');
-        refreshUI(updated);
+        // Parsear JSON de la respuesta
+        let extracted;
+        try {
+          // Limpiar posibles backticks o texto extra
+          const clean = rawText.replace(/```json|```/g, '').trim();
+          extracted = JSON.parse(clean);
+        } catch {
+          throw new Error('La IA no pudo extraer los datos correctamente. Intentá de nuevo.');
+        }
+
+        setProgress(90, 'Completando perfil...', 'Aplicando los datos extraídos');
+
+        pendingAiData = extracted;
+
+        // Mostrar preview de lo que se va a cargar
+        showAiPreview(extracted);
+
+        setProgress(100, '¡Análisis completado!', '');
+        setTimeout(() => {
+          document.getElementById('ai-progress').style.display = 'none';
+          document.getElementById('ai-result').style.display   = 'block';
+        }, 600);
 
       } catch(err) {
+        document.getElementById('ai-progress').style.display = 'none';
         showAlert('✗ ' + err.message, 'error');
       }
     };
     reader.readAsDataURL(file);
+  }
+
+  function showAiPreview(data) {
+    const container = document.getElementById('ai-extracted-fields');
+    const summary   = document.getElementById('ai-result-summary');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const fields = [
+      data.firstName && data.lastName ? `👤 ${data.firstName} ${data.lastName}` : null,
+      data.jobTitle  ? `💼 ${data.jobTitle}` : null,
+      data.location  ? `📍 ${data.location}` : null,
+      data.skills?.length  ? `🛠 ${data.skills.length} habilidades técnicas` : null,
+      data.experience?.length ? `📋 ${data.experience.length} experiencia(s)` : null,
+      data.education?.length  ? `🎓 ${data.education.length} educación` : null,
+      data.languages?.length  ? `🌍 ${data.languages.length} idioma(s)` : null,
+    ].filter(Boolean);
+
+    fields.forEach(f => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'background:rgba(76,175,132,0.12);color:var(--clr-success);border:1px solid rgba(76,175,132,0.25);padding:4px 10px;border-radius:100px;font-size:0.78rem;';
+      chip.textContent = f;
+      container.appendChild(chip);
+    });
+
+    if (summary) summary.textContent = `${fields.length} secciones extraídas correctamente`;
+  }
+
+  async function confirmAiData() {
+    if (!pendingAiData) return;
+    const btn = document.querySelector('#ai-result .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+
+    try {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+
+      // Guardar CV + datos del perfil en una sola llamada
+      const payload = {
+        ...pendingAiData,
+        cvFileName: pendingFileName,
+        cvUrl:      pendingBase64,
+      };
+
+      const res = await fetch('http://localhost:3001/api/users/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Error al guardar los datos');
+
+      const updated = await res.json();
+      localStorage.setItem('talentai_user', JSON.stringify(updated));
+
+      // Rellenar el formulario con los datos nuevos
+      const { fillProfileForm, refreshUI } = await import('../../js/profile.js');
+      fillProfileForm(updated);
+      refreshUI(updated);
+      renderCvState(updated);
+
+      document.getElementById('ai-result').style.display = 'none';
+      showAlert('🤖 ¡Perfil completado automáticamente con IA! Revisá los datos en cada sección.');
+
+      // Ir a la pestaña de datos personales para que lo revise
+      const personalTab = document.querySelector('[data-tab="personal"]');
+      if (personalTab) personalTab.click();
+
+      pendingAiData = null;
+    } catch(err) {
+      showAlert('✗ ' + err.message, 'error');
+      if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar y guardar'; }
+    }
+  }
+
+  function discardAiData() {
+    pendingAiData = null;
+    document.getElementById('ai-result').style.display = 'none';
+    // Solo guardar el CV sin los datos de la IA
+    if (pendingBase64 && pendingFileName) {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      fetch('http://localhost:3001/api/users/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ cvFileName: pendingFileName, cvUrl: pendingBase64 }),
+      }).then(r => r.json()).then(updated => {
+        localStorage.setItem('talentai_user', JSON.stringify(updated));
+        renderCvState(updated);
+        import('../../js/profile.js').then(({ refreshUI }) => refreshUI(updated));
+        showAlert('✓ CV guardado. Completá los datos manualmente.');
+      });
+    }
   }
 
   async function removeCv() {
