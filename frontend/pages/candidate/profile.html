@@ -37,8 +37,8 @@
       <a href="dashboard.html" class="nav-item "><span class="nav-icon">📊</span> Dashboard</a>
       <a href="jobs.html" class="nav-item"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
       <span class="nav-section-label">Mi perfil</span>
-      <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span> Editar perfil</a>
-      <a href="profile.html" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
+      <a href="profile.html#cv" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
       <span class="nav-section-label">Postulaciones</span>
       <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
       <a href="saved.html" class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
@@ -388,6 +388,28 @@
       btn.classList.add('active');
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
     });
+  });
+
+  // ── Navegación por ancla (#) y estado activo del sidebar ───────────────────
+  window.addEventListener('load', () => {
+    const hash = window.location.hash.substring(1);
+
+    // 1. Activar la pestaña correcta
+    if (hash) {
+      const tabToActivate = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+      if (tabToActivate) {
+        tabToActivate.click(); // Simula un clic para activar la pestaña
+      }
+    }
+
+    // 2. Actualizar el estado 'active' en el sidebar
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav a[href^="profile.html"]');
+    sidebarLinks.forEach(link => link.classList.remove('active'));
+
+    const activeLink = hash === 'cv'
+      ? document.querySelector('a[href="profile.html#cv"]')
+      : document.querySelector('a[href="profile.html"]');
+    if (activeLink) activeLink.classList.add('active');
   });
 
   // ── Bio char count ────────────────────────────────
