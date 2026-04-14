@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { CvModule }   from './cv/cv.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
 
@@ -34,6 +35,7 @@ import { User } from './users/user.entity';
 
     UsersModule,
     AuthModule,
+    CvModule,
   ],
 })
 export class AppModule {}

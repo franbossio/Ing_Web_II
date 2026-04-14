@@ -384,19 +384,33 @@
             </div>
 
             <!-- Resultado del análisis -->
-            <div id="ai-result" style="display:none; margin-top:20px; padding:20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2);">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                <span style="font-size:1.3rem;">🤖</span>
-                <div>
-                  <div style="font-weight:600;color:var(--clr-success);">¡Perfil completado automáticamente!</div>
-                  <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-result-summary">La IA extrajo tus datos del CV</div>
+            <div id="ai-result" style="display:none; margin-top:20px;">
+
+              <!-- Datos extraídos -->
+              <div style="padding:18px 20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2); margin-bottom:14px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                  <span style="font-size:1.3rem;">✅</span>
+                  <div>
+                    <div style="font-weight:600;color:var(--clr-success);">Datos extraídos del CV</div>
+                    <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-result-summary">Gemini analizó tu CV</div>
+                  </div>
+                </div>
+                <div id="ai-extracted-fields" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <button class="btn btn-primary" onclick="confirmAiData()" style="font-size:0.85rem;padding:8px 18px;">✅ Confirmar y guardar</button>
+                  <button class="btn btn-ghost" onclick="discardAiData()" style="font-size:0.85rem;padding:8px 18px;">✏️ Solo guardar CV</button>
                 </div>
               </div>
-              <div id="ai-extracted-fields" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
-              <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn btn-primary" onclick="confirmAiData()" style="font-size:0.85rem;padding:8px 18px;">✅ Confirmar y guardar</button>
-                <button class="btn btn-ghost" onclick="discardAiData()" style="font-size:0.85rem;padding:8px 18px;">✏️ Editar manualmente</button>
+
+              <!-- Comentario / análisis del CV -->
+              <div id="ai-comment-block" style="display:none; padding:18px 20px; background:rgba(201,168,76,0.06); border-radius:var(--radius-md); border:1px solid rgba(201,168,76,0.2);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                  <span style="font-size:1.1rem;">🤖</span>
+                  <div style="font-weight:600;font-size:0.88rem;color:var(--clr-accent);">Análisis de Gemini sobre tu CV</div>
+                </div>
+                <p id="ai-comment-text" style="font-size:0.85rem;color:var(--clr-text);line-height:1.7;margin:0;font-style:italic;"></p>
               </div>
+
             </div>
 
           </div>
@@ -626,93 +640,48 @@
       setProgress(10, 'Leyendo el PDF...', 'Preparando el archivo para análisis');
 
       try {
-        setProgress(30, 'Analizando con IA...', 'Claude está extrayendo la información de tu CV');
+        setProgress(30, 'Analizando con IA...', 'Gemini está extrayendo la información de tu CV');
 
-        // Llamar a Claude API con el PDF
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        // ── Llamar al BACKEND (Gemini, API key segura en el servidor) ──
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const response = await fetch('http://localhost:3001/api/cv/analyze-preview', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1500,
-            messages: [{
-              role: 'user',
-              content: [
-                {
-                  type: 'document',
-                  source: { type: 'base64', media_type: 'application/pdf', data: base64Only }
-                },
-                {
-                  type: 'text',
-                  text: `Analizá este CV y extraé la información. Respondé ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown, sin backticks. El JSON debe tener exactamente esta estructura:
-{
-  "firstName": "nombre",
-  "lastName": "apellido",
-  "phone": "teléfono o null",
-  "jobTitle": "título profesional actual o más reciente",
-  "location": "ciudad, país",
-  "bio": "resumen profesional de 2-3 oraciones basado en el CV",
-  "linkedin": "url de linkedin o null",
-  "github": "url de github o null",
-  "portfolio": "url de portfolio o null",
-  "salary": null,
-  "skills": ["skill1", "skill2"],
-  "softSkills": ["habilidad1", "habilidad2"],
-  "languages": [{"name": "Español", "level": "Nativo"}, {"name": "Inglés", "level": "Avanzado"}],
-  "experience": [
-    {
-      "title": "cargo",
-      "company": "empresa",
-      "startDate": "YYYY-MM",
-      "endDate": "Presente o YYYY-MM",
-      "current": true,
-      "description": "descripción breve"
-    }
-  ],
-  "education": [
-    {
-      "career": "título o carrera",
-      "institution": "institución",
-      "startYear": "2018",
-      "endYear": "2023",
-      "status": "Graduado"
-    }
-  ]
-}
-Para levels de idiomas usá solo: Nativo, Avanzado, Intermedio, Básico.
-Para status de educación usá solo: Graduado, En curso, Incompleto.`
-                }
-              ]
-            }]
-          })
+            base64Pdf: base64Only,
+            fileName:  file.name,
+          }),
         });
 
         setProgress(70, 'Procesando resultados...', 'Organizando la información extraída');
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
-          throw new Error(err.error?.message || 'Error al analizar con IA');
+          throw new Error(err.message || 'Error al analizar con Gemini');
         }
 
-        const aiData = await response.json();
-        const rawText = aiData.content?.[0]?.text || '';
-
-        // Parsear JSON de la respuesta
-        let extracted;
-        try {
-          // Limpiar posibles backticks o texto extra
-          const clean = rawText.replace(/```json|```/g, '').trim();
-          extracted = JSON.parse(clean);
-        } catch {
-          throw new Error('La IA no pudo extraer los datos correctamente. Intentá de nuevo.');
-        }
+        const result    = await response.json();
+        const extracted = result.extracted;
 
         setProgress(90, 'Completando perfil...', 'Aplicando los datos extraídos');
 
         pendingAiData = extracted;
 
-        // Mostrar preview de lo que se va a cargar
+        // Mostrar preview y comentario de Gemini
         showAiPreview(extracted);
+
+        // Mostrar el comentario/análisis del CV si viene
+        if (extracted.cvComment) {
+          const commentBlock = document.getElementById('ai-comment-block');
+          const commentText  = document.getElementById('ai-comment-text');
+          if (commentBlock && commentText) {
+            commentText.textContent = extracted.cvComment;
+            commentBlock.style.display = 'block';
+          }
+        }
 
         setProgress(100, '¡Análisis completado!', '');
         setTimeout(() => {
@@ -757,42 +726,44 @@ Para status de educación usá solo: Graduado, En curso, Incompleto.`
   async function confirmAiData() {
     if (!pendingAiData) return;
     const btn = document.querySelector('#ai-result .btn-primary');
-    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...'; }
 
     try {
-      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const token      = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const base64Only = pendingBase64.split(',')[1];
 
-      // Guardar CV + datos del perfil en una sola llamada
-      const payload = {
-        ...pendingAiData,
-        cvFileName: pendingFileName,
-        cvUrl:      pendingBase64,
-      };
-
-      const res = await fetch('http://localhost:3001/api/users/me', {
-        method: 'PATCH',
+      // ── Llamar al backend /api/cv/analyze → guarda CV + perfil ──
+      const res = await fetch('http://localhost:3001/api/cv/analyze', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          base64Pdf: base64Only,
+          fileName:  pendingFileName,
+        }),
       });
 
-      if (!res.ok) throw new Error('Error al guardar los datos');
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e.message || 'Error al guardar los datos');
+      }
 
-      const updated = await res.json();
+      const result  = await res.json();
+      const updated = result.user;
       localStorage.setItem('talentai_user', JSON.stringify(updated));
 
-      // Rellenar el formulario con los datos nuevos
+      // Rellenar formulario con los datos nuevos
       const { fillProfileForm, refreshUI } = await import('../../js/profile.js');
       fillProfileForm(updated);
       refreshUI(updated);
       renderCvState(updated);
 
       document.getElementById('ai-result').style.display = 'none';
-      showAlert('🤖 ¡Perfil completado automáticamente con IA! Revisá los datos en cada sección.');
+      showAlert('🤖 ¡Perfil completado con Gemini! Revisá los datos en cada sección.');
 
-      // Ir a la pestaña de datos personales para que lo revise
+      // Ir a datos personales para revisión
       const personalTab = document.querySelector('[data-tab="personal"]');
       if (personalTab) personalTab.click();
 
