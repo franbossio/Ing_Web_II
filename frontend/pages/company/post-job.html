@@ -6,6 +6,7 @@
   <title>Publicar oferta — CONECTA IA Empresa</title>
   <link rel="stylesheet" href="../../css/global.css" />
   <script src="../../js/theme.js"></script>
+  <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
 </head>
 <body>
@@ -15,43 +16,7 @@
   <!-- ══════════════════════════════════════════
        SIDEBAR
   ══════════════════════════════════════════ -->
-  <aside class="sidebar">
-    <a href="dashboard.html" class="logo-container">
-            <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
-        </div>
-    </a>
-
-   <div class="sidebar-company">
-      <div class="company-badge">
-        <div class="company-avatar" id="sidebar-avatar">AC</div>
-        <div class="company-info">
-          <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
-          <div class="company-role" id="sidebar-role">Empresa</div>
-        </div>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Principal</span>
-      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-      <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
-      <span class="nav-section-label">Ofertas</span>
-      <a href="post-job.html" class="nav-item active"><span class="nav-icon">➕</span> Publicar oferta</a>
-      <a href="my-jobs.html" class="nav-item"><span class="nav-icon">📋</span> Mis ofertas</a>
-      <span class="nav-section-label">Gestión</span>
-      <a href="applications.html" class="nav-item "><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
-      <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
-      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <a href="#" onclick="cerrarSesion()" class="nav-item">
-        <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-        </span> Cerrar sesión
-      </a>
-    </div>
-  </aside>
+  <div id="sidebar-root"></div>
 
   <!-- ══════════════════════════════════════════
        MAIN CONTENT
@@ -294,14 +259,10 @@
 </div><!-- /app-layout -->
 <script src="../../js/profile.js"></script>
 <script type="module">
-  import { logout } from '../../js/auth.js';
-  import { updateDashboardHero } from '../../js/profile.js';
-
+  
   window.cerrarSesion = logout;
 
   // Actualizar sidebar con datos reales del usuario
-  const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-  if (u) updateDashboardHero(u);
 </script>
 </body>
 </html>

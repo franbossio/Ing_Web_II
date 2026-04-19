@@ -6,6 +6,7 @@
   <title>Mi Dashboard — CONECTA IA</title>
   <link rel="stylesheet" href="../../css/global.css" />
   <script src="../../js/theme.js"></script>
+  <script src="../../js/sidebar-candidate.js" type="module"></script>
   <link rel="stylesheet" href="../../css/candidate.css" />
   <style>
     /* ── CV bar (debajo del hero) ── */
@@ -107,43 +108,7 @@
 </head>
 <body>
 <div class="app-layout">
-
-  <aside class="sidebar">
-    <a href="dashboard.html" class="logo-container">
-      <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img">
-      <div class="logo-text-group"></div>
-    </a>
-    <div class="sidebar-profile">
-      <div class="profile-badge">
-        <div class="profile-avatar" id="sidebar-avatar">JP</div>
-        <div class="profile-info">
-          <div class="profile-name"  id="sidebar-name">Juan Pérez</div>
-          <div class="profile-role"  id="sidebar-role">Candidato</div>
-        </div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Principal</span>
-      <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
-      <a href="jobs.html"      class="nav-item"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
-      <span class="nav-section-label">Mi perfil</span>
-      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
-      <a href="profile.html#cv" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
-      <span class="nav-section-label">Postulaciones</span>
-      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
-      <a href="saved.html"    class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
-      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="#" onclick="cerrarSesion()" class="nav-item">
-        <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323">
-            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
-          </svg>
-        </span> Cerrar sesión
-      </a>
-    </div>
-  </aside>
+  <div id="sidebar-root"></div>
 
   <main class="main-content">
     <div class="topbar">
@@ -414,13 +379,7 @@
 </script>
 
 <script type="module">
-  import { logout } from '../../js/auth.js';
-  import { initDashboard } from '../../js/profile.js';
-
-  window.cerrarSesion = function() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
-  };
-
+    import { initDashboard } from '../../js/profile.js';
   async function loadDashboard() {
     await initDashboard();
     const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
