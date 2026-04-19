@@ -236,3 +236,52 @@
   .quick-actions { grid-template-columns: 1fr; }
 }
 
+/*══════════════════════════════════════════════════════════
+LÍNEA MOSTAZA ANIMADA (De adentro hacia afuera)
+══════════════════════════════════════════════════════════*/
+.animated-top-line {
+  position: relative; 
+  overflow: hidden; 
+  border-top: none !important; /* Esto apaga tu borde viejo automáticamente */
+}
+
+.animated-top-line::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  
+  /* El degradado de la línea */
+  background: linear-gradient(
+    90deg, 
+    rgba(201, 168, 76, 0) 0%, 
+    var(--clr-accent) 50%, 
+    rgba(201, 168, 76, 0) 100%
+  );
+  
+  /* El brillo */
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+  animation: pulse-outwards 4s infinite ease-in-out;
+  z-index: 10;
+}
+/* La animación que le da vida (Efecto de luz / respiración) */
+@keyframes pulse-outwards {
+  0% {
+    transform: translateX(-50%); /* Mantiene la línea en su lugar, sin encogerla */
+    opacity: 0.4;
+    box-shadow: 0 0 2px rgba(201, 168, 76, 0.2); /* Brillo apagado */
+  }
+  50% {
+    transform: translateX(-50%);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(201, 168, 76, 0.8); /* Brillo intenso simulando luz */
+  }
+  100% {
+    transform: translateX(-50%);
+    opacity: 0.4;
+    box-shadow: 0 0 2px rgba(201, 168, 76, 0.2); /* Vuelve a apagarse */
+  }
+}
