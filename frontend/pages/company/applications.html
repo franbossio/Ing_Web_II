@@ -176,447 +176,466 @@
   </style>
 </head>
 <body>
-<div class="app-layout">
+  <div class="app-layout">
 
-  <aside class="sidebar">
-    
-    <a href="dashboard.html" class="logo-container">
-            <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
-        </div>
-    </a>
+    <button class="sidebar-toggle" id="sidebarToggle">
+          <span class="arrow-icon">❮</span>
+    </button>
 
-    
-    <div class="sidebar-company">
-      <div class="company-badge">
-        <div class="company-avatar" id="sidebar-avatar">AC</div>
-        <div class="company-info">
-          <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
-          <div class="company-role" id="sidebar-role">Empresa</div>
+    <aside class="sidebar">
+
+      <a href="dashboard.html" class="logo-container">
+              <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
+          </div>
+      </a>
+
+      
+      <div class="sidebar-company">
+        <div class="company-badge">
+          <div class="company-avatar" id="sidebar-avatar">AC</div>
+          <div class="company-info">
+            <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
+            <div class="company-role" id="sidebar-role">Empresa</div>
+          </div>
         </div>
       </div>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Principal</span>
-      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-      <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
-      <span class="nav-section-label">Ofertas</span>
-      <a href="post-job.html" class="nav-item"><span class="nav-icon">➕</span> Publicar oferta</a>
-      <a href="my-jobs.html" class="nav-item"><span class="nav-icon">📋</span> Mis ofertas</a>
-      <span class="nav-section-label">Gestión</span>
-      <a href="applications.html" class="nav-item active"><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
-      <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
-      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="#" onclick="cerrarSesion()" class="nav-item"><span class="nav-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-      </span> Cerrar sesión</a>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Postulaciones</div>
-        <div class="topbar-subtitle">Gestioná todos los candidatos que se postularon a tus ofertas</div>
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Principal</span>
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
+        <span class="nav-section-label">Ofertas</span>
+        <a href="post-job.html" class="nav-item"><span class="nav-icon">➕</span> Publicar oferta</a>
+        <a href="my-jobs.html" class="nav-item"><span class="nav-icon">📋</span> Mis ofertas</a>
+        <span class="nav-section-label">Gestión</span>
+        <a href="applications.html" class="nav-item active"><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
+        <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
+        <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" onclick="cerrarSesion()" class="nav-item"><span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+        </span> Cerrar sesión</a>
       </div>
-      <div class="topbar-right">
-        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
-        <a href="candidates.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Buscar candidatos</a>
-      </div>
-    </div>
+    </aside>
 
-    <div class="page-content">
-
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat-box active" onclick="filterByStatus('all',this)">
-          <div class="stat-box-num">148</div>
-          <div class="stat-box-label">Total</div>
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">Postulaciones</div>
+          <div class="topbar-subtitle">Gestioná todos los candidatos que se postularon a tus ofertas</div>
         </div>
-        <div class="stat-box" onclick="filterByStatus('nueva',this)">
-          <div class="stat-box-num" style="color:var(--clr-accent);">34</div>
-          <div class="stat-box-label">Nuevas</div>
-        </div>
-        <div class="stat-box" onclick="filterByStatus('revision',this)">
-          <div class="stat-box-num" style="color:#7aaee8;">63</div>
-          <div class="stat-box-label">En revisión</div>
-        </div>
-        <div class="stat-box" onclick="filterByStatus('entrevista',this)">
-          <div class="stat-box-num" style="color:var(--clr-success);">7</div>
-          <div class="stat-box-label">Entrevistas</div>
-        </div>
-        <div class="stat-box" onclick="filterByStatus('rechazado',this)">
-          <div class="stat-box-num" style="color:var(--clr-error);">44</div>
-          <div class="stat-box-label">Rechazadas</div>
+        <div class="topbar-right">
+          <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+          <a href="candidates.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Buscar candidatos</a>
         </div>
       </div>
 
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Buscá por nombre, puesto o habilidad..." />
+      <div class="page-content">
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-box active" onclick="filterByStatus('all',this)">
+            <div class="stat-box-num">148</div>
+            <div class="stat-box-label">Total</div>
+          </div>
+          <div class="stat-box" onclick="filterByStatus('nueva',this)">
+            <div class="stat-box-num" style="color:var(--clr-accent);">34</div>
+            <div class="stat-box-label">Nuevas</div>
+          </div>
+          <div class="stat-box" onclick="filterByStatus('revision',this)">
+            <div class="stat-box-num" style="color:#7aaee8;">63</div>
+            <div class="stat-box-label">En revisión</div>
+          </div>
+          <div class="stat-box" onclick="filterByStatus('entrevista',this)">
+            <div class="stat-box-num" style="color:var(--clr-success);">7</div>
+            <div class="stat-box-label">Entrevistas</div>
+          </div>
+          <div class="stat-box" onclick="filterByStatus('rechazado',this)">
+            <div class="stat-box-num" style="color:var(--clr-error);">44</div>
+            <div class="stat-box-label">Rechazadas</div>
+          </div>
         </div>
-        <select class="filter-select" id="filter-job">
-          <option value="">📋 Todas las ofertas</option>
-          <option>Full Stack Developer</option>
-          <option>Diseñador UX/UI</option>
-          <option>Data Analyst</option>
-          <option>DevOps Engineer</option>
-        </select>
-        <select class="filter-select" id="filter-order">
-          <option>Más recientes</option>
-          <option>Mayor match IA</option>
-          <option>A-Z por nombre</option>
-        </select>
-        <span class="results-info" id="results-count">6 postulaciones</span>
-      </div>
 
-      <!-- Status tabs -->
-      <div class="status-tabs">
-        <button class="status-tab active" onclick="switchTab('all',this)">Todas <span class="tab-count">6</span></button>
-        <button class="status-tab" onclick="switchTab('nueva',this)">🟡 Nuevas <span class="tab-count">2</span></button>
-        <button class="status-tab" onclick="switchTab('revision',this)">🔵 En revisión <span class="tab-count">2</span></button>
-        <button class="status-tab" onclick="switchTab('entrevista',this)">🟢 Entrevista <span class="tab-count">1</span></button>
-        <button class="status-tab" onclick="switchTab('rechazado',this)">🔴 Rechazada <span class="tab-count">1</span></button>
-      </div>
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Buscá por nombre, puesto o habilidad..." />
+          </div>
+          <select class="filter-select" id="filter-job">
+            <option value="">📋 Todas las ofertas</option>
+            <option>Full Stack Developer</option>
+            <option>Diseñador UX/UI</option>
+            <option>Data Analyst</option>
+            <option>DevOps Engineer</option>
+          </select>
+          <select class="filter-select" id="filter-order">
+            <option>Más recientes</option>
+            <option>Mayor match IA</option>
+            <option>A-Z por nombre</option>
+          </select>
+          <span class="results-info" id="results-count">6 postulaciones</span>
+        </div>
 
-      <!-- Lista -->
-      <div id="app-list">
+        <!-- Status tabs -->
+        <div class="status-tabs">
+          <button class="status-tab active" onclick="switchTab('all',this)">Todas <span class="tab-count">6</span></button>
+          <button class="status-tab" onclick="switchTab('nueva',this)">🟡 Nuevas <span class="tab-count">2</span></button>
+          <button class="status-tab" onclick="switchTab('revision',this)">🔵 En revisión <span class="tab-count">2</span></button>
+          <button class="status-tab" onclick="switchTab('entrevista',this)">🟢 Entrevista <span class="tab-count">1</span></button>
+          <button class="status-tab" onclick="switchTab('rechazado',this)">🔴 Rechazada <span class="tab-count">1</span></button>
+        </div>
 
-        <div class="app-card" data-status="nueva">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg">JP</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">Juan Pérez</div>
-                  <div class="cand-title-lg">Full Stack Developer · 4 años exp.</div>
+        <!-- Lista -->
+        <div id="app-list">
+
+          <div class="app-card" data-status="nueva">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg">JP</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">Juan Pérez</div>
+                    <div class="cand-title-lg">Full Stack Developer · 4 años exp.</div>
+                  </div>
+                  <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
                 </div>
-                <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
+                <div class="app-card-meta">
+                  <span>📋 Full Stack Developer</span>
+                  <span>📍 Buenos Aires</span>
+                  <span>📅 Hace 10 min</span>
+                </div>
               </div>
-              <div class="app-card-meta">
-                <span>📋 Full Stack Developer</span>
-                <span>📍 Buenos Aires</span>
-                <span>📅 Hace 10 min</span>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:87%"></div></div>
+                <span class="match-pct-text">87%</span>
               </div>
             </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:87%"></div></div>
-              <span class="match-pct-text">87%</span>
+            <div class="app-card-tags">
+              <span class="skill-tag match">React</span>
+              <span class="skill-tag match">Node.js</span>
+              <span class="skill-tag match">TypeScript</span>
+              <span class="skill-tag">Docker</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left">
+                Cambiar estado:
+                <select class="status-select" onchange="changeStatus(this)">
+                  <option value="nueva" selected>🟡 Nueva</option>
+                  <option value="revision">🔵 En revisión</option>
+                  <option value="entrevista">🟢 Entrevista</option>
+                  <option value="rechazado">🔴 Rechazar</option>
+                </select>
+              </div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
+              </div>
             </div>
           </div>
-          <div class="app-card-tags">
-            <span class="skill-tag match">React</span>
-            <span class="skill-tag match">Node.js</span>
-            <span class="skill-tag match">TypeScript</span>
-            <span class="skill-tag">Docker</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left">
-              Cambiar estado:
-              <select class="status-select" onchange="changeStatus(this)">
-                <option value="nueva" selected>🟡 Nueva</option>
-                <option value="revision">🔵 En revisión</option>
-                <option value="entrevista">🟢 Entrevista</option>
-                <option value="rechazado">🔴 Rechazar</option>
-              </select>
+
+          <div class="app-card" data-status="nueva">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg v2">MG</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">María García</div>
+                    <div class="cand-title-lg">UX/UI Designer · 6 años exp.</div>
+                  </div>
+                  <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
+                </div>
+                <div class="app-card-meta">
+                  <span>📋 Diseñador UX/UI</span>
+                  <span>📍 Córdoba</span>
+                  <span>📅 Hace 32 min</span>
+                </div>
+              </div>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:92%"></div></div>
+                <span class="match-pct-text">92%</span>
+              </div>
             </div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
+            <div class="app-card-tags">
+              <span class="skill-tag match">Figma</span>
+              <span class="skill-tag match">UX Research</span>
+              <span class="skill-tag match">Prototyping</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left">
+                Cambiar estado:
+                <select class="status-select" onchange="changeStatus(this)">
+                  <option value="nueva" selected>🟡 Nueva</option>
+                  <option value="revision">🔵 En revisión</option>
+                  <option value="entrevista">🟢 Entrevista</option>
+                  <option value="rechazado">🔴 Rechazar</option>
+                </select>
+              </div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
+              </div>
             </div>
           </div>
+
+          <div class="app-card" data-status="revision">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg v3">LR</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">Lucas Rodríguez</div>
+                    <div class="cand-title-lg">Data Analyst · 3 años exp.</div>
+                  </div>
+                  <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
+                </div>
+                <div class="app-card-meta">
+                  <span>📋 Data Analyst</span>
+                  <span>📍 Rosario</span>
+                  <span>📅 Hace 1 día</span>
+                </div>
+              </div>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:79%"></div></div>
+                <span class="match-pct-text">79%</span>
+              </div>
+            </div>
+            <div class="app-card-tags">
+              <span class="skill-tag match">Python</span>
+              <span class="skill-tag match">SQL</span>
+              <span class="skill-tag">Power BI</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left">
+                Cambiar estado:
+                <select class="status-select" onchange="changeStatus(this)">
+                  <option value="nueva">🟡 Nueva</option>
+                  <option value="revision" selected>🔵 En revisión</option>
+                  <option value="entrevista">🟢 Entrevista</option>
+                  <option value="rechazado">🔴 Rechazar</option>
+                </select>
+              </div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card" data-status="revision">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg v4">SF</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">Sofía Fernández</div>
+                    <div class="cand-title-lg">Backend Developer · 2 años exp.</div>
+                  </div>
+                  <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
+                </div>
+                <div class="app-card-meta">
+                  <span>📋 Full Stack Developer</span>
+                  <span>📍 Remoto</span>
+                  <span>📅 Hace 2 días</span>
+                </div>
+              </div>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:74%"></div></div>
+                <span class="match-pct-text">74%</span>
+              </div>
+            </div>
+            <div class="app-card-tags">
+              <span class="skill-tag match">NestJS</span>
+              <span class="skill-tag match">PostgreSQL</span>
+              <span class="skill-tag">Redis</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left">
+                Cambiar estado:
+                <select class="status-select" onchange="changeStatus(this)">
+                  <option value="nueva">🟡 Nueva</option>
+                  <option value="revision" selected>🔵 En revisión</option>
+                  <option value="entrevista">🟢 Entrevista</option>
+                  <option value="rechazado">🔴 Rechazar</option>
+                </select>
+              </div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card" data-status="entrevista">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg v5">DT</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">Diego Torres</div>
+                    <div class="cand-title-lg">DevOps Engineer · 5 años exp.</div>
+                  </div>
+                  <span class="badge badge-green"><span class="badge-dot"></span> Entrevista</span>
+                </div>
+                <div class="app-card-meta">
+                  <span>📋 DevOps Engineer</span>
+                  <span>📍 Buenos Aires</span>
+                  <span>📅 Hace 3 días</span>
+                  <span style="color:var(--clr-success);">📅 Entrevista: Lunes 23 mar — 10:00 hs</span>
+                </div>
+              </div>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:85%"></div></div>
+                <span class="match-pct-text">85%</span>
+              </div>
+            </div>
+            <div class="app-card-tags">
+              <span class="skill-tag match">Docker</span>
+              <span class="skill-tag match">Kubernetes</span>
+              <span class="skill-tag match">CI/CD</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left">
+                Cambiar estado:
+                <select class="status-select" onchange="changeStatus(this)">
+                  <option value="nueva">🟡 Nueva</option>
+                  <option value="revision">🔵 En revisión</option>
+                  <option value="entrevista" selected>🟢 Entrevista</option>
+                  <option value="rechazado">🔴 Rechazar</option>
+                </select>
+              </div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="btn btn-ghost" style="padding:8px 16px;font-size:0.8rem;">✅ Marcar como contratado</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-card" data-status="rechazado" style="opacity:0.65;">
+            <div class="app-card-main">
+              <div class="cand-avatar-lg v6">AM</div>
+              <div class="app-card-info">
+                <div class="app-card-top">
+                  <div>
+                    <div class="cand-name-lg">Agustina Molina</div>
+                    <div class="cand-title-lg">Frontend Developer · 3 años exp.</div>
+                  </div>
+                  <span class="badge badge-red">Rechazada</span>
+                </div>
+                <div class="app-card-meta">
+                  <span>📋 Full Stack Developer</span>
+                  <span>📍 Mendoza</span>
+                  <span>📅 Hace 1 semana</span>
+                </div>
+              </div>
+              <div class="match-inline">
+                <div class="match-bar-bg"><div class="match-bar-fill" style="width:58%;background:var(--clr-muted)"></div></div>
+                <span class="match-pct-text" style="color:var(--clr-muted)">58%</span>
+              </div>
+            </div>
+            <div class="app-card-tags">
+              <span class="skill-tag">Vue.js</span>
+              <span class="skill-tag">CSS</span>
+            </div>
+            <div class="app-card-footer">
+              <div class="app-card-footer-left" style="color:var(--clr-error);">❌ Candidato rechazado</div>
+              <div class="app-card-actions">
+                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
+                <button class="icon-btn" style="font-size:0.8rem;" onclick="restoreApp(this)">↩ Restaurar</button>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="app-card" data-status="nueva">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg v2">MG</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">María García</div>
-                  <div class="cand-title-lg">UX/UI Designer · 6 años exp.</div>
-                </div>
-                <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
-              </div>
-              <div class="app-card-meta">
-                <span>📋 Diseñador UX/UI</span>
-                <span>📍 Córdoba</span>
-                <span>📅 Hace 32 min</span>
-              </div>
-            </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:92%"></div></div>
-              <span class="match-pct-text">92%</span>
-            </div>
-          </div>
-          <div class="app-card-tags">
-            <span class="skill-tag match">Figma</span>
-            <span class="skill-tag match">UX Research</span>
-            <span class="skill-tag match">Prototyping</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left">
-              Cambiar estado:
-              <select class="status-select" onchange="changeStatus(this)">
-                <option value="nueva" selected>🟡 Nueva</option>
-                <option value="revision">🔵 En revisión</option>
-                <option value="entrevista">🟢 Entrevista</option>
-                <option value="rechazado">🔴 Rechazar</option>
-              </select>
-            </div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card" data-status="revision">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg v3">LR</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">Lucas Rodríguez</div>
-                  <div class="cand-title-lg">Data Analyst · 3 años exp.</div>
-                </div>
-                <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
-              </div>
-              <div class="app-card-meta">
-                <span>📋 Data Analyst</span>
-                <span>📍 Rosario</span>
-                <span>📅 Hace 1 día</span>
-              </div>
-            </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:79%"></div></div>
-              <span class="match-pct-text">79%</span>
-            </div>
-          </div>
-          <div class="app-card-tags">
-            <span class="skill-tag match">Python</span>
-            <span class="skill-tag match">SQL</span>
-            <span class="skill-tag">Power BI</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left">
-              Cambiar estado:
-              <select class="status-select" onchange="changeStatus(this)">
-                <option value="nueva">🟡 Nueva</option>
-                <option value="revision" selected>🔵 En revisión</option>
-                <option value="entrevista">🟢 Entrevista</option>
-                <option value="rechazado">🔴 Rechazar</option>
-              </select>
-            </div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card" data-status="revision">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg v4">SF</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">Sofía Fernández</div>
-                  <div class="cand-title-lg">Backend Developer · 2 años exp.</div>
-                </div>
-                <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
-              </div>
-              <div class="app-card-meta">
-                <span>📋 Full Stack Developer</span>
-                <span>📍 Remoto</span>
-                <span>📅 Hace 2 días</span>
-              </div>
-            </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:74%"></div></div>
-              <span class="match-pct-text">74%</span>
-            </div>
-          </div>
-          <div class="app-card-tags">
-            <span class="skill-tag match">NestJS</span>
-            <span class="skill-tag match">PostgreSQL</span>
-            <span class="skill-tag">Redis</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left">
-              Cambiar estado:
-              <select class="status-select" onchange="changeStatus(this)">
-                <option value="nueva">🟡 Nueva</option>
-                <option value="revision" selected>🔵 En revisión</option>
-                <option value="entrevista">🟢 Entrevista</option>
-                <option value="rechazado">🔴 Rechazar</option>
-              </select>
-            </div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card" data-status="entrevista">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg v5">DT</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">Diego Torres</div>
-                  <div class="cand-title-lg">DevOps Engineer · 5 años exp.</div>
-                </div>
-                <span class="badge badge-green"><span class="badge-dot"></span> Entrevista</span>
-              </div>
-              <div class="app-card-meta">
-                <span>📋 DevOps Engineer</span>
-                <span>📍 Buenos Aires</span>
-                <span>📅 Hace 3 días</span>
-                <span style="color:var(--clr-success);">📅 Entrevista: Lunes 23 mar — 10:00 hs</span>
-              </div>
-            </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:85%"></div></div>
-              <span class="match-pct-text">85%</span>
-            </div>
-          </div>
-          <div class="app-card-tags">
-            <span class="skill-tag match">Docker</span>
-            <span class="skill-tag match">Kubernetes</span>
-            <span class="skill-tag match">CI/CD</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left">
-              Cambiar estado:
-              <select class="status-select" onchange="changeStatus(this)">
-                <option value="nueva">🟡 Nueva</option>
-                <option value="revision">🔵 En revisión</option>
-                <option value="entrevista" selected>🟢 Entrevista</option>
-                <option value="rechazado">🔴 Rechazar</option>
-              </select>
-            </div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="btn btn-ghost" style="padding:8px 16px;font-size:0.8rem;">✅ Marcar como contratado</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card" data-status="rechazado" style="opacity:0.65;">
-          <div class="app-card-main">
-            <div class="cand-avatar-lg v6">AM</div>
-            <div class="app-card-info">
-              <div class="app-card-top">
-                <div>
-                  <div class="cand-name-lg">Agustina Molina</div>
-                  <div class="cand-title-lg">Frontend Developer · 3 años exp.</div>
-                </div>
-                <span class="badge badge-red">Rechazada</span>
-              </div>
-              <div class="app-card-meta">
-                <span>📋 Full Stack Developer</span>
-                <span>📍 Mendoza</span>
-                <span>📅 Hace 1 semana</span>
-              </div>
-            </div>
-            <div class="match-inline">
-              <div class="match-bar-bg"><div class="match-bar-fill" style="width:58%;background:var(--clr-muted)"></div></div>
-              <span class="match-pct-text" style="color:var(--clr-muted)">58%</span>
-            </div>
-          </div>
-          <div class="app-card-tags">
-            <span class="skill-tag">Vue.js</span>
-            <span class="skill-tag">CSS</span>
-          </div>
-          <div class="app-card-footer">
-            <div class="app-card-footer-left" style="color:var(--clr-error);">❌ Candidato rechazado</div>
-            <div class="app-card-actions">
-              <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-              <button class="icon-btn" style="font-size:0.8rem;" onclick="restoreApp(this)">↩ Restaurar</button>
-            </div>
-          </div>
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">Sin postulaciones</div>
+          <div class="empty-desc">No hay postulaciones con este filtro aplicado.</div>
         </div>
 
       </div>
-
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">📭</div>
-        <div class="empty-title">Sin postulaciones</div>
-        <div class="empty-desc">No hay postulaciones con este filtro aplicado.</div>
-      </div>
-
-    </div>
-  </main>
-</div>
-<script src="../../js/profile.js"></script>
-<script>
-  function switchTab(status, btn) {
-    document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    applyFilter(status);
-  }
-  function filterByStatus(status, box) {
-    document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active'));
-    box.classList.add('active');
-    document.querySelectorAll('.status-tab').forEach(t => t.classList.toggle('active', t.textContent.trim().startsWith(status === 'all' ? 'Todas' : '')));
-    applyFilter(status);
-  }
-  function applyFilter(status) {
-    let visible = 0;
-    document.querySelectorAll('.app-card').forEach(c => {
-      const show = status === 'all' || c.dataset.status === status;
-      c.style.display = show ? '' : 'none';
-      if (show) visible++;
+    </main>
+  </div>
+  <script src="../../js/profile.js"></script>
+  <script>
+    function switchTab(status, btn) {
+      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(status);
+    }
+    function filterByStatus(status, box) {
+      document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active'));
+      box.classList.add('active');
+      document.querySelectorAll('.status-tab').forEach(t => t.classList.toggle('active', t.textContent.trim().startsWith(status === 'all' ? 'Todas' : '')));
+      applyFilter(status);
+    }
+    function applyFilter(status) {
+      let visible = 0;
+      document.querySelectorAll('.app-card').forEach(c => {
+        const show = status === 'all' || c.dataset.status === status;
+        c.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('results-count').textContent = `${visible} postulaciones`;
+      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+    }
+    document.getElementById('search-input').addEventListener('input', function() {
+      let visible = 0;
+      document.querySelectorAll('.app-card').forEach(c => {
+        const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
+        c.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('results-count').textContent = `${visible} postulaciones`;
+      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
     });
-    document.getElementById('results-count').textContent = `${visible} postulaciones`;
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-  }
-  document.getElementById('search-input').addEventListener('input', function() {
-    let visible = 0;
-    document.querySelectorAll('.app-card').forEach(c => {
-      const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
-      c.style.display = show ? '' : 'none';
-      if (show) visible++;
+    function changeStatus(sel) {
+      const card = sel.closest('.app-card');
+      card.dataset.status = sel.value;
+      const badge = card.querySelector('.badge');
+      const map = { nueva: ['badge-gold','🟡 Nueva'], revision: ['badge-blue','🔵 En revisión'], entrevista: ['badge-green','🟢 Entrevista'], rechazado: ['badge-red','🔴 Rechazada'] };
+      badge.className = 'badge ' + map[sel.value][0];
+      badge.innerHTML = `<span class="badge-dot"></span> ${map[sel.value][1].split(' ').slice(1).join(' ')}`;
+      card.style.opacity = sel.value === 'rechazado' ? '0.65' : '1';
+    }
+    function restoreApp(btn) {
+      const card = btn.closest('.app-card');
+      card.dataset.status = 'revision';
+      card.style.opacity = '1';
+      card.querySelector('.badge').className = 'badge badge-blue';
+      card.querySelector('.badge').innerHTML = '<span class="badge-dot"></span> En revisión';
+    }
+  </script>
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    import { updateDashboardHero } from '../../js/profile.js';
+
+    window.cerrarSesion = logout;
+
+    // Actualizar sidebar con datos reales del usuario
+    const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (u) updateDashboardHero(u);
+  </script>
+
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
+
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
     });
-    document.getElementById('results-count').textContent = `${visible} postulaciones`;
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-  });
-  function changeStatus(sel) {
-    const card = sel.closest('.app-card');
-    card.dataset.status = sel.value;
-    const badge = card.querySelector('.badge');
-    const map = { nueva: ['badge-gold','🟡 Nueva'], revision: ['badge-blue','🔵 En revisión'], entrevista: ['badge-green','🟢 Entrevista'], rechazado: ['badge-red','🔴 Rechazada'] };
-    badge.className = 'badge ' + map[sel.value][0];
-    badge.innerHTML = `<span class="badge-dot"></span> ${map[sel.value][1].split(' ').slice(1).join(' ')}`;
-    card.style.opacity = sel.value === 'rechazado' ? '0.65' : '1';
-  }
-  function restoreApp(btn) {
-    const card = btn.closest('.app-card');
-    card.dataset.status = 'revision';
-    card.style.opacity = '1';
-    card.querySelector('.badge').className = 'badge badge-blue';
-    card.querySelector('.badge').innerHTML = '<span class="badge-dot"></span> En revisión';
-  }
-</script>
-<script type="module">
-  import { logout } from '../../js/auth.js';
-  import { updateDashboardHero } from '../../js/profile.js';
+  </script>
 
-  window.cerrarSesion = logout;
-
-  // Actualizar sidebar con datos reales del usuario
-  const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-  if (u) updateDashboardHero(u);
-</script>
 </body>
 </html>

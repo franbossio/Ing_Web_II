@@ -37,7 +37,6 @@
     .cv-drop-inline.visible  { display: block; }
     .cv-drop-inline:hover,
     .cv-drop-inline.drag-over { border-color: var(--clr-accent); background: rgba(201,168,76,0.04); }
-    .cv-drop-inline-icon  { font-size: 2rem; margin-bottom: 8px; display: block; }
     .cv-drop-inline-title { font-family: var(--font-display); font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
     .cv-drop-inline-sub   { font-size: 0.8rem; color: var(--clr-muted); margin-bottom: 14px; }
 
@@ -106,363 +105,386 @@
   </style>
 </head>
 <body>
-<div class="app-layout">
+  <div class="app-layout">
 
-  <aside class="sidebar">
-    <a href="dashboard.html" class="logo-container">
-      <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img">
-      <div class="logo-text-group"></div>
-    </a>
-    <div class="sidebar-profile">
-      <div class="profile-badge">
-        <div class="profile-avatar" id="sidebar-avatar">JP</div>
-        <div class="profile-info">
-          <div class="profile-name"  id="sidebar-name">Juan Pérez</div>
-          <div class="profile-role"  id="sidebar-role">Candidato</div>
-        </div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-section-label">Principal</span>
-      <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
-      <a href="jobs.html"      class="nav-item"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
-      <span class="nav-section-label">Mi perfil</span>
-      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
-      <a href="profile.html#cv" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
-      <span class="nav-section-label">Postulaciones</span>
-      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
-      <a href="saved.html"    class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
-      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="#" onclick="cerrarSesion()" class="nav-item">
-        <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323">
-            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
-          </svg>
-        </span> Cerrar sesión
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <span class="arrow-icon">❮</span>
+    </button>
+
+    <aside class="sidebar">
+      
+      <a href="dashboard.html" class="logo-container">
+        <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img">
+        <div class="logo-text-group"></div>
       </a>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Dashboard</div>
-        <div class="topbar-subtitle" id="topbar-subtitle">Bienvenido de vuelta 👋</div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
-        <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Explorar ofertas</a>
-      </div>
-    </div>
-
-    <div class="page-content">
-
-      <!-- Hero perfil -->
-      <div class="profile-hero">
-        <div class="profile-hero-bg"></div>
-        <div class="profile-hero-left">
-          <div class="hero-avatar" id="hero-avatar">JP</div>
-          <div>
-            <div class="hero-name"  id="hero-name">Juan Pérez</div>
-            <div class="hero-title" id="hero-title">Desarrollador Full Stack</div>
-            <div class="hero-meta">
-              <span id="hero-location">📍 Buenos Aires, Argentina</span>
-            </div>
+      
+      <div class="sidebar-profile">
+        <div class="profile-badge">
+          <div class="profile-avatar" id="sidebar-avatar">JP</div>
+          <div class="profile-info">
+            <div class="profile-name"  id="sidebar-name">Juan Pérez</div>
+            <div class="profile-role"  id="sidebar-role">Candidato</div>
           </div>
         </div>
-        <div class="profile-hero-right">
-          <div class="complete-label">Perfil completado</div>
-          <div class="complete-ring">
-            <svg viewBox="0 0 76 76" width="76" height="76">
-              <circle class="ring-bg"   cx="38" cy="38" r="30"/>
-              <circle class="ring-fill" cx="38" cy="38" r="30"/>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Principal</span>
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="jobs.html"      class="nav-item"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
+        <span class="nav-section-label">Mi perfil</span>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
+        <a href="profile.html#cv" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
+        <span class="nav-section-label">Postulaciones</span>
+        <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
+        <a href="saved.html"    class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
+        <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" onclick="cerrarSesion()" class="nav-item">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323">
+              <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
             </svg>
-            <div class="ring-pct" id="ring-pct">0%</div>
-          </div>
-          <div class="complete-hint">
-            <a href="profile.html" style="color:var(--clr-accent);font-size:0.78rem;">Completar perfil →</a>
-          </div>
+          </span> Cerrar sesión
+        </a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">Dashboard</div>
+          <div class="topbar-subtitle" id="topbar-subtitle">Bienvenido de vuelta 👋</div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+          <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Explorar ofertas</a>
         </div>
       </div>
 
-      <!-- CV bar -->
-      <div class="cv-upload-bar">
-        <div class="cv-bar-left">
-          <div class="cv-bar-icon">📄</div>
-          <div id="cv-bar-info">
-            <div class="cv-bar-title">Subir CV</div>
-            <div class="cv-bar-sub">La IA analiza tu CV y completa tu perfil automáticamente</div>
-          </div>
-        </div>
-        <div>
-          <button class="btn btn-ghost" id="cv-bar-btn"
-            style="font-size:0.82rem;padding:8px 16px;"
-            onclick="toggleDrop()">📤 Subir CV</button>
-        </div>
-      </div>
+      <div class="page-content">
 
-      <!-- Drop area inline -->
-      <div class="cv-drop-inline" id="cv-drop-inline"
-        onclick="document.getElementById('cv-dash-input').click()"
-        ondragover="event.preventDefault();this.classList.add('drag-over')"
-        ondragleave="this.classList.remove('drag-over')"
-        ondrop="handleDrop(event)">
-        <span class="cv-drop-inline-icon">📤</span>
-        <div class="cv-drop-inline-title">Arrastrá tu CV acá o hacé click para seleccionar</div>
-        <div class="cv-drop-inline-sub">Solo PDF · Máximo 5 MB</div>
-        <button class="btn btn-primary" style="pointer-events:none;padding:9px 22px;font-size:0.85rem;">
-          Seleccionar archivo
-        </button>
-      </div>
-      <input type="file" id="cv-dash-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
-
-      <!-- Columnas -->
-      <div class="dash-cols">
-
-        <!-- Izq: Mis postulaciones -->
-        <div class="panel">
-          <div class="panel-header">
+        <!-- Hero perfil -->
+        <div class="profile-hero">
+          <div class="profile-hero-bg"></div>
+          <div class="profile-hero-left">
+            <div class="hero-avatar" id="hero-avatar">JP</div>
             <div>
-              <div class="panel-title">Mis postulaciones</div>
-              <div class="panel-subtitle">Estado de tus últimas aplicaciones</div>
-            </div>
-            <a href="applications.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
-          </div>
-          <div class="panel-body" style="padding:14px 20px;">
-            <div id="app-list">
-              <div class="empty-msg" id="apps-empty">
-                📭 Todavía no te postulaste a ninguna oferta.<br>
-                <a href="jobs.html">Explorar ofertas →</a>
+              <div class="hero-name"  id="hero-name">Juan Pérez</div>
+              <div class="hero-title" id="hero-title">Desarrollador Full Stack</div>
+              <div class="hero-meta">
+                <span id="hero-location">📍 Buenos Aires, Argentina</span>
               </div>
             </div>
           </div>
-          <div class="panel-footer">
-            <a href="applications.html">Ver todas las postulaciones →</a>
+          <div class="profile-hero-right">
+            <div class="complete-label">Perfil completado</div>
+            <div class="complete-ring">
+              <svg viewBox="0 0 76 76" width="76" height="76">
+                <circle class="ring-bg"   cx="38" cy="38" r="30"/>
+                <circle class="ring-fill" cx="38" cy="38" r="30"/>
+              </svg>
+              <div class="ring-pct" id="ring-pct">0%</div>
+            </div>
+            <div class="complete-hint">
+              <a href="profile.html" style="color:var(--clr-accent);font-size:0.78rem;">Completar perfil →</a>
+            </div>
           </div>
         </div>
 
-        <!-- Der: Recomendadas -->
-        <div class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">🤖 Recomendadas para vos</div>
-              <div class="panel-subtitle">Basadas en tu perfil y CV</div>
+        <!-- CV bar -->
+        <div class="cv-upload-bar">
+          <div class="cv-bar-left">
+            <div class="cv-bar-icon">📄</div>
+            <div id="cv-bar-info">
+              <div class="cv-bar-title">Subir CV</div>
+              <div class="cv-bar-sub">La IA analiza tu CV y completa tu perfil automáticamente</div>
             </div>
-            <a href="jobs.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
           </div>
-          <div class="panel-body" style="padding:14px 20px;">
-
-            <div class="rec-card">
-              <div class="rec-card-top">
-                <div>
-                  <div class="rec-card-title">Senior Full Stack Developer</div>
-                  <div class="rec-card-company">🏢 Globant · Buenos Aires</div>
-                </div>
-                <div class="rec-match-box">
-                  <div class="rec-match-pct">92%</div>
-                  <div class="rec-match-label">Match</div>
-                </div>
-              </div>
-              <div class="rec-card-meta"><span>🏠 Remoto</span><span>💰 USD 2.500–3.500</span></div>
-              <div class="rec-card-tags">
-                <span class="skill-tag match">React</span>
-                <span class="skill-tag match">Node.js</span>
-                <span class="skill-tag match">TypeScript</span>
-              </div>
-              <div class="rec-card-footer">
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Alta compatibilidad</span>
-                <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
-              </div>
-            </div>
-
-            <div class="rec-card">
-              <div class="rec-card-top">
-                <div>
-                  <div class="rec-card-title">Backend Developer — NestJS</div>
-                  <div class="rec-card-company">🚀 MercadoLibre · Remoto</div>
-                </div>
-                <div class="rec-match-box">
-                  <div class="rec-match-pct">85%</div>
-                  <div class="rec-match-label">Match</div>
-                </div>
-              </div>
-              <div class="rec-card-meta"><span>🏠 Remoto</span><span>💰 USD 2.000–2.800</span></div>
-              <div class="rec-card-tags">
-                <span class="skill-tag match">Node.js</span>
-                <span class="skill-tag match">TypeScript</span>
-                <span class="skill-tag">PostgreSQL</span>
-              </div>
-              <div class="rec-card-footer">
-                <span class="badge badge-gold" style="font-size:0.7rem;"><span class="badge-dot"></span> Buena compatibilidad</span>
-                <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
-              </div>
-            </div>
-
-            <div class="rec-card">
-              <div class="rec-card-top">
-                <div>
-                  <div class="rec-card-title">Frontend Developer — React</div>
-                  <div class="rec-card-company">💻 Despegar · Buenos Aires</div>
-                </div>
-                <div class="rec-match-box">
-                  <div class="rec-match-pct">78%</div>
-                  <div class="rec-match-label">Match</div>
-                </div>
-              </div>
-              <div class="rec-card-meta"><span>🔀 Híbrido</span><span>💰 ARS 800k–1.2M</span></div>
-              <div class="rec-card-tags">
-                <span class="skill-tag match">React</span>
-                <span class="skill-tag match">TypeScript</span>
-                <span class="skill-tag">Next.js</span>
-              </div>
-              <div class="rec-card-footer">
-                <span class="badge badge-gray" style="font-size:0.7rem;">Compatibilidad media</span>
-                <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
-              </div>
-            </div>
-
+          <div>
+            <button class="btn btn-ghost" id="cv-bar-btn"
+              style="font-size:0.82rem;padding:8px 16px;"
+              onclick="toggleDrop()">📤 Subir CV</button>
           </div>
-          <div class="panel-footer">
-            <a href="jobs.html">Ver todas las recomendaciones →</a>
+        </div>
+
+        <!-- Drop area inline -->
+        <div class="cv-drop-inline" id="cv-drop-inline"
+          onclick="document.getElementById('cv-dash-input').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleDrop(event)">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF"><path d="M446.67-315.33v-356L332-556.67l-47.33-48L480-800l195.33 195.33-47.33 48-114.67-114.66v356h-66.66ZM226.67-160q-27 0-46.84-19.83Q160-199.67 160-226.67V-362h66.67v135.33h506.66V-362H800v135.33q0 27-19.83 46.84Q760.33-160 733.33-160H226.67Z"/></svg>
+          </span>
+          <div class="cv-drop-inline-title">Arrastrá tu CV acá o hacé click para seleccionar</div>
+          <div class="cv-drop-inline-sub">Solo PDF · Máximo 5 MB</div>
+          <button class="btn btn-primary" style="pointer-events:none;padding:9px 22px;font-size:0.85rem;">
+            Seleccionar archivo
+          </button>
+        </div>
+        <input type="file" id="cv-dash-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
+
+        <!-- Columnas -->
+        <div class="dash-cols">
+
+          <!-- Izq: Mis postulaciones -->
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Mis postulaciones</div>
+                <div class="panel-subtitle">Estado de tus últimas aplicaciones</div>
+              </div>
+              <a href="applications.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
+            </div>
+            <div class="panel-body" style="padding:14px 20px;">
+              <div id="app-list">
+                <div class="empty-msg" id="apps-empty">
+                  📭 Todavía no te postulaste a ninguna oferta.<br>
+                  <a href="jobs.html">Explorar ofertas →</a>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer">
+              <a href="applications.html">Ver todas las postulaciones →</a>
+            </div>
           </div>
+
+          <!-- Der: Recomendadas -->
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">🤖 Recomendadas para vos</div>
+                <div class="panel-subtitle">Basadas en tu perfil y CV</div>
+              </div>
+              <a href="jobs.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
+            </div>
+            <div class="panel-body" style="padding:14px 20px;">
+
+              <div class="rec-card">
+                <div class="rec-card-top">
+                  <div>
+                    <div class="rec-card-title">Senior Full Stack Developer</div>
+                    <div class="rec-card-company">🏢 Globant · Buenos Aires</div>
+                  </div>
+                  <div class="rec-match-box">
+                    <div class="rec-match-pct">92%</div>
+                    <div class="rec-match-label">Match</div>
+                  </div>
+                </div>
+                <div class="rec-card-meta"><span>🏠 Remoto</span><span>💰 USD 2.500–3.500</span></div>
+                <div class="rec-card-tags">
+                  <span class="skill-tag match">React</span>
+                  <span class="skill-tag match">Node.js</span>
+                  <span class="skill-tag match">TypeScript</span>
+                </div>
+                <div class="rec-card-footer">
+                  <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Alta compatibilidad</span>
+                  <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
+                </div>
+              </div>
+
+              <div class="rec-card">
+                <div class="rec-card-top">
+                  <div>
+                    <div class="rec-card-title">Backend Developer — NestJS</div>
+                    <div class="rec-card-company">🚀 MercadoLibre · Remoto</div>
+                  </div>
+                  <div class="rec-match-box">
+                    <div class="rec-match-pct">85%</div>
+                    <div class="rec-match-label">Match</div>
+                  </div>
+                </div>
+                <div class="rec-card-meta"><span>🏠 Remoto</span><span>💰 USD 2.000–2.800</span></div>
+                <div class="rec-card-tags">
+                  <span class="skill-tag match">Node.js</span>
+                  <span class="skill-tag match">TypeScript</span>
+                  <span class="skill-tag">PostgreSQL</span>
+                </div>
+                <div class="rec-card-footer">
+                  <span class="badge badge-gold" style="font-size:0.7rem;"><span class="badge-dot"></span> Buena compatibilidad</span>
+                  <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
+                </div>
+              </div>
+
+              <div class="rec-card">
+                <div class="rec-card-top">
+                  <div>
+                    <div class="rec-card-title">Frontend Developer — React</div>
+                    <div class="rec-card-company">💻 Despegar · Buenos Aires</div>
+                  </div>
+                  <div class="rec-match-box">
+                    <div class="rec-match-pct">78%</div>
+                    <div class="rec-match-label">Match</div>
+                  </div>
+                </div>
+                <div class="rec-card-meta"><span>🔀 Híbrido</span><span>💰 ARS 800k–1.2M</span></div>
+                <div class="rec-card-tags">
+                  <span class="skill-tag match">React</span>
+                  <span class="skill-tag match">TypeScript</span>
+                  <span class="skill-tag">Next.js</span>
+                </div>
+                <div class="rec-card-footer">
+                  <span class="badge badge-gray" style="font-size:0.7rem;">Compatibilidad media</span>
+                  <a href="jobs.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver oferta</a>
+                </div>
+              </div>
+
+            </div>
+            <div class="panel-footer">
+              <a href="jobs.html">Ver todas las recomendaciones →</a>
+            </div>
+          </div>
+
         </div>
 
       </div>
+    </main>
+  </div>
 
-    </div>
-  </main>
-</div>
+  <div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:999;min-width:260px;max-width:380px;"></div>
 
-<div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:999;min-width:260px;max-width:380px;"></div>
+  <script>
+    function toggleDrop() {
+      document.getElementById('cv-drop-inline').classList.toggle('visible');
+    }
 
-<script>
-  function toggleDrop() {
-    document.getElementById('cv-drop-inline').classList.toggle('visible');
-  }
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('global-alert');
+      el.className = `alert alert-${type} visible`;
+      el.textContent = msg;
+      setTimeout(() => el.classList.remove('visible'), 4000);
+    }
 
-  function showAlert(msg, type = 'success') {
-    const el = document.getElementById('global-alert');
-    el.className = `alert alert-${type} visible`;
-    el.textContent = msg;
-    setTimeout(() => el.classList.remove('visible'), 4000);
-  }
+    function handleFileSelect(input) { if (input.files[0]) processCV(input.files[0]); }
 
-  function handleFileSelect(input) { if (input.files[0]) processCV(input.files[0]); }
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('cv-drop-inline').classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type === 'application/pdf') processCV(f);
+      else showAlert('Solo se aceptan archivos PDF.', 'error');
+    }
 
-  function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById('cv-drop-inline').classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type === 'application/pdf') processCV(f);
-    else showAlert('Solo se aceptan archivos PDF.', 'error');
-  }
+    async function processCV(file) {
+      if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
+      document.getElementById('cv-drop-inline').classList.remove('visible');
 
-  async function processCV(file) {
-    if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
-    document.getElementById('cv-drop-inline').classList.remove('visible');
+      const btn = document.getElementById('cv-bar-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Analizando...';
 
-    const btn = document.getElementById('cv-bar-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Analizando...';
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Only = e.target.result.split(',')[1];
+        try {
+          const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+          const res = await fetch('http://localhost:3001/api/cv/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ base64Pdf: base64Only, fileName: file.name }),
+          });
+          if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Error'); }
+          const { user: updated } = await res.json();
+          localStorage.setItem('talentai_user', JSON.stringify(updated));
+          renderCvBar(updated);
+          const { updateDashboardHero, calcCandidatePercent, updateRing } = await import('../../js/profile.js');
+          updateDashboardHero(updated);
+          updateRing(calcCandidatePercent(updated));
+          showAlert('🤖 ¡Perfil completado con IA! Revisá tus datos en Editar perfil.');
+        } catch (err) {
+          showAlert('✗ ' + err.message, 'error');
+          btn.disabled = false;
+          btn.innerHTML = '📤 Subir CV';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
 
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-      const base64Only = e.target.result.split(',')[1];
-      try {
-        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('http://localhost:3001/api/cv/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ base64Pdf: base64Only, fileName: file.name }),
-        });
-        if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Error'); }
-        const { user: updated } = await res.json();
-        localStorage.setItem('talentai_user', JSON.stringify(updated));
-        renderCvBar(updated);
-        const { updateDashboardHero, calcCandidatePercent, updateRing } = await import('../../js/profile.js');
-        updateDashboardHero(updated);
-        updateRing(calcCandidatePercent(updated));
-        showAlert('🤖 ¡Perfil completado con IA! Revisá tus datos en Editar perfil.');
-      } catch (err) {
-        showAlert('✗ ' + err.message, 'error');
+    function renderCvBar(u) {
+      const btn  = document.getElementById('cv-bar-btn');
+      const info = document.getElementById('cv-bar-info');
+      if (u?.cvFileName) {
+        info.innerHTML = `
+          <div class="cv-bar-file-name">📄 ${u.cvFileName}</div>
+          <div class="cv-bar-file-meta">✓ Guardado en tu perfil</div>`;
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Reemplazar';
+      } else {
+        info.innerHTML = `
+          <div class="cv-bar-title">Subir CV</div>
+          <div class="cv-bar-sub">La IA analiza tu CV y completa tu perfil automáticamente</div>`;
         btn.disabled = false;
         btn.innerHTML = '📤 Subir CV';
       }
+    }
+  </script>
+
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    import { initDashboard } from '../../js/profile.js';
+
+    window.cerrarSesion = function() {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
     };
-    reader.readAsDataURL(file);
-  }
 
-  function renderCvBar(u) {
-    const btn  = document.getElementById('cv-bar-btn');
-    const info = document.getElementById('cv-bar-info');
-    if (u?.cvFileName) {
-      info.innerHTML = `
-        <div class="cv-bar-file-name">📄 ${u.cvFileName}</div>
-        <div class="cv-bar-file-meta">✓ Guardado en tu perfil</div>`;
-      btn.disabled = false;
-      btn.innerHTML = '🔄 Reemplazar';
-    } else {
-      info.innerHTML = `
-        <div class="cv-bar-title">Subir CV</div>
-        <div class="cv-bar-sub">La IA analiza tu CV y completa tu perfil automáticamente</div>`;
-      btn.disabled = false;
-      btn.innerHTML = '📤 Subir CV';
-    }
-  }
-</script>
+    async function loadDashboard() {
+      await initDashboard();
+      const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+      if (!u) return;
 
-<script type="module">
-  import { logout } from '../../js/auth.js';
-  import { initDashboard } from '../../js/profile.js';
+      // Subtitle
+      const sub = document.getElementById('topbar-subtitle');
+      if (sub) sub.textContent = `Bienvenido de vuelta, ${u.firstName || u.companyName || ''} 👋`;
 
-  window.cerrarSesion = function() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
-  };
+      // CV bar
+      renderCvBar(u);
 
-  async function loadDashboard() {
-    await initDashboard();
-    const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-    if (!u) return;
-
-    // Subtitle
-    const sub = document.getElementById('topbar-subtitle');
-    if (sub) sub.textContent = `Bienvenido de vuelta, ${u.firstName || u.companyName || ''} 👋`;
-
-    // CV bar
-    renderCvBar(u);
-
-    // Postulaciones
-    const apps  = u.recentApplications || [];
-    const list  = document.getElementById('app-list');
-    const empty = document.getElementById('apps-empty');
-    if (apps.length) {
-      empty.style.display = 'none';
-      const sc = { revision:'badge-gold', entrevista:'badge-green', pendiente:'badge-gray', rechazado:'badge-red' };
-      const sl = { revision:'En revisión', entrevista:'Entrevista', pendiente:'Pendiente', rechazado:'No seleccionado' };
-      list.innerHTML = apps.slice(0, 5).map(a => `
-        <div class="app-row">
-          <div class="app-row-left">
-            <div class="app-company-icon">${a.icon || '🏢'}</div>
-            <div>
-              <div class="app-job-title">${a.jobTitle || '—'}</div>
-              <div class="app-company-name">${a.company || ''}</div>
+      // Postulaciones
+      const apps  = u.recentApplications || [];
+      const list  = document.getElementById('app-list');
+      const empty = document.getElementById('apps-empty');
+      if (apps.length) {
+        empty.style.display = 'none';
+        const sc = { revision:'badge-gold', entrevista:'badge-green', pendiente:'badge-gray', rechazado:'badge-red' };
+        const sl = { revision:'En revisión', entrevista:'Entrevista', pendiente:'Pendiente', rechazado:'No seleccionado' };
+        list.innerHTML = apps.slice(0, 5).map(a => `
+          <div class="app-row">
+            <div class="app-row-left">
+              <div class="app-company-icon">${a.icon || '🏢'}</div>
+              <div>
+                <div class="app-job-title">${a.jobTitle || '—'}</div>
+                <div class="app-company-name">${a.company || ''}</div>
+              </div>
             </div>
-          </div>
-          <div class="app-row-right">
-            <span class="app-date">${a.date || ''}</span>
-            <span class="badge ${sc[a.status] || 'badge-gray'}"><span class="badge-dot"></span>${sl[a.status] || 'Pendiente'}</span>
-          </div>
-        </div>`).join('');
+            <div class="app-row-right">
+              <span class="app-date">${a.date || ''}</span>
+              <span class="badge ${sc[a.status] || 'badge-gray'}"><span class="badge-dot"></span>${sl[a.status] || 'Pendiente'}</span>
+            </div>
+          </div>`).join('');
+      }
     }
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadDashboard);
-  } else {
-    loadDashboard();
-  }
-</script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDashboard);
+    } else {
+      loadDashboard();
+    }
+  </script>
+
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
+
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

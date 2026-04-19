@@ -80,6 +80,10 @@
 <body>
 <div class="app-layout">
 
+  <button class="sidebar-toggle" id="sidebarToggle">
+        <span class="arrow-icon">❮</span>
+  </button>
+
   <aside class="sidebar">
     
     <a href="dashboard.html" class="logo-container">
@@ -455,5 +459,20 @@
   const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (u) updateDashboardHero(u);
 </script>
+
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
+
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

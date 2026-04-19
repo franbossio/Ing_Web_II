@@ -1,27 +1,3 @@
-/* ══════════════════════════════════════════════════════════
-   APP LAYOUT
-══════════════════════════════════════════════════════════ */
-.app-layout {
-  display: grid;
-  grid-template-columns: 256px 1fr;
-  min-height: 100vh;
-}
-
-/* ══════════════════════════════════════════════════════════
-   SIDEBAR
-══════════════════════════════════════════════════════════ */
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 256px;
-  height: 100vh;
-  background: var(--clr-surface);
-  border-right: 1px solid var(--clr-border);
-  display: flex;
-  flex-direction: column;
-  z-index: 50;
-  overflow-y: auto;
-}
 
 /*LOGO HEADER*/
 .logo-container {

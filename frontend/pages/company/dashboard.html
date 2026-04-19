@@ -12,9 +12,11 @@
 
 <div class="app-layout">
 
-  <!-- ══════════════════════════════════════════
-       SIDEBAR
-  ══════════════════════════════════════════ -->
+  <button class="sidebar-toggle" id="sidebarToggle">
+        <span class="arrow-icon">❮</span>
+  </button>
+
+  <!--SIDEBAR-->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo-container">
             <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
@@ -391,5 +393,19 @@
   // Actualizar hero y ring con datos reales del usuario
   initDashboard();
 </script>
+
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
+
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
+    });
+  </script>
 </body>
 </html>
