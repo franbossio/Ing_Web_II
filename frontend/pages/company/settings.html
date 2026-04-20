@@ -534,7 +534,9 @@
 <script type="module">
     import { initProfile, readCompanyForm, saveProfile, calcCompanyPercent, updateDashboardHero } from '../../js/profile.js';
 
-  window.cerrarSesion = logout;
+  window.cerrarSesion = function() {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
+    };
 
   const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (_u) updateDashboardHero(_u);

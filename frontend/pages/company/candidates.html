@@ -344,7 +344,9 @@
     import { logout } from '../../js/auth.js';
     import { updateDashboardHero } from '../../js/profile.js';
 
-    window.cerrarSesion = logout;
+    window.cerrarSesion = function() {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
+    };
 
     // Actualizar sidebar con datos reales del usuario
     //const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
