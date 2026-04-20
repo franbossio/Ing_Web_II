@@ -331,3 +331,87 @@ a:hover { color: #e8c86a; }
 .modal-content h3 { margin-top: 0; color: var(--clr-text); margin-bottom: 8px; }
 .modal-content p { color: var(--clr-muted); font-size: 0.9rem; margin-bottom: 24px; }
 .modal-actions { display: flex; justify-content: center; gap: 12px; }
+
+/*--Barra de herramientas lateral--*/
+
+/*APP LAYOUT (Actualizado para el modo colapsable)*/
+.app-layout {
+  display: block; /* Cambiamos grid por block para la animación */
+  min-height: 100vh;
+  position: relative;
+}
+
+/*SIDEBAR (Fusionado)*/
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--clr-surface);
+  border-right: 1px solid var(--clr-border);
+  display: flex;          /* Conserva tu menú ordenado */
+  flex-direction: column; /* Conserva tu menú vertical */
+  overflow-y: auto;       /* Permite scrollear el menú si es largo */
+  z-index: 100;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*Contenedor Principal*/
+.main-content {
+  margin-left: 260px; 
+  padding: 20px;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*El Botón de la Flecha (Súper Visible)*/
+.sidebar-toggle {
+  position: fixed;
+  left: 260px; 
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 60px;
+  background: var(--clr-accent); 
+  border: none;
+  border-radius: 0 10px 10px 0; 
+  color: #000;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1001; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 4px 0 15px rgba(201, 168, 76, 0.3);
+  transition: all 0.4s ease;
+}
+
+.sidebar-toggle:hover {
+  width: 45px;
+  background: #e5c15d;
+}
+
+.arrow-icon {
+  transition: transform 0.4s ease;
+  display: inline-block;
+}
+
+/* ESTADO CERRADO (Cuando presionas la flecha)*/
+.app-layout.collapsed .sidebar {
+  transform: translateX(-100%); 
+}
+
+.app-layout.collapsed .main-content {
+  margin-left: 0; 
+}
+
+.app-layout.collapsed .sidebar-toggle {
+  left: 0; 
+  background: var(--clr-surface-2); 
+  color: var(--clr-accent);
+  border: 1px solid var(--clr-border);
+}
+
+.app-layout.collapsed .arrow-icon {
+  transform: rotate(180deg); 
+}
+

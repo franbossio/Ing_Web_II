@@ -113,332 +113,388 @@
   </style>
 </head>
 <body>
-<div class="app-layout">
-  <div id="sidebar-root"></div>
+  <div class="app-layout">
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <span class="arrow-icon">❮</span>
+    </button>
 
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Explorar ofertas</div>
-        <div class="topbar-subtitle">Encontrá el trabajo ideal para tu perfil</div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
-      </div>
-    </div>
-
-    <div class="page-content">
-
-      <!-- Búsqueda + botón filtros -->
-      <div class="search-top">
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Buscá por puesto, empresa o habilidad..." />
-        </div>
-        <button class="filter-trigger-btn" id="filter-trigger-btn" onclick="openFilters()">
-          <span>🎛</span>
-          <span>Filtros</span>
-          <span class="filter-count-badge" id="filter-badge" style="display:none;">0</span>
-        </button>
-        <button class="btn btn-primary" style="padding:0 20px;height:46px;font-size:.88rem;" id="search-btn">Buscar</button>
-      </div>
-
-      <!-- Chips de filtros activos -->
-      <div class="active-filters" id="active-filters"></div>
-
-      <!-- Categorías -->
-      <div class="quick-cats">
-        <button class="cat-pill active" data-cat="all">✨ Todas</button>
-        <button class="cat-pill" data-cat="frontend">💻 Frontend</button>
-        <button class="cat-pill" data-cat="backend">⚙️ Backend</button>
-        <button class="cat-pill" data-cat="fullstack">🔀 Full Stack</button>
-        <button class="cat-pill" data-cat="data">📊 Data</button>
-        <button class="cat-pill" data-cat="devops">🛠 DevOps</button>
-        <button class="cat-pill" data-cat="design">🎨 Diseño</button>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="jobs-toolbar">
-        <span class="results-count"><strong id="results-num">6</strong> ofertas encontradas</span>
-        <div class="toolbar-right">
-          <select class="sort-select"><option>🤖 Mayor match</option><option>📅 Más recientes</option><option>💰 Mayor salario</option></select>
-          <button class="view-btn active" id="view-list">☰</button>
-          <button class="view-btn" id="view-grid">⊞</button>
-        </div>
-      </div>
-
-      <!-- Ofertas -->
-      <div class="jobs-list" id="jobs-list">
-
-        <div class="job-card featured" data-cat="fullstack">
-          <div class="featured-badge">⭐ Recomendado</div>
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">🏢</div><div><div class="job-card-title">Senior Full Stack Developer</div><div class="job-card-company">Globant · Buenos Aires</div></div></div>
-            <div class="job-card-right"><div class="match-badge"><div class="match-pct">92%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+    <aside class="sidebar">
+      <a href="dashboard.html" class="logo-container">
+        <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img">
+        <div class="logo-text-group"></div>
+      </a>
+      <div class="sidebar-profile">
+        <div class="profile-badge">
+          <div class="profile-avatar" id="sidebar-avatar">JP</div>
+          <div class="profile-info">
+            <div class="profile-name" id="sidebar-name">Juan Pérez</div>
+            <div class="profile-role" id="sidebar-role">Candidato</div>
           </div>
-          <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +3 años exp.</span><span>📅 Hace 1 día</span><span>👁 142 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">AWS</span><span class="skill-tag missing">Microservices</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.500 – 3.500 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Principal</span>
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="jobs.html" class="nav-item active"><span class="nav-icon">🔍</span> Explorar ofertas<span class="nav-badge">12</span></a>
+        <span class="nav-section-label">Mi perfil</span>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Editar perfil</a>
+        <a href="profile.html#cv" class="nav-item"><span class="nav-icon">📄</span> Mi CV</a>
+        <span class="nav-section-label">Postulaciones</span>
+        <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Mis postulaciones<span class="nav-badge">5</span></a>
+        <a href="saved.html" class="nav-item"><span class="nav-icon">⭐</span> Guardados</a>
+        <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" onclick="cerrarSesion(event)" class="nav-item">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+          </span> Cerrar sesión
+        </a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">Explorar ofertas</div>
+          <div class="topbar-subtitle">Encontrá el trabajo ideal para tu perfil</div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        </div>
+      </div>
+
+      <div class="page-content">
+
+        <!-- Búsqueda + botón filtros -->
+        <div class="search-top">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Buscá por puesto, empresa o habilidad..." />
+          </div>
+          <button class="filter-trigger-btn" id="filter-trigger-btn" onclick="openFilters()">
+            <span>🎛</span>
+            <span>Filtros</span>
+            <span class="filter-count-badge" id="filter-badge" style="display:none;">0</span>
+          </button>
+          <button class="btn btn-primary" style="padding:0 20px;height:46px;font-size:.88rem;" id="search-btn">Buscar</button>
         </div>
 
-        <div class="job-card" data-cat="fullstack">
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">🚀</div><div><div class="job-card-title">Desarrollador Full Stack</div><div class="job-card-company">Acme Corp S.A. · Buenos Aires</div></div></div>
-            <div class="job-card-right"><div class="match-badge"><div class="match-pct">87%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-          </div>
-          <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 2 días</span><span>👁 98 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">Docker</span><span class="skill-tag missing">Kubernetes</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 900k – 1.2M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+        <!-- Chips de filtros activos -->
+        <div class="active-filters" id="active-filters"></div>
+
+        <!-- Categorías -->
+        <div class="quick-cats">
+          <button class="cat-pill active" data-cat="all">✨ Todas</button>
+          <button class="cat-pill" data-cat="frontend">💻 Frontend</button>
+          <button class="cat-pill" data-cat="backend">⚙️ Backend</button>
+          <button class="cat-pill" data-cat="fullstack">🔀 Full Stack</button>
+          <button class="cat-pill" data-cat="data">📊 Data</button>
+          <button class="cat-pill" data-cat="devops">🛠 DevOps</button>
+          <button class="cat-pill" data-cat="design">🎨 Diseño</button>
         </div>
 
-        <div class="job-card" data-cat="backend">
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">🛒</div><div><div class="job-card-title">Backend Developer — NestJS</div><div class="job-card-company">MercadoLibre · Remoto</div></div></div>
-            <div class="job-card-right"><div class="match-badge"><div class="match-pct">85%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+        <!-- Toolbar -->
+        <div class="jobs-toolbar">
+          <span class="results-count"><strong id="results-num">6</strong> ofertas encontradas</span>
+          <div class="toolbar-right">
+            <select class="sort-select"><option>🤖 Mayor match</option><option>📅 Más recientes</option><option>💰 Mayor salario</option></select>
+            <button class="view-btn active" id="view-list">☰</button>
+            <button class="view-btn" id="view-grid">⊞</button>
           </div>
-          <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 3 días</span><span>👁 215 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag match">Docker</span><span class="skill-tag">Redis</span><span class="skill-tag missing">Kafka</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.000 – 2.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
         </div>
 
-        <div class="job-card" data-cat="frontend">
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">✈️</div><div><div class="job-card-title">Frontend Developer — React</div><div class="job-card-company">Despegar · Buenos Aires</div></div></div>
-            <div class="job-card-right"><div class="match-badge"><div class="match-pct">83%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+        <!-- Ofertas -->
+        <div class="jobs-list" id="jobs-list">
+
+          <div class="job-card featured" data-cat="fullstack">
+            <div class="featured-badge">⭐ Recomendado</div>
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">🏢</div><div><div class="job-card-title">Senior Full Stack Developer</div><div class="job-card-company">Globant · Buenos Aires</div></div></div>
+              <div class="job-card-right"><div class="match-badge"><div class="match-pct">92%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+            </div>
+            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +3 años exp.</span><span>📅 Hace 1 día</span><span>👁 142 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">AWS</span><span class="skill-tag missing">Microservices</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.500 – 3.500 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
           </div>
-          <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 5 días</span><span>👁 167 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">TypeScript</span><span class="skill-tag">Next.js</span><span class="skill-tag">Tailwind</span><span class="skill-tag missing">GraphQL</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 800k – 1.1M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+
+          <div class="job-card" data-cat="fullstack">
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">🚀</div><div><div class="job-card-title">Desarrollador Full Stack</div><div class="job-card-company">Acme Corp S.A. · Buenos Aires</div></div></div>
+              <div class="job-card-right"><div class="match-badge"><div class="match-pct">87%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+            </div>
+            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 2 días</span><span>👁 98 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">Docker</span><span class="skill-tag missing">Kubernetes</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 900k – 1.2M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+          </div>
+
+          <div class="job-card" data-cat="backend">
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">🛒</div><div><div class="job-card-title">Backend Developer — NestJS</div><div class="job-card-company">MercadoLibre · Remoto</div></div></div>
+              <div class="job-card-right"><div class="match-badge"><div class="match-pct">85%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+            </div>
+            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 3 días</span><span>👁 215 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag match">Docker</span><span class="skill-tag">Redis</span><span class="skill-tag missing">Kafka</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.000 – 2.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+          </div>
+
+          <div class="job-card" data-cat="frontend">
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">✈️</div><div><div class="job-card-title">Frontend Developer — React</div><div class="job-card-company">Despegar · Buenos Aires</div></div></div>
+              <div class="job-card-right"><div class="match-badge"><div class="match-pct">83%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+            </div>
+            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 5 días</span><span>👁 167 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">TypeScript</span><span class="skill-tag">Next.js</span><span class="skill-tag">Tailwind</span><span class="skill-tag missing">GraphQL</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 800k – 1.1M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+          </div>
+
+          <div class="job-card" data-cat="devops">
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">☁️</div><div><div class="job-card-title">DevOps Engineer Junior</div><div class="job-card-company">CloudBase · Remoto</div></div></div>
+              <div class="job-card-right"><div class="match-badge" style="background:rgba(76,175,132,.08);border-color:rgba(76,175,132,.2);"><div class="match-pct" style="color:var(--clr-success);">74%</div><div class="match-label">Match IA</div></div><span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span></div>
+            </div>
+            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +1 año exp.</span><span>📅 Hoy</span><span>👁 23 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">Docker</span><span class="skill-tag match">Git</span><span class="skill-tag">Linux</span><span class="skill-tag missing">Kubernetes</span><span class="skill-tag missing">Terraform</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 1.200 – 1.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+          </div>
+
+          <div class="job-card" data-cat="data">
+            <div class="job-card-header">
+              <div class="job-card-left"><div class="job-company-logo">📊</div><div><div class="job-card-title">Data Engineer</div><div class="job-card-company">AnalyticsLab · Córdoba</div></div></div>
+              <div class="job-card-right"><div class="match-badge" style="background:rgba(122,174,232,.08);border-color:rgba(122,174,232,.2);"><div class="match-pct" style="color:#7aaee8;">68%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
+            </div>
+            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 1 semana</span><span>👁 89 vistas</span></div>
+            <div class="job-card-tags"><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">Python</span><span class="skill-tag missing">Spark</span><span class="skill-tag missing">Airflow</span><span class="skill-tag missing">dbt</span></div>
+            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 700k – 950k / mes</span><span class="badge badge-gray">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+          </div>
+
         </div>
 
-        <div class="job-card" data-cat="devops">
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">☁️</div><div><div class="job-card-title">DevOps Engineer Junior</div><div class="job-card-company">CloudBase · Remoto</div></div></div>
-            <div class="job-card-right"><div class="match-badge" style="background:rgba(76,175,132,.08);border-color:rgba(76,175,132,.2);"><div class="match-pct" style="color:var(--clr-success);">74%</div><div class="match-label">Match IA</div></div><span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span></div>
-          </div>
-          <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +1 año exp.</span><span>📅 Hoy</span><span>👁 23 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">Docker</span><span class="skill-tag match">Git</span><span class="skill-tag">Linux</span><span class="skill-tag missing">Kubernetes</span><span class="skill-tag missing">Terraform</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 1.200 – 1.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No encontramos ofertas</div>
+          <div class="empty-desc">Probá con otros filtros o términos de búsqueda.</div>
+          <button class="btn btn-ghost" onclick="clearAllFilters()">Limpiar filtros</button>
         </div>
 
-        <div class="job-card" data-cat="data">
-          <div class="job-card-header">
-            <div class="job-card-left"><div class="job-company-logo">📊</div><div><div class="job-card-title">Data Engineer</div><div class="job-card-company">AnalyticsLab · Córdoba</div></div></div>
-            <div class="job-card-right"><div class="match-badge" style="background:rgba(122,174,232,.08);border-color:rgba(122,174,232,.2);"><div class="match-pct" style="color:#7aaee8;">68%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-          </div>
-          <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 1 semana</span><span>👁 89 vistas</span></div>
-          <div class="job-card-tags"><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">Python</span><span class="skill-tag missing">Spark</span><span class="skill-tag missing">Airflow</span><span class="skill-tag missing">dbt</span></div>
-          <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 700k – 950k / mes</span><span class="badge badge-gray">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
+        <div class="pagination" id="pagination">
+          <button class="page-btn" disabled>← Anterior</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <span style="color:var(--clr-muted);font-size:.85rem;">...</span>
+          <button class="page-btn">8</button>
+          <button class="page-btn">Siguiente →</button>
         </div>
 
       </div>
-
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-title">No encontramos ofertas</div>
-        <div class="empty-desc">Probá con otros filtros o términos de búsqueda.</div>
-        <button class="btn btn-ghost" onclick="clearAllFilters()">Limpiar filtros</button>
-      </div>
-
-      <div class="pagination" id="pagination">
-        <button class="page-btn" disabled>← Anterior</button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <span style="color:var(--clr-muted);font-size:.85rem;">...</span>
-        <button class="page-btn">8</button>
-        <button class="page-btn">Siguiente →</button>
-      </div>
-
-    </div>
-  </main>
-</div>
-
-<!-- Overlay -->
-<div class="filter-overlay" id="filter-overlay" onclick="closeFilters()"></div>
-
-<!-- Modal filtros (panel lateral derecho) -->
-<div class="filter-modal" id="filter-modal">
-  <div class="filter-modal-header">
-    <div class="filter-modal-title">🎛 Filtros</div>
-    <button class="filter-modal-close" onclick="closeFilters()">✕</button>
+    </main>
   </div>
-  <div class="filter-modal-body">
 
-    <div class="fm-section">
-      <div class="fm-section-title">Modalidad</div>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Remoto" onchange="syncFilters()"> 🏠 Remoto</span><span class="fm-check-count">8</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Híbrido" onchange="syncFilters()"> 🔀 Híbrido</span><span class="fm-check-count">3</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="modalidad" data-val="Presencial" onchange="syncFilters()"> 🏢 Presencial</span><span class="fm-check-count">2</span></label>
+  <!-- Overlay -->
+  <div class="filter-overlay" id="filter-overlay" onclick="closeFilters()"></div>
+
+  <!-- Modal filtros (panel lateral derecho) -->
+  <div class="filter-modal" id="filter-modal">
+    <div class="filter-modal-header">
+      <div class="filter-modal-title">🎛 Filtros</div>
+      <button class="filter-modal-close" onclick="closeFilters()">✕</button>
     </div>
+    <div class="filter-modal-body">
 
-    <div class="fm-section">
-      <div class="fm-section-title">Tipo de contrato</div>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="contrato" data-val="Full-time" onchange="syncFilters()"> Full-time</span><span class="fm-check-count">9</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Part-time" onchange="syncFilters()"> Part-time</span><span class="fm-check-count">2</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Freelance" onchange="syncFilters()"> Freelance</span><span class="fm-check-count">2</span></label>
+      <div class="fm-section">
+        <div class="fm-section-title">Modalidad</div>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Remoto" onchange="syncFilters()"> 🏠 Remoto</span><span class="fm-check-count">8</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Híbrido" onchange="syncFilters()"> 🔀 Híbrido</span><span class="fm-check-count">3</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="modalidad" data-val="Presencial" onchange="syncFilters()"> 🏢 Presencial</span><span class="fm-check-count">2</span></label>
+      </div>
+
+      <div class="fm-section">
+        <div class="fm-section-title">Tipo de contrato</div>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="contrato" data-val="Full-time" onchange="syncFilters()"> Full-time</span><span class="fm-check-count">9</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Part-time" onchange="syncFilters()"> Part-time</span><span class="fm-check-count">2</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Freelance" onchange="syncFilters()"> Freelance</span><span class="fm-check-count">2</span></label>
+      </div>
+
+      <div class="fm-section">
+        <div class="fm-section-title">Experiencia mínima</div>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="Sin experiencia" onchange="syncFilters()"> Sin experiencia</span><span class="fm-check-count">1</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+1 año" onchange="syncFilters()"> +1 año</span><span class="fm-check-count">3</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+2 años" onchange="syncFilters()"> +2 años</span><span class="fm-check-count">4</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="exp" data-val="+5 años" onchange="syncFilters()"> +5 años</span><span class="fm-check-count">2</span></label>
+      </div>
+
+      <div class="fm-section">
+        <div class="fm-section-title">Match IA mínimo</div>
+        <input type="range" class="fm-slider" id="match-slider" min="0" max="100" value="0" step="5" oninput="updateMatchLabel(this)">
+        <div class="fm-slider-labels"><span class="fm-slider-val" id="match-min-label">0%</span><span>100%</span></div>
+      </div>
+
+      <div class="fm-section">
+        <div class="fm-section-title">Ubicación</div>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Buenos Aires" onchange="syncFilters()"> Buenos Aires</span><span class="fm-check-count">5</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Córdoba" onchange="syncFilters()"> Córdoba</span><span class="fm-check-count">2</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Remoto global" onchange="syncFilters()"> Remoto (cualquier lugar)</span><span class="fm-check-count">6</span></label>
+      </div>
+
+      <div class="fm-section">
+        <div class="fm-section-title">Moneda preferida</div>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="USD" onchange="syncFilters()"> 🇺🇸 USD</span><span class="fm-check-count">7</span></label>
+        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="ARS" onchange="syncFilters()"> 🇦🇷 ARS</span><span class="fm-check-count">5</span></label>
+      </div>
+
     </div>
-
-    <div class="fm-section">
-      <div class="fm-section-title">Experiencia mínima</div>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="Sin experiencia" onchange="syncFilters()"> Sin experiencia</span><span class="fm-check-count">1</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+1 año" onchange="syncFilters()"> +1 año</span><span class="fm-check-count">3</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+2 años" onchange="syncFilters()"> +2 años</span><span class="fm-check-count">4</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="exp" data-val="+5 años" onchange="syncFilters()"> +5 años</span><span class="fm-check-count">2</span></label>
+    <div class="filter-modal-footer">
+      <button class="fm-clear" onclick="clearAllFilters()">Limpiar todo</button>
+      <button class="fm-apply" onclick="applyAndClose()">Ver resultados</button>
     </div>
-
-    <div class="fm-section">
-      <div class="fm-section-title">Match IA mínimo</div>
-      <input type="range" class="fm-slider" id="match-slider" min="0" max="100" value="0" step="5" oninput="updateMatchLabel(this)">
-      <div class="fm-slider-labels"><span class="fm-slider-val" id="match-min-label">0%</span><span>100%</span></div>
-    </div>
-
-    <div class="fm-section">
-      <div class="fm-section-title">Ubicación</div>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Buenos Aires" onchange="syncFilters()"> Buenos Aires</span><span class="fm-check-count">5</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Córdoba" onchange="syncFilters()"> Córdoba</span><span class="fm-check-count">2</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Remoto global" onchange="syncFilters()"> Remoto (cualquier lugar)</span><span class="fm-check-count">6</span></label>
-    </div>
-
-    <div class="fm-section">
-      <div class="fm-section-title">Moneda preferida</div>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="USD" onchange="syncFilters()"> 🇺🇸 USD</span><span class="fm-check-count">7</span></label>
-      <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="ARS" onchange="syncFilters()"> 🇦🇷 ARS</span><span class="fm-check-count">5</span></label>
-    </div>
-
   </div>
-  <div class="filter-modal-footer">
-    <button class="fm-clear" onclick="clearAllFilters()">Limpiar todo</button>
-    <button class="fm-apply" onclick="applyAndClose()">Ver resultados</button>
-  </div>
-</div>
 
-<script>
-  function openFilters() {
-    document.getElementById('filter-overlay').classList.add('open');
-    document.getElementById('filter-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeFilters() {
-    document.getElementById('filter-overlay').classList.remove('open');
-    document.getElementById('filter-modal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  function applyAndClose() { closeFilters(); renderActiveChips(); }
-
-  function syncFilters() {
-    const unchecked = document.querySelectorAll('#filter-modal input[type=checkbox]:not(:checked)').length;
-    const badge = document.getElementById('filter-badge');
-    const btn   = document.getElementById('filter-trigger-btn');
-    if (unchecked > 0) { badge.textContent = unchecked; badge.style.display = 'inline'; btn.classList.add('has-filters'); }
-    else               { badge.style.display = 'none'; btn.classList.remove('has-filters'); }
-  }
-
-  function renderActiveChips() {
-    const container = document.getElementById('active-filters');
-    container.innerHTML = '';
-    document.querySelectorAll('#filter-modal input[type=checkbox]:not(:checked)').forEach(cb => {
-      const chip = document.createElement('span');
-      chip.className = 'active-filter-chip';
-      const val = cb.dataset.val;
-      chip.innerHTML = `<span>Sin: ${val}</span><button onclick="removeCbFilter(this,'${val}')">✕</button>`;
-      container.appendChild(chip);
-    });
-    const matchVal = document.getElementById('match-slider').value;
-    if (matchVal > 0) {
-      const chip = document.createElement('span');
-      chip.className = 'active-filter-chip';
-      chip.innerHTML = `<span>Match ≥ ${matchVal}%</span><button onclick="resetMatch(this)">✕</button>`;
-      container.appendChild(chip);
+  <script>
+    function openFilters() {
+      document.getElementById('filter-overlay').classList.add('open');
+      document.getElementById('filter-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
-  }
+    function closeFilters() {
+      document.getElementById('filter-overlay').classList.remove('open');
+      document.getElementById('filter-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function applyAndClose() { closeFilters(); renderActiveChips(); }
 
-  function removeCbFilter(btn, val) {
-    const cb = document.querySelector(`#filter-modal input[data-val="${val}"]`);
-    if (cb) cb.checked = true;
-    btn.parentElement.remove();
-    syncFilters();
-  }
-  function resetMatch(btn) {
-    document.getElementById('match-slider').value = 0;
-    document.getElementById('match-min-label').textContent = '0%';
-    btn.parentElement.remove();
-  }
+    function syncFilters() {
+      const unchecked = document.querySelectorAll('#filter-modal input[type=checkbox]:not(:checked)').length;
+      const badge = document.getElementById('filter-badge');
+      const btn   = document.getElementById('filter-trigger-btn');
+      if (unchecked > 0) { badge.textContent = unchecked; badge.style.display = 'inline'; btn.classList.add('has-filters'); }
+      else               { badge.style.display = 'none'; btn.classList.remove('has-filters'); }
+    }
 
-  document.querySelectorAll('.cat-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      const cat = pill.dataset.cat;
+    function renderActiveChips() {
+      const container = document.getElementById('active-filters');
+      container.innerHTML = '';
+      document.querySelectorAll('#filter-modal input[type=checkbox]:not(:checked)').forEach(cb => {
+        const chip = document.createElement('span');
+        chip.className = 'active-filter-chip';
+        const val = cb.dataset.val;
+        chip.innerHTML = `<span>Sin: ${val}</span><button onclick="removeCbFilter(this,'${val}')">✕</button>`;
+        container.appendChild(chip);
+      });
+      const matchVal = document.getElementById('match-slider').value;
+      if (matchVal > 0) {
+        const chip = document.createElement('span');
+        chip.className = 'active-filter-chip';
+        chip.innerHTML = `<span>Match ≥ ${matchVal}%</span><button onclick="resetMatch(this)">✕</button>`;
+        container.appendChild(chip);
+      }
+    }
+
+    function removeCbFilter(btn, val) {
+      const cb = document.querySelector(`#filter-modal input[data-val="${val}"]`);
+      if (cb) cb.checked = true;
+      btn.parentElement.remove();
+      syncFilters();
+    }
+    function resetMatch(btn) {
+      document.getElementById('match-slider').value = 0;
+      document.getElementById('match-min-label').textContent = '0%';
+      btn.parentElement.remove();
+    }
+
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const cat = pill.dataset.cat;
+        let visible = 0;
+        document.querySelectorAll('.job-card').forEach(card => {
+          const show = cat === 'all' || card.dataset.cat === cat;
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        document.getElementById('results-num').textContent = visible;
+        document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+        document.getElementById('pagination').style.display  = visible === 0 ? 'none' : 'flex';
+      });
+    });
+
+    document.getElementById('search-input').addEventListener('input', runSearch);
+    document.getElementById('search-btn').addEventListener('click', runSearch);
+    function runSearch() {
+      const q = document.getElementById('search-input').value.toLowerCase();
       let visible = 0;
       document.querySelectorAll('.job-card').forEach(card => {
-        const show = cat === 'all' || card.dataset.cat === cat;
+        const show = !q || card.textContent.toLowerCase().includes(q);
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
       document.getElementById('results-num').textContent = visible;
       document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
       document.getElementById('pagination').style.display  = visible === 0 ? 'none' : 'flex';
+    }
+
+    function updateMatchLabel(input) { document.getElementById('match-min-label').textContent = input.value + '%'; }
+
+    function clearAllFilters() {
+      document.getElementById('search-input').value = '';
+      document.querySelectorAll('#filter-modal input[type=checkbox]').forEach(cb => cb.checked = true);
+      document.getElementById('match-slider').value = 0;
+      document.getElementById('match-min-label').textContent = '0%';
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+      document.querySelectorAll('.job-card').forEach(c => c.style.display = '');
+      document.getElementById('results-num').textContent = document.querySelectorAll('.job-card').length;
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('pagination').style.display  = 'flex';
+      document.getElementById('active-filters').innerHTML  = '';
+      document.getElementById('filter-badge').style.display = 'none';
+      document.getElementById('filter-trigger-btn').classList.remove('has-filters');
+    }
+
+    document.getElementById('view-list').addEventListener('click', function() {
+      document.getElementById('view-grid').classList.remove('active'); this.classList.add('active');
+      const l = document.getElementById('jobs-list'); l.style.display='flex'; l.style.flexDirection='column'; l.style.gridTemplateColumns='';
     });
-  });
-
-  document.getElementById('search-input').addEventListener('input', runSearch);
-  document.getElementById('search-btn').addEventListener('click', runSearch);
-  function runSearch() {
-    const q = document.getElementById('search-input').value.toLowerCase();
-    let visible = 0;
-    document.querySelectorAll('.job-card').forEach(card => {
-      const show = !q || card.textContent.toLowerCase().includes(q);
-      card.style.display = show ? '' : 'none';
-      if (show) visible++;
+    document.getElementById('view-grid').addEventListener('click', function() {
+      document.getElementById('view-list').classList.remove('active'); this.classList.add('active');
+      const l = document.getElementById('jobs-list'); l.style.display='grid'; l.style.gridTemplateColumns='repeat(auto-fill,minmax(320px,1fr))';
     });
-    document.getElementById('results-num').textContent = visible;
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-    document.getElementById('pagination').style.display  = visible === 0 ? 'none' : 'flex';
-  }
 
-  function updateMatchLabel(input) { document.getElementById('match-min-label').textContent = input.value + '%'; }
+    function toggleSave(btn) { btn.classList.toggle('saved'); btn.textContent = btn.classList.contains('saved') ? '★ Guardado' : '⭐ Guardar'; }
+    function applyJob(btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div>';
+      setTimeout(() => {
+        btn.disabled = false; btn.textContent = '✓ Postulado';
+        btn.style.cssText = 'padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);cursor:default;font-family:var(--font-body);font-weight:600;';
+        btn.onclick = null;
+      }, 900);
+    }
 
-  function clearAllFilters() {
-    document.getElementById('search-input').value = '';
-    document.querySelectorAll('#filter-modal input[type=checkbox]').forEach(cb => cb.checked = true);
-    document.getElementById('match-slider').value = 0;
-    document.getElementById('match-min-label').textContent = '0%';
-    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-    document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
-    document.querySelectorAll('.job-card').forEach(c => c.style.display = '');
-    document.getElementById('results-num').textContent = document.querySelectorAll('.job-card').length;
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('pagination').style.display  = 'flex';
-    document.getElementById('active-filters').innerHTML  = '';
-    document.getElementById('filter-badge').style.display = 'none';
-    document.getElementById('filter-trigger-btn').classList.remove('has-filters');
-  }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilters(); });
+  </script>
 
-  document.getElementById('view-list').addEventListener('click', function() {
-    document.getElementById('view-grid').classList.remove('active'); this.classList.add('active');
-    const l = document.getElementById('jobs-list'); l.style.display='flex'; l.style.flexDirection='column'; l.style.gridTemplateColumns='';
-  });
-  document.getElementById('view-grid').addEventListener('click', function() {
-    document.getElementById('view-list').classList.remove('active'); this.classList.add('active');
-    const l = document.getElementById('jobs-list'); l.style.display='grid'; l.style.gridTemplateColumns='repeat(auto-fill,minmax(320px,1fr))';
-  });
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    import { updateDashboardHero } from '../../js/profile.js';
+    window.cerrarSesion = function(e) { if (e) e.preventDefault(); if (confirm('¿Cerrar sesión?')) logout(); };
+    const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (u) updateDashboardHero(u);
+  </script>
 
-  function toggleSave(btn) { btn.classList.toggle('saved'); btn.textContent = btn.classList.contains('saved') ? '★ Guardado' : '⭐ Guardar'; }
-  function applyJob(btn) {
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div>';
-    setTimeout(() => {
-      btn.disabled = false; btn.textContent = '✓ Postulado';
-      btn.style.cssText = 'padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);cursor:default;font-family:var(--font-body);font-weight:600;';
-      btn.onclick = null;
-    }, 900);
-  }
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilters(); });
-</script>
-
-<script type="module">
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
+    });
   </script>
 
 </body>

@@ -125,7 +125,45 @@
 </head>
 <body>
 <div class="app-layout">
-  <div id="sidebar-root"></div>
+
+  <button class="sidebar-toggle" id="sidebarToggle">
+        <span class="arrow-icon">❮</span>
+  </button>
+
+  <aside class="sidebar">
+   
+    <a href="dashboard.html" class="logo-container">
+            <img src="../../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
+        </div>
+    </a>
+
+    <div class="sidebar-company">
+      <div class="company-badge">
+        <div class="company-avatar" id="sidebar-avatar">AC</div>
+        <div class="company-info">
+          <div class="company-name" id="sidebar-name">Acme Corp S.A.</div>
+          <div class="company-role" id="sidebar-role">Empresa</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="candidates.html" class="nav-item"><span class="nav-icon">🔍</span> Buscar candidatos<span class="nav-badge">24</span></a>
+      <span class="nav-section-label">Ofertas</span>
+      <a href="post-job.html" class="nav-item"><span class="nav-icon">➕</span> Publicar oferta</a>
+      <a href="my-jobs.html" class="nav-item"><span class="nav-icon">📋</span> Mis ofertas</a>
+      <span class="nav-section-label">Gestión</span>
+      <a href="applications.html" class="nav-item"><span class="nav-icon">📬</span> Postulaciones<span class="nav-badge">8</span></a>
+      <a href="favorites.html" class="nav-item"><span class="nav-icon">⭐</span> Favoritos</a>
+      <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" onclick="cerrarSesion()" class="nav-item"><span class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+      </span> Cerrar sesión</a>
+    </div>
+  </aside>
 
   <main class="main-content">
     <div class="topbar">
@@ -579,5 +617,20 @@
     }
   };
 </script>
+
+  <script>
+    //Función para colapsar la barra lateral
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('sidebarToggle');
+      const layout = document.querySelector('.app-layout');
+
+      if(toggleBtn && layout) {
+        toggleBtn.addEventListener('click', () => {
+          layout.classList.toggle('collapsed');
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
