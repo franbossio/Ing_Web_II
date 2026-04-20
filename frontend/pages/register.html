@@ -161,6 +161,15 @@
               </button>
             </div>
             <div class="password-strength" id="strength-bars">
+
+              <ul class="password-requirements" id="password-requirements">
+                <li id="req-length"><span>●</span> Mínimo 8 caracteres</li>
+                <li id="req-upper"><span>●</span> Al menos una mayúscula</li>
+                <li id="req-lower"><span>●</span> Al menos una minúscula</li>
+                <li id="req-number"><span>●</span> Al menos un número</li>
+                <li id="req-special"><span>●</span> Un carácter especial (!@#$%)</li>
+              </ul>
+
               <div class="strength-bar" id="bar-1"></div>
               <div class="strength-bar" id="bar-2"></div>
               <div class="strength-bar" id="bar-3"></div>
@@ -192,7 +201,7 @@
             <input type="checkbox" id="terms" name="terms" required />
             Acepto los Términos y Condiciones y la Política de privacidad
           </label>
-          <span class="field-error" id="terms-error" style="margin-top:-12px;">Debés aceptar los términos.</span>
+          <span class="field-error" id="terms-error" style="margin-top:-12px;">Debés aceptar los términos y condiciones.</span>
 
           <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
             Crear cuenta
@@ -210,5 +219,84 @@
   </div>
 
   <script src="../js/register.js" type="module"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    /* =================================================================
+       1. LÓGICA DE REQUISITOS DE CONTRASEÑA EN TIEMPO REAL
+    ================================================================= */
+    const passwordInput = document.getElementById('password');
+    
+    const reqLength = document.getElementById('req-length');
+    const reqUpper = document.getElementById('req-upper');
+    const reqLower = document.getElementById('req-lower');
+    const reqNumber = document.getElementById('req-number');
+    const reqSpecial = document.getElementById('req-special');
+
+    function updateRequirement(element, isMet) {
+      if (!element) return;
+      const icon = element.querySelector('span');
+      if (isMet) {
+        element.classList.add('met');
+        icon.textContent = '✓';
+        icon.style.fontSize = '0.8rem';
+      } else {
+        element.classList.remove('met');
+        icon.textContent = '●';
+        icon.style.fontSize = '0.6rem';
+      }
+    }
+
+    if(passwordInput) {
+      passwordInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        updateRequirement(reqLength, val.length >= 8);
+        updateRequirement(reqUpper, /[A-Z]/.test(val));
+        updateRequirement(reqLower, /[a-z]/.test(val));
+        updateRequirement(reqNumber, /[0-9]/.test(val));
+        updateRequirement(reqSpecial, /[\W_]/.test(val));
+      });
+    }
+
+    /* =================================================================
+       2. LÓGICA DEL ERROR INLINE (TÉRMINOS Y CONDICIONES)
+    ================================================================= */
+    const form = document.querySelector('form');
+    const termsCheckbox = document.getElementById('terms');
+    const termsError = document.getElementById('terms-error');
+
+    // Nos aseguramos de que el mensaje esté oculto al iniciar
+    if (termsError) termsError.style.display = 'none';
+
+    if(form && termsCheckbox && termsError) {
+      form.addEventListener('submit', (e) => {
+        // Si el checkbox no está marcado...
+        if (!termsCheckbox.checked) {
+          e.preventDefault(); // Detenemos el envío del formulario
+          
+          // Reiniciamos la animación por si hacen clic varias veces
+          termsError.classList.remove('show');
+          void termsError.offsetWidth; // Truco para reiniciar la animación CSS
+          
+          // Mostramos el texto rojo
+          termsError.classList.add('show');
+        }
+      });
+
+      // Si el usuario hace clic en el checkbox, ocultamos el error al instante
+      termsCheckbox.addEventListener('change', () => {
+        if (termsCheckbox.checked) {
+          termsError.classList.remove('show');
+          termsError.style.display = 'none'; // Forzamos ocultarlo
+        } else {
+          termsError.style.display = ''; // Devolvemos el control a la clase .show
+        }
+      });
+    }
+
+  });
+</script>
+
 </body>
 </html>
