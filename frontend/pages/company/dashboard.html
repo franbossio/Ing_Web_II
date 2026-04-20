@@ -6,12 +6,14 @@
   <title>Dashboard — CONECTA IA Empresa</title>
   <link rel="stylesheet" href="../../css/global.css" />
   <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
   <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
 </head>
 <body>
 
 <div class="app-layout">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <button class="sidebar-toggle" id="sidebarToggle">
         <span class="arrow-icon">❮</span>
@@ -66,6 +68,9 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+      </button>
         <div class="topbar-title">Dashboard</div>
         <div class="topbar-subtitle">Bienvenido de vuelta, Acme Corp</div>
       </div>

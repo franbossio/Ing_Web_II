@@ -474,3 +474,125 @@ a:hover { color: #e8c86a; }
   transform: rotate(180deg); 
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE SIDEBAR — overlay drawer
+═══════════════════════════════════════════════════════════ */
+
+/* Overlay oscuro detrás del sidebar en mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 49;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
+/* Botón hamburguesa visible solo en mobile */
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 60;
+}
+.mobile-menu-btn svg { width: 18px; height: 18px; stroke: var(--clr-text); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+@media (max-width: 900px) {
+  /* Layout pasa a una sola columna */
+  .app-layout {
+    grid-template-columns: 1fr !important;
+    display: block !important;
+  }
+
+  /* Sidebar: drawer lateral oculto por defecto */
+  .sidebar {
+    display: flex !important;
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    overflow-y: auto;
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Main content ocupa todo */
+  .main-content {
+    grid-column: 1 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    min-height: 100vh;
+  }
+
+  /* Topbar: mostrar el botón hamburguesa */
+  .topbar {
+    padding: 12px 16px !important;
+    gap: 10px;
+  }
+  .mobile-menu-btn { display: flex; }
+
+  /* Texto del topbar más pequeño */
+  .topbar-title { font-size: 1rem !important; }
+  .topbar-subtitle { font-size: 0.72rem !important; }
+
+  /* Ocultar el botón fijo de arrow (reemplazado por hamburguesa) */
+  .sidebar-toggle { display: none !important; }
+
+  /* Page content con padding mobile */
+  .page-content { padding: 16px !important; }
+
+  /* Evitar overflow horizontal */
+  body { overflow-x: hidden; }
+}
+
+@media (max-width: 600px) {
+  /* Cards y grids en mobile pequeño */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .quick-actions { grid-template-columns: 1fr !important; }
+  .bento-top, .bento-mid { grid-template-columns: 1fr !important; }
+  .dash-cols { grid-template-columns: 1fr !important; }
+  .dash-grid { grid-template-columns: 1fr !important; }
+
+  /* Profile hero en columna */
+  .profile-hero {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .profile-hero-right { width: 100%; display: flex; justify-content: flex-end; }
+
+  /* Rec cards sin overflow */
+  .rec-card-meta { flex-wrap: wrap; }
+  .offer-item { flex-wrap: wrap; }
+  .offer-action { width: 100%; margin-top: 8px; }
+  .offer-action .btn-sm { width: 100%; text-align: center; }
+
+  /* Topbar actions: ocultar texto de botones */
+  .topbar-right .btn-primary span { display: none; }
+
+  /* Form grids */
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-grid .col-span-2 { grid-column: span 1 !important; }
+
+  /* Tabla/lista apps */
+  .app-row { flex-wrap: wrap; gap: 8px; }
+  .app-row-right { width: 100%; justify-content: flex-end; }
+
+  /* Jobs filters modal ya es full width */
+  .filter-modal { width: 100vw !important; }
+
+  /* Topbar right: compactar */
+  .topbar-right { gap: 6px; }
+  .topbar-right .btn-primary { padding: 8px 12px !important; font-size: 0.78rem !important; }
+}
