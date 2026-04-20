@@ -40,6 +40,7 @@
   --clr-success:   #16a34a;
   --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
   --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
+  --clr-topbar-bg: rgba(255,255,255,0.92);
 }
 
 /* Sistema: si el usuario prefiere claro y el tema es sistema */
@@ -58,6 +59,64 @@
     --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
     --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
   }
+}
+
+
+/* ─── Tema Claro — overrides de componentes hardcodeados ─── */
+[data-theme="light"] .topbar,
+[data-theme="light"] .topbar-fixed {
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom-color: #d0d4de;
+}
+
+[data-theme="light"] .topbar-title {
+  color: #1a1d27;
+}
+
+[data-theme="light"] .sidebar {
+  background: #ffffff;
+  border-right-color: #d0d4de;
+}
+
+[data-theme="light"] .nav-item {
+  color: #6b7280;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: #f5f6fa;
+  color: #1a1d27;
+}
+
+[data-theme="light"] .nav-item.active {
+  background: rgba(184,146,10,0.1);
+  color: #b8920a;
+}
+
+[data-theme="light"] .profile-badge,
+[data-theme="light"] .company-badge {
+  background: #f5f6fa;
+  border-color: #d0d4de;
+}
+
+[data-theme="light"] .sidebar-footer {
+  border-top-color: #d0d4de;
+}
+
+/* Sistema claro — mismos overrides */
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] .topbar,
+  [data-theme="system"] .topbar-fixed {
+    background: rgba(255,255,255,0.92) !important;
+    border-bottom-color: #d0d4de;
+  }
+  [data-theme="system"] .topbar-title { color: #1a1d27; }
+  [data-theme="system"] .sidebar { background: #ffffff; border-right-color: #d0d4de; }
+  [data-theme="system"] .nav-item { color: #6b7280; }
+  [data-theme="system"] .nav-item:hover { background: #f5f6fa; color: #1a1d27; }
+  [data-theme="system"] .nav-item.active { background: rgba(184,146,10,0.1); color: #b8920a; }
+  [data-theme="system"] .profile-badge,
+  [data-theme="system"] .company-badge { background: #f5f6fa; border-color: #d0d4de; }
+  [data-theme="system"] .sidebar-footer { border-top-color: #d0d4de; }
 }
 
 /* ─── Reset ──────────────────────────────────────────────── */
