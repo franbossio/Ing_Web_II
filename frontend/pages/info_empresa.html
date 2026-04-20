@@ -6,6 +6,7 @@
   <title>CONECTA IA — Plataforma Inteligente de Selección de Personal</title>
   <meta name="description" content="Conectamos talento con oportunidad mediante inteligencia artificial. Subí tu CV y encontrá el trabajo ideal." />
   <link rel="stylesheet" href="../css/global.css" />
+  <script src="../js/theme.js"></script>
   <link rel="stylesheet" href="../css/landing.css" />
 </head>
 
@@ -106,6 +107,11 @@
   </footer>
 
 <script>
+    // Navbar scroll effect
+    const navbar = document.querySelector('nav.navbar');
+    window.addEventListener('scroll', () => {
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
     // Reveal on scroll
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {

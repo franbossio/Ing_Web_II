@@ -315,9 +315,9 @@
 
   <script>
     // Navbar scroll effect
-    const navbar = document.getElementById('navbar');
+    const navbar = document.querySelector('nav.navbar');
     window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 40);
     });
 
     // Reveal on scroll
