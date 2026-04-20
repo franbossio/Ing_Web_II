@@ -346,11 +346,19 @@
 </div><!-- /app-layout -->
 <script src="../../js/profile.js"></script>
 <script type="module">
+  import { logout } from '../../js/auth.js';
     import { initDashboard } from '../../js/profile.js';
 
-  window.cerrarSesion = function() {
-      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
-    };
+  window.cerrarSesion = function(event) {
+        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+        
+        // El navegador mostrará una alerta genérica preguntando esto:
+        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+        
+        if (seguro) {
+          logout(); // Si hace clic en "Aceptar", cierra la sesión
+        }
+      }
 
   // Actualizar hero y ring con datos reales del usuario
   initDashboard();

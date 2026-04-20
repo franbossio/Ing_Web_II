@@ -544,11 +544,19 @@
   setInterval(updateClock, 1000);
 </script>
 <script type="module">
+  import { logout } from '../../js/auth.js';
     import { initProfile, readCompanyForm, saveProfile, calcCompanyPercent, updateDashboardHero } from '../../js/profile.js';
 
-  window.cerrarSesion = function() {
-      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
-    };
+  window.cerrarSesion = function(event) {
+        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+        
+        // El navegador mostrará una alerta genérica preguntando esto:
+        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+        
+        if (seguro) {
+          logout(); // Si hace clic en "Aceptar", cierra la sesión
+        }
+      }
 
   const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
   if (_u) updateDashboardHero(_u);
