@@ -58,7 +58,7 @@
     display: flex; align-items: center; justify-content: space-between;
 }
 .settings-block-title {
-    font-family: var(--font-display); font-size: 24px; font-weight: 24px;
+    font-family: var(--font-display); font-size: 24px; font-weight: 600;
     display: flex; align-items: center; gap: 8px;
 }
 .settings-block-body { padding: 22px 24px; }
