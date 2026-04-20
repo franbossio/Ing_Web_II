@@ -5,7 +5,7 @@
   --clr-bg:        #0d0f14;
   --clr-surface:   #13161e;
   --clr-surface-2: #1a1e2a;
-  --clr-border:    #252a38;
+  --clr-border:    #464e64;
   --clr-accent:    #c9a84c;
   --clr-accent-dim:#8a6e2f;
   --clr-text:      #e8e9ed;
@@ -23,6 +23,100 @@
   --shadow-glow: 0 0 40px rgba(201,168,76,0.12);
   --shadow-card: 0 8px 40px rgba(0,0,0,0.5);
   --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+
+/* ─── Tema Claro ─────────────────────────────────────────── */
+[data-theme="light"] {
+  --clr-bg:        #f0f2f5;
+  --clr-surface:   #ffffff;
+  --clr-surface-2: #f5f6fa;
+  --clr-border:    #d0d4de;
+  --clr-accent:    #b8920a;
+  --clr-accent-dim:#c9a84c;
+  --clr-text:      #1a1d27;
+  --clr-muted:     #6b7280;
+  --clr-error:     #dc2626;
+  --clr-success:   #16a34a;
+  --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
+  --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
+  --clr-topbar-bg: rgba(255,255,255,0.92);
+}
+
+/* Sistema: si el usuario prefiere claro y el tema es sistema */
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    --clr-bg:        #f0f2f5;
+    --clr-surface:   #ffffff;
+    --clr-surface-2: #f5f6fa;
+    --clr-border:    #d0d4de;
+    --clr-accent:    #b8920a;
+    --clr-accent-dim:#c9a84c;
+    --clr-text:      #1a1d27;
+    --clr-muted:     #6b7280;
+    --clr-error:     #dc2626;
+    --clr-success:   #16a34a;
+    --shadow-glow:   0 0 40px rgba(185,146,10,0.10);
+    --shadow-card:   0 8px 40px rgba(0,0,0,0.10);
+  }
+}
+
+
+/* ─── Tema Claro — overrides de componentes hardcodeados ─── */
+[data-theme="light"] .topbar,
+[data-theme="light"] .topbar-fixed {
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom-color: #d0d4de;
+}
+
+[data-theme="light"] .topbar-title {
+  color: #1a1d27;
+}
+
+[data-theme="light"] .sidebar {
+  background: #ffffff;
+  border-right-color: #d0d4de;
+}
+
+[data-theme="light"] .nav-item {
+  color: #6b7280;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: #f5f6fa;
+  color: #1a1d27;
+}
+
+[data-theme="light"] .nav-item.active {
+  background: rgba(184,146,10,0.1);
+  color: #b8920a;
+}
+
+[data-theme="light"] .profile-badge,
+[data-theme="light"] .company-badge {
+  background: #f5f6fa;
+  border-color: #d0d4de;
+}
+
+[data-theme="light"] .sidebar-footer {
+  border-top-color: #d0d4de;
+}
+
+/* Sistema claro — mismos overrides */
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] .topbar,
+  [data-theme="system"] .topbar-fixed {
+    background: rgba(255,255,255,0.92) !important;
+    border-bottom-color: #d0d4de;
+  }
+  [data-theme="system"] .topbar-title { color: #1a1d27; }
+  [data-theme="system"] .sidebar { background: #ffffff; border-right-color: #d0d4de; }
+  [data-theme="system"] .nav-item { color: #6b7280; }
+  [data-theme="system"] .nav-item:hover { background: #f5f6fa; color: #1a1d27; }
+  [data-theme="system"] .nav-item.active { background: rgba(184,146,10,0.1); color: #b8920a; }
+  [data-theme="system"] .profile-badge,
+  [data-theme="system"] .company-badge { background: #f5f6fa; border-color: #d0d4de; }
+  [data-theme="system"] .sidebar-footer { border-top-color: #d0d4de; }
 }
 
 /* ─── Reset ──────────────────────────────────────────────── */
@@ -165,3 +259,340 @@ a:hover { color: #e8c86a; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--clr-bg); }
 ::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 3px; }
+
+/* ─── Fondo de Burbujas 3D Premium Flotantes ────────────────────────── */
+
+/* El contenedor ocupa toda la pantalla y se queda fijo atrás */
+.bubbles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Reutilizamos el fondo oscuro y la grilla de tu hero para integración perfecta */
+  background-color: var(--bg-dark);
+  background-image: var(--grid-pattern);
+  z-index: 0; /* Lo mantiene en el fondo */
+  overflow: hidden; /* Evita que la página se ensanche */
+  pointer-events: none; /* Asegura que puedas hacer clic en botones que estén encima */
+}
+
+/* Estilo base de cada burbuja 3D */
+.bubble {
+  position: absolute;
+  bottom: -200px; /* Empiezan escondidas abajo de la pantalla */
+  border-radius: 50%; /* Las hace redondas */
+  animation: floatUp 25s infinite ease-in-out; /* Animación infinita con suavizado */
+  
+  /* Truco 3D: Gradiente complejo que simula refracción y volumen */
+  background: 
+    /* Brillo dorado en el borde para dimensionalidad */
+    radial-gradient(circle at top right, rgba(201, 168, 76, 0.2) 0%, transparent 60%),
+    /* Luz dorada sutil en el borde opuesto */
+    radial-gradient(circle at bottom left, rgba(201, 168, 76, 0.1) 0%, transparent 70%),
+    /* Fondo azul profundo con brillo dorado interior */
+    radial-gradient(ellipse 70% 50% at 50% 50%, rgba(201, 168, 76, 0.05) 0%, rgba(26, 34, 56, 0.8) 100%);
+  
+  /* Borde dorado extremadamente fino */
+  border: 1px solid rgba(201, 168, 76, 0.1); 
+  
+  /* Efecto de cristal difuminado (blur) */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  /* Sombra dorada base para dimensionalidad */
+  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.05);
+
+  /* Aseguramos que el contenido sea legible debajo */
+  opacity: 0.8;
+}
+
+/* Configuramos tamaños, posiciones y velocidades distintas para que se vea natural y ocupe toda la pantalla */
+.bubble-lg { width: 150px; height: 150px; }
+.bubble-md { width: 100px; height: 100px; }
+.bubble-sm { width: 60px; height: 60px; }
+
+/* Distribuimos las burbujas por toda la pantalla (de izquierda a derecha) */
+.bubble:nth-child(1) { left: 5%; animation-delay: 0s; animation-duration: 25s; }
+.bubble:nth-child(2) { left: 15%; animation-delay: 4s; animation-duration: 22s; }
+.bubble:nth-child(3) { left: 30%; animation-delay: 2s; animation-duration: 18s; }
+.bubble:nth-child(4) { left: 45%; animation-delay: 7s; animation-duration: 28s; }
+.bubble:nth-child(5) { left: 60%; animation-delay: 1s; animation-duration: 24s; }
+.bubble:nth-child(6) { left: 75%; animation-delay: 5s; animation-duration: 30s; }
+.bubble:nth-child(7) { left: 85%; animation-delay: 9s; animation-duration: 26s; }
+.bubble:nth-child(8) { left: 95%; animation-delay: 3s; animation-duration: 29s; }
+.bubble:nth-child(9) { left: 22%; animation-delay: 6s; animation-duration: 27s; }
+
+/* La animación que las hace subir, girar y balancearse para el efecto 3D */
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8; /* Aparecen suavemente */
+  }
+  50% {
+    /* En el medio, se balancean un poco a la izquierda y giran */
+    transform: translateY(-60vh) rotate(180deg) scale(1.1);
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    /* Suben un 120% del alto de la pantalla, giran por completo y desaparecen */
+    transform: translateY(-120vh) rotate(360deg) scale(1.2); 
+    opacity: 0; /* Desaparecen antes de llegar arriba del todo */
+  }
+}
+
+/* ─── Cartel Modal de Cierre de Sesión ─── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(13, 15, 20, 0.8);
+  backdrop-filter: blur(4px); /* Difumina el fondo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Para que quede por encima de todo */
+  
+  /* Oculto por defecto con animación suave */
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  width: 90%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  
+  /* Animación de entrada */
+  transform: translateY(20px);
+  transition: all var(--transition);
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0); /* Sube a su posición al aparecer */
+}
+
+.modal-content h3 { margin-top: 0; color: var(--clr-text); margin-bottom: 8px; }
+.modal-content p { color: var(--clr-muted); font-size: 0.9rem; margin-bottom: 24px; }
+.modal-actions { display: flex; justify-content: center; gap: 12px; }
+
+/*--Barra de herramientas lateral--*/
+
+/*APP LAYOUT (Actualizado para el modo colapsable)*/
+.app-layout {
+  display: block; /* Cambiamos grid por block para la animación */
+  min-height: 100vh;
+  position: relative;
+}
+
+/*SIDEBAR (Fusionado)*/
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--clr-surface);
+  border-right: 1px solid var(--clr-border);
+  display: flex;          /* Conserva tu menú ordenado */
+  flex-direction: column; /* Conserva tu menú vertical */
+  overflow-y: auto;       /* Permite scrollear el menú si es largo */
+  z-index: 100;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*Contenedor Principal*/
+.main-content {
+  margin-left: 260px; 
+  padding: 20px;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*El Botón de la Flecha (Súper Visible)*/
+.sidebar-toggle {
+  position: fixed;
+  left: 260px; 
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 60px;
+  background: var(--clr-accent); 
+  border: none;
+  border-radius: 0 10px 10px 0; 
+  color: #000;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1001; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 4px 0 15px rgba(201, 168, 76, 0.3);
+  transition: all 0.4s ease;
+}
+
+.sidebar-toggle:hover {
+  width: 45px;
+  background: #e5c15d;
+}
+
+.arrow-icon {
+  transition: transform 0.4s ease;
+  display: inline-block;
+}
+
+/* ESTADO CERRADO (Cuando presionas la flecha)*/
+.app-layout.collapsed .sidebar {
+  transform: translateX(-100%); 
+}
+
+.app-layout.collapsed .main-content {
+  margin-left: 0; 
+}
+
+.app-layout.collapsed .sidebar-toggle {
+  left: 0; 
+  background: var(--clr-surface-2); 
+  color: var(--clr-accent);
+  border: 1px solid var(--clr-border);
+}
+
+.app-layout.collapsed .arrow-icon {
+  transform: rotate(180deg); 
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE SIDEBAR — overlay drawer
+═══════════════════════════════════════════════════════════ */
+
+/* Overlay oscuro detrás del sidebar en mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 49;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
+/* Botón hamburguesa visible solo en mobile */
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 60;
+}
+.mobile-menu-btn svg { width: 18px; height: 18px; stroke: var(--clr-text); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+@media (max-width: 900px) {
+  /* Layout pasa a una sola columna */
+  .app-layout {
+    grid-template-columns: 1fr !important;
+    display: block !important;
+  }
+
+  /* Sidebar: drawer lateral oculto por defecto */
+  .sidebar {
+    display: flex !important;
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    overflow-y: auto;
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Main content ocupa todo */
+  .main-content {
+    grid-column: 1 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    min-height: 100vh;
+  }
+
+  /* Topbar: mostrar el botón hamburguesa */
+  .topbar {
+    padding: 12px 16px !important;
+    gap: 10px;
+  }
+  .mobile-menu-btn { display: flex; }
+
+  /* Texto del topbar más pequeño */
+  .topbar-title { font-size: 1rem !important; }
+  .topbar-subtitle { font-size: 0.72rem !important; }
+
+  /* Ocultar el botón fijo de arrow (reemplazado por hamburguesa) */
+  .sidebar-toggle { display: none !important; }
+
+  /* Page content con padding mobile */
+  .page-content { padding: 16px !important; }
+
+  /* Evitar overflow horizontal */
+  body { overflow-x: hidden; }
+}
+
+@media (max-width: 600px) {
+  /* Cards y grids en mobile pequeño */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .quick-actions { grid-template-columns: 1fr !important; }
+  .bento-top, .bento-mid { grid-template-columns: 1fr !important; }
+  .dash-cols { grid-template-columns: 1fr !important; }
+  .dash-grid { grid-template-columns: 1fr !important; }
+
+  /* Profile hero en columna */
+  .profile-hero {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .profile-hero-right { width: 100%; display: flex; justify-content: flex-end; }
+
+  /* Rec cards sin overflow */
+  .rec-card-meta { flex-wrap: wrap; }
+  .offer-item { flex-wrap: wrap; }
+  .offer-action { width: 100%; margin-top: 8px; }
+  .offer-action .btn-sm { width: 100%; text-align: center; }
+
+  /* Topbar actions: ocultar texto de botones */
+  .topbar-right .btn-primary span { display: none; }
+
+  /* Form grids */
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-grid .col-span-2 { grid-column: span 1 !important; }
+
+  /* Tabla/lista apps */
+  .app-row { flex-wrap: wrap; gap: 8px; }
+  .app-row-right { width: 100%; justify-content: flex-end; }
+
+  /* Jobs filters modal ya es full width */
+  .filter-modal { width: 100vw !important; }
+
+  /* Topbar right: compactar */
+  .topbar-right { gap: 6px; }
+  .topbar-right .btn-primary { padding: 8px 12px !important; font-size: 0.78rem !important; }
+}

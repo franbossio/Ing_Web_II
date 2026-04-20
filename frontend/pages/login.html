@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Iniciar sesión — TalentAI</title>
+  <title>Iniciar sesión — ConectaIA</title>
   <link rel="stylesheet" href="../css/global.css" />
+  <script src="../js/theme.js"></script>
   <link rel="stylesheet" href="../css/auth.css" />
 </head>
 <body>
+
+  <div class="bubbles-container">
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+  </div>
 
   <div class="auth-layout">
 
@@ -15,37 +28,25 @@
     <aside class="auth-panel">
       <div class="panel-grid"></div>
 
-      <div class="panel-logo">
-        <div class="panel-logo-icon">💼</div>
-        <span class="panel-logo-name">Talent<span>AI</span></span>
-      </div>
+    <a href="index.html" class="logo-container" id="navbar">
+            <img src="../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
+            <div> <span class="logo-main-text">CONECTA</span><span class="logo-main-text2">IA</span> </div>
+            <span class="logo-sub-text">Plataforma de IA para reclutamiento & empleo</span>
+        </div>
+    </a>
 
-      <div class="panel-content">
-        <h2 class="panel-tagline">
-          Conectamos<br />
-          <em>talento</em> con<br />
-          oportunidad.
-        </h2>
-        <p class="panel-desc">
-          La plataforma inteligente que usa IA para encontrar el candidato
-          ideal o el trabajo perfecto para vos.
-        </p>
-      </div>
+    <div class="panel-content">
+      <h2 class="panel-tagline">
+        Conectamos<br />
+        <em>talento</em> con<br />
+        oportunidad.
+      </h2>
+      <p class="panel-desc">
+        La plataforma inteligente que usa IA para encontrar el candidato
+        ideal o el trabajo perfecto para vos.
+      </p>
+    </div>
 
-      <div class="panel-stats">
-        <div class="stat-item">
-          <div class="stat-num">2.4k</div>
-          <div class="stat-label">Candidatos</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">380</div>
-          <div class="stat-label">Empresas</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">1.1k</div>
-          <div class="stat-label">Ofertas activas</div>
-        </div>
-      </div>
     </aside>
 
     <!-- ── Formulario ── -->
@@ -53,7 +54,7 @@
       <div class="auth-card">
 
         <div class="auth-header">
-          <h1>Bienvenido de vuelta</h1>
+          <h1>Bienvenido</h1>
           <p>Ingresá tus credenciales para continuar</p>
         </div>
 
@@ -116,5 +117,6 @@
     </main>
 
   </div>
+  <script src="../js/login.js" type="module"></script>
 </body>
 </html>

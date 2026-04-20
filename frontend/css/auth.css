@@ -45,34 +45,64 @@
   pointer-events: none;
 }
 
-.panel-logo {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 1;
+/*LOGO HEADER*/
+.logo-container {
+    display: flex;
+    align-items: center;
 }
-.panel-logo-icon {
-  width: 40px; height: 40px;
-  background: var(--clr-accent);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
+
+.logo-main-text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #c7bdb9;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
-.panel-logo-name {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--clr-text);
+
+.logo-main-text2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--teal-dark);
+    letter-spacing: 2px;
 }
-.panel-logo-name span { color: var(--clr-accent); }
+
+.logo-sub-text {
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: #c7bdb9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.logo-text-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-img {
+    max-height: 60px;
+    width: auto;
+    margin-right: 15px;
+}
+/**/
 
 .panel-content {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  
+  /* Esto lo centra VERTICALMENTE (lo empuja hacia el medio de la caja) */
+  justify-content: center; 
+  
+  /* Esto lo mantiene alineado a la IZQUIERDA */
+  align-items: flex-start; 
+  text-align: left; 
+  
+  /* Es vital para que el centrado vertical funcione */
+  height: 100%; 
 }
+
 .panel-tagline {
   font-family: var(--font-display);
   font-size: 2.6rem;
@@ -85,34 +115,15 @@
   font-style: italic;
   color: var(--clr-accent);
 }
+
 .panel-desc {
   font-size: 0.95rem;
   color: var(--clr-muted);
   max-width: 340px;
   line-height: 1.7;
+  margin: 0; /* Aseguramos que no tenga márgenes que lo desfasen */
 }
 
-.panel-stats {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 32px;
-}
-
-.stat-num {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--clr-accent);
-  line-height: 1;
-}
-.stat-label {
-  font-size: 0.78rem;
-  color: var(--clr-muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
 
 /* ─── Right Panel (Form) ─────────────────────────────────── */
 .auth-form-side {
@@ -252,4 +263,56 @@
 @media (max-width: 480px) {
   .form-row { grid-template-columns: 1fr; }
   .auth-header h1 { font-size: 1.6rem; }
+}
+
+/* ─── Password Requirements Checklist ─── */
+.password-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.password-requirements li {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.password-requirements li span {
+  font-size: 0.6rem;
+  display: inline-block;
+  width: 12px;
+  text-align: center;
+}
+
+/* Clase que se activa cuando la condición se cumple */
+.password-requirements li.met {
+  color: var(--clr-success); /* Usa tu verde de éxito */
+}
+
+/* ─── Error de Términos y Condiciones Inline ─── */
+#terms-error {
+  display: none; /* Oculto por defecto */
+  color: var(--clr-error); /* Usa tu variable de color rojo */
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+#terms-error.show {
+  display: block;
+  animation: shakeError 0.4s ease-in-out;
+}
+
+/* Animación de temblor para llamar la atención */
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
 }

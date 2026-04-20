@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favoritos — CONECTA IA Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-company.js" type="module"></script>
+  <link rel="stylesheet" href="../../css/company.css" />
+  <style>
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px; transition: all var(--transition); }
+    .stat-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-1px); }
+    .stat-icon { width: 44px; height: 44px; background: rgba(201,168,76,0.1); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .stat-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; line-height: 1; }
+    .stat-label { font-size: 0.74rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
+
+    .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-bar { position: relative; flex: 1; min-width: 200px; }
+    .search-bar input { width: 100%; background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 16px 10px 40px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); }
+    .search-bar input:focus { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--clr-muted); pointer-events: none; }
+    .filter-select { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.83rem; padding: 10px 30px 10px 12px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+    .results-info { font-size: 0.82rem; color: var(--clr-muted); margin-left: auto; }
+
+    /* Collections */
+    .collections-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; margin-bottom: 28px; }
+    .col-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 18px 16px; text-align: center; cursor: pointer; transition: all var(--transition); }
+    .col-card:hover { border-color: var(--clr-accent); transform: translateY(-2px); }
+    .col-card.add { border-style: dashed; color: var(--clr-muted); }
+    .col-card.add:hover { color: var(--clr-accent); }
+    .col-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+    .col-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 3px; }
+    .col-count { font-size: 0.74rem; color: var(--clr-muted); }
+
+    /* Candidate cards grid */
+    .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
+    .fav-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 22px; transition: all var(--transition); }
+    .fav-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
+    .fav-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .fav-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #0d0f14; flex-shrink: 0; }
+    .av1 { background: linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim)); }
+    .av2 { background: linear-gradient(135deg,#4c82c8,#2d5a9e); }
+    .av3 { background: linear-gradient(135deg,#4caf84,#2e8060); }
+    .av4 { background: linear-gradient(135deg,#c84c7a,#9e2d55); }
+    .av5 { background: linear-gradient(135deg,#c8844c,#9e5e2d); }
+    .fav-name { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); margin-bottom: 2px; }
+    .fav-title { font-size: 0.78rem; color: var(--clr-muted); }
+    .fav-match { text-align: right; }
+    .fav-match-pct { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--clr-accent); line-height: 1; }
+    .fav-match-label { font-size: 0.62rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .fav-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--clr-muted); margin-bottom: 12px; }
+    .fav-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+    .skill-tag { background: var(--clr-surface-2); border: 1px solid var(--clr-border); color: var(--clr-muted); padding: 2px 9px; border-radius: 100px; font-size: 0.7rem; font-weight: 500; }
+    .skill-tag.match { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent); }
+    .fav-card-footer { display: flex; gap: 8px; }
+    .fav-card-footer .btn { flex: 1; padding: 9px 12px; font-size: 0.8rem; }
+
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--clr-muted); display: none; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    .empty-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--clr-text); margin-bottom: 8px; }
+    .empty-desc { font-size: 0.85rem; max-width: 260px; margin: 0 auto 24px; line-height: 1.6; }
+
+    @media (max-width:900px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .fav-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .results-info { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+    <div id="sidebar-root"></div>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+      </button>
+        <div class="topbar-title">Candidatos favoritos</div>
+        <div class="topbar-subtitle">Perfiles que guardaste para contactar después</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        <a href="candidates.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Buscar candidatos</a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div><div class="stat-num">5</div><div class="stat-label">Total favoritos</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📬</div>
+          <div><div class="stat-num" style="color:var(--clr-success);">2</div><div class="stat-label">Ya contactados</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div><div class="stat-num" style="color:var(--clr-accent);">3</div><div class="stat-label">Pendientes de contacto</div></div>
+        </div>
+      </div>
+
+      <!-- Colecciones -->
+      <div class="panel" style="margin-bottom:24px;">
+        <div class="panel-header">
+          <div><div class="panel-title">Mis listas</div><div class="panel-subtitle">Organizá candidatos por vacante o criterio</div></div>
+        </div>
+        <div class="panel-body">
+          <div class="collections-row">
+            <div class="col-card"><span class="col-icon">📁</span><div class="col-name">Todos</div><div class="col-count">5 candidatos</div></div>
+            <div class="col-card"><span class="col-icon">💻</span><div class="col-name">Full Stack</div><div class="col-count">2 candidatos</div></div>
+            <div class="col-card"><span class="col-icon">🎨</span><div class="col-name">UX/UI</div><div class="col-count">1 candidato</div></div>
+            <div class="col-card"><span class="col-icon">⭐</span><div class="col-name">Top perfiles</div><div class="col-count">3 candidatos</div></div>
+            <div class="col-card add" onclick="addList()"><span class="col-icon">➕</span><div class="col-name">Nueva lista</div><div class="col-count">Organizá tus favoritos</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscá por nombre o habilidad..." />
+        </div>
+        <select class="filter-select">
+          <option>Mayor match</option>
+          <option>Más recientes</option>
+          <option>A-Z por nombre</option>
+        </select>
+        <select class="filter-select">
+          <option>Todas las áreas</option>
+          <option>Full Stack</option>
+          <option>UX/UI</option>
+          <option>Data</option>
+          <option>DevOps</option>
+        </select>
+        <span class="results-info" id="results-count">5 favoritos</span>
+      </div>
+
+      <!-- Grid favoritos -->
+      <div class="fav-grid" id="fav-grid">
+
+        <div class="fav-card">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div class="fav-avatar av1">JP</div>
+              <div><div class="fav-name">Juan Pérez</div><div class="fav-title">Full Stack Developer</div></div>
+            </div>
+            <div class="fav-match"><div class="fav-match-pct">92%</div><div class="fav-match-label">Match IA</div></div>
+          </div>
+          <div class="fav-meta"><span>📍 Buenos Aires</span><span>🏆 4 años</span><span>🎓 Ing. Sistemas</span></div>
+          <div class="fav-tags">
+            <span class="skill-tag match">React</span>
+            <span class="skill-tag match">Node.js</span>
+            <span class="skill-tag match">TypeScript</span>
+            <span class="skill-tag">Docker</span>
+          </div>
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="fav-card">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div class="fav-avatar av2">MG</div>
+              <div><div class="fav-name">María García</div><div class="fav-title">UX/UI Designer</div></div>
+            </div>
+            <div class="fav-match"><div class="fav-match-pct">88%</div><div class="fav-match-label">Match IA</div></div>
+          </div>
+          <div class="fav-meta"><span>📍 Córdoba</span><span>🏆 6 años</span><span>🎓 Diseño Gráfico</span></div>
+          <div class="fav-tags">
+            <span class="skill-tag match">Figma</span>
+            <span class="skill-tag match">UX Research</span>
+            <span class="skill-tag">Framer</span>
+          </div>
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="fav-card">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div class="fav-avatar av3">LR</div>
+              <div><div class="fav-name">Lucas Rodríguez</div><div class="fav-title">Data Analyst</div></div>
+            </div>
+            <div class="fav-match"><div class="fav-match-pct">79%</div><div class="fav-match-label">Match IA</div></div>
+          </div>
+          <div class="fav-meta"><span>📍 Rosario</span><span>🏆 3 años</span><span>🎓 Lic. Matemática</span></div>
+          <div class="fav-tags">
+            <span class="skill-tag match">Python</span>
+            <span class="skill-tag match">SQL</span>
+            <span class="skill-tag">Power BI</span>
+          </div>
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="fav-card">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div class="fav-avatar av4">SF</div>
+              <div><div class="fav-name">Sofía Fernández</div><div class="fav-title">Backend Developer</div></div>
+            </div>
+            <div class="fav-match"><div class="fav-match-pct">84%</div><div class="fav-match-label">Match IA</div></div>
+          </div>
+          <div class="fav-meta"><span>📍 Remoto</span><span>🏆 2 años</span><span>🎓 Ing. Informática</span></div>
+          <div class="fav-tags">
+            <span class="skill-tag match">NestJS</span>
+            <span class="skill-tag match">PostgreSQL</span>
+            <span class="skill-tag">Redis</span>
+          </div>
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="fav-card">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div class="fav-avatar av5">DT</div>
+              <div><div class="fav-name">Diego Torres</div><div class="fav-title">DevOps Engineer</div></div>
+            </div>
+            <div class="fav-match"><div class="fav-match-pct">85%</div><div class="fav-match-label">Match IA</div></div>
+          </div>
+          <div class="fav-meta"><span>📍 Buenos Aires</span><span>🏆 5 años</span><span>🎓 Tec. Sistemas</span></div>
+          <div class="fav-tags">
+            <span class="skill-tag match">Docker</span>
+            <span class="skill-tag match">Kubernetes</span>
+            <span class="skill-tag">Terraform</span>
+          </div>
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
+            <button class="btn btn-primary">Ver perfil</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">⭐</div>
+        <div class="empty-title">Sin favoritos</div>
+        <div class="empty-desc">Guardá candidatos desde el buscador para verlos acá.</div>
+        <a href="candidates.html" class="btn btn-primary">Buscar candidatos</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script src="../../js/profile.js"></script>
+
+<script type="module">
+  import { logout } from '../../js/auth.js';
+  window.cerrarSesion = function(event) {
+        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+        
+        // El navegador mostrará una alerta genérica preguntando esto:
+        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+        
+        if (seguro) {
+          logout(); // Si hace clic en "Aceptar", cierra la sesión
+        }
+      }
+
+  // Actualizar sidebar con datos reales del usuario
+</script>
+<script>
+  document.getElementById('search-input').addEventListener('input', function() {
+    let visible = 0;
+    document.querySelectorAll('.fav-card').forEach(c => {
+      const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('results-count').textContent = `${visible} favorito${visible !== 1 ? 's' : ''}`;
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  });
+  function removeFav(btn) {
+    const card = btn.closest('.fav-card');
+    card.style.transition = 'all 0.35s ease';
+    card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      card.remove();
+      const v = document.querySelectorAll('.fav-card').length;
+      document.getElementById('results-count').textContent = `${v} favorito${v !== 1 ? 's' : ''}`;
+      document.getElementById('empty-state').style.display = v === 0 ? 'block' : 'none';
+    }, 350);
+  }
+  function addList() {
+    const name = prompt('Nombre de la nueva lista:');
+    if (name && name.trim()) alert(`Lista "${name}" creada.`);
+  }
+</script>
+  
+  <script src="../../js/sidebar-toggle.js"></script>
+</body>
+</html>

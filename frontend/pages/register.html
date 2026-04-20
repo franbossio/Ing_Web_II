@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crear cuenta — TalentAI</title>
+  <title>Crear cuenta — CONECTA IA</title>
   <link rel="stylesheet" href="../css/global.css" />
+  <script src="../js/theme.js"></script>
   <link rel="stylesheet" href="../css/auth.css" />
 </head>
 <body>
+
+  <div class="bubbles-container">
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+      <div class="bubble bubble-lg"></div>
+      <div class="bubble bubble-md"></div>
+      <div class="bubble bubble-sm"></div>
+  </div>
 
   <div class="auth-layout">
 
@@ -15,10 +28,12 @@
     <aside class="auth-panel">
       <div class="panel-grid"></div>
 
-      <div class="panel-logo">
-        <div class="panel-logo-icon">💼</div>
-        <span class="panel-logo-name">Talent<span>AI</span></span>
-      </div>
+      <a href="index.html" class="logo-container" id="navbar">
+            <img src="../imagen/logo_IA.png" alt="Logo AI" class="logo-img"><div class="logo-text-group">
+            <div> <span class="logo-main-text">CONECTA</span><span class="logo-main-text2">IA</span> </div>
+            <span class="logo-sub-text">Plataforma de IA para reclutamiento & empleo</span>
+        </div>
+      </a>
 
       <div class="panel-content">
         <h2 class="panel-tagline">
@@ -32,20 +47,6 @@
         </p>
       </div>
 
-      <div class="panel-stats">
-        <div class="stat-item">
-          <div class="stat-num">94%</div>
-          <div class="stat-label">Tasa de match</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">48h</div>
-          <div class="stat-label">Tiempo promedio</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">Free</div>
-          <div class="stat-label">Siempre gratis</div>
-        </div>
-      </div>
     </aside>
 
     <!-- ── Formulario ── -->
@@ -69,14 +70,18 @@
               <div class="role-option">
                 <input type="radio" name="role" id="role-candidate" value="candidate" checked />
                 <label for="role-candidate">
-                  <span class="role-icon">🧑‍💼</span>
+                  <span class="role-icon">
+                    <img width="38" height="38" src="https://img.icons8.com/arcade/64/gender-neutral-user--v1.png" alt="gender-neutral-user--v1"/>         
+                  </span>
                   Candidato
                 </label>
               </div>
               <div class="role-option">
                 <input type="radio" name="role" id="role-company" value="company" />
                 <label for="role-company">
-                  <span class="role-icon">🏢</span>
+                  <span class="role-icon">
+                    <img width="38" height="38" src="https://img.icons8.com/arcade/64/organization.png" alt="organization"/>
+                  </span>
                   Empresa
                 </label>
               </div>
@@ -156,6 +161,15 @@
               </button>
             </div>
             <div class="password-strength" id="strength-bars">
+
+              <ul class="password-requirements" id="password-requirements">
+                <li id="req-length"><span>●</span> Mínimo 8 caracteres</li>
+                <li id="req-upper"><span>●</span> Al menos una mayúscula</li>
+                <li id="req-lower"><span>●</span> Al menos una minúscula</li>
+                <li id="req-number"><span>●</span> Al menos un número</li>
+                <li id="req-special"><span>●</span> Un carácter especial (!@#$%)</li>
+              </ul>
+
               <div class="strength-bar" id="bar-1"></div>
               <div class="strength-bar" id="bar-2"></div>
               <div class="strength-bar" id="bar-3"></div>
@@ -185,9 +199,9 @@
           <!-- Términos -->
           <label class="form-check">
             <input type="checkbox" id="terms" name="terms" required />
-            Acepto los <a href="#">Términos y condiciones</a> y la <a href="#">Política de privacidad</a>
+            Acepto los Términos y Condiciones y la Política de privacidad
           </label>
-          <span class="field-error" id="terms-error" style="margin-top:-12px;">Debés aceptar los términos.</span>
+          <span class="field-error" id="terms-error" style="margin-top:-12px;">Debés aceptar los términos y condiciones.</span>
 
           <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
             Crear cuenta
@@ -204,6 +218,85 @@
 
   </div>
 
-  <script src="../ts/pages/register.js" type="module"></script>
+  <script src="../js/register.js" type="module"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    /* =================================================================
+       1. LÓGICA DE REQUISITOS DE CONTRASEÑA EN TIEMPO REAL
+    ================================================================= */
+    const passwordInput = document.getElementById('password');
+    
+    const reqLength = document.getElementById('req-length');
+    const reqUpper = document.getElementById('req-upper');
+    const reqLower = document.getElementById('req-lower');
+    const reqNumber = document.getElementById('req-number');
+    const reqSpecial = document.getElementById('req-special');
+
+    function updateRequirement(element, isMet) {
+      if (!element) return;
+      const icon = element.querySelector('span');
+      if (isMet) {
+        element.classList.add('met');
+        icon.textContent = '✓';
+        icon.style.fontSize = '0.8rem';
+      } else {
+        element.classList.remove('met');
+        icon.textContent = '●';
+        icon.style.fontSize = '0.6rem';
+      }
+    }
+
+    if(passwordInput) {
+      passwordInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        updateRequirement(reqLength, val.length >= 8);
+        updateRequirement(reqUpper, /[A-Z]/.test(val));
+        updateRequirement(reqLower, /[a-z]/.test(val));
+        updateRequirement(reqNumber, /[0-9]/.test(val));
+        updateRequirement(reqSpecial, /[\W_]/.test(val));
+      });
+    }
+
+    /* =================================================================
+       2. LÓGICA DEL ERROR INLINE (TÉRMINOS Y CONDICIONES)
+    ================================================================= */
+    const form = document.querySelector('form');
+    const termsCheckbox = document.getElementById('terms');
+    const termsError = document.getElementById('terms-error');
+
+    // Nos aseguramos de que el mensaje esté oculto al iniciar
+    if (termsError) termsError.style.display = 'none';
+
+    if(form && termsCheckbox && termsError) {
+      form.addEventListener('submit', (e) => {
+        // Si el checkbox no está marcado...
+        if (!termsCheckbox.checked) {
+          e.preventDefault(); // Detenemos el envío del formulario
+          
+          // Reiniciamos la animación por si hacen clic varias veces
+          termsError.classList.remove('show');
+          void termsError.offsetWidth; // Truco para reiniciar la animación CSS
+          
+          // Mostramos el texto rojo
+          termsError.classList.add('show');
+        }
+      });
+
+      // Si el usuario hace clic en el checkbox, ocultamos el error al instante
+      termsCheckbox.addEventListener('change', () => {
+        if (termsCheckbox.checked) {
+          termsError.classList.remove('show');
+          termsError.style.display = 'none'; // Forzamos ocultarlo
+        } else {
+          termsError.style.display = ''; // Devolvemos el control a la clase .show
+        }
+      });
+    }
+
+  });
+</script>
+
 </body>
 </html>

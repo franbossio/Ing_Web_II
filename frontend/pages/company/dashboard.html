@@ -3,43 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — TalentAI Empresa</title>
+  <title>Inicio — CONECTA IA Empresa</title>
   <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
 </head>
 <body>
 
 <div class="app-layout">
-
-  <!-- ══════════════════════════════════════════
-       SIDEBAR
-  ══════════════════════════════════════════ -->
-  <aside class="sidebar">
-    <a href="../../index.html" class="sidebar-logo">
-      <div class="sidebar-logo-icon">💼</div>
-      <span class="sidebar-logo-name">Talent<span>AI</span></span>
-    </a>
-
-    <div class="sidebar-company">
-      <div class="company-badge">
-        <div class="company-avatar">AC</div>
-        <div class="company-info">
-          <div class="company-name">Acme Corp S.A.</div>
-          <div class="company-role">Empresa</div>
-        </div>
-      </div>
-    </div>
-
-    <!--funcion en js-->
-    <nav id="sidebar"></nav>
-    
-
-    <div class="sidebar-footer">
-      <a href="../../pages/login.html" class="nav-item">
-        <span class="nav-icon">🚪</span> Cerrar sesión
-      </a>
-    </div>
-  </aside>
+    <div id="sidebar-root"></div>
 
   <!-- ══════════════════════════════════════════
        MAIN CONTENT
@@ -49,7 +23,10 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-left">
-        <div class="topbar-title">Dashboard</div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+      </button>
+        <div class="topbar-title">Inicio</div>
         <div class="topbar-subtitle">Bienvenido de vuelta, Acme Corp</div>
       </div>
       <div class="topbar-right">
@@ -367,6 +344,25 @@
   </main>
 
 </div><!-- /app-layout -->
-<script src="../../js/rutaDeAcceso.js"></script>
+<script src="../../js/profile.js"></script>
+<script type="module">
+  import { logout } from '../../js/auth.js';
+    import { initDashboard } from '../../js/profile.js';
+
+  window.cerrarSesion = function(event) {
+        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+        
+        // El navegador mostrará una alerta genérica preguntando esto:
+        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+        
+        if (seguro) {
+          logout(); // Si hace clic en "Aceptar", cierra la sesión
+        }
+      }
+
+  // Actualizar hero y ring con datos reales del usuario
+  initDashboard();
+</script>
+  <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>
