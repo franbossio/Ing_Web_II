@@ -8,6 +8,7 @@
   <script src="../../js/theme.js"></script>
   <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
+  <link rel="stylesheet" href="../../css/settings.css" />
 
   <style>
     .settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
@@ -95,32 +96,7 @@
       .col-span-2 { grid-column: span 1; }
     }
 
-    /* Theme cards */
-    .theme-options { display: flex; gap: 16px; flex-wrap: wrap; }
-    .theme-card { cursor: pointer; border: 2px solid var(--clr-border); border-radius: var(--radius-md); padding: 12px; width: 120px; text-align: center; transition: all var(--transition); }
-    .theme-card:hover { border-color: var(--clr-accent); }
-    .theme-card.active { border-color: var(--clr-accent); background: rgba(201,168,76,0.08); }
-    .theme-preview { height: 60px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
-    .theme-preview-bar { height: 12px; }
-    .theme-preview-content { display: flex; height: 48px; }
-    .theme-preview-side { width: 30%; }
-    .theme-preview-main { flex: 1; }
-    .theme-name { font-size: 0.78rem; color: var(--clr-text); font-weight: 500; }
-    /* Dark preview */
-    .theme-dark .theme-preview { background: #0d0f14; }
-    .theme-dark .theme-preview-bar { background: #13161e; }
-    .theme-dark .theme-preview-side { background: #13161e; border-right: 1px solid #464e64; }
-    .theme-dark .theme-preview-main { background: #1a1e2a; }
-    /* Light preview */
-    .theme-light .theme-preview { background: #f0f2f5; }
-    .theme-light .theme-preview-bar { background: #ffffff; }
-    .theme-light .theme-preview-side { background: #ffffff; border-right: 1px solid #d0d4de; }
-    .theme-light .theme-preview-main { background: #f5f6fa; }
-    /* System preview (mitad oscuro, mitad claro) */
-    .theme-system .theme-preview { background: linear-gradient(90deg, #0d0f14 50%, #f0f2f5 50%); }
-    .theme-system .theme-preview-bar { background: linear-gradient(90deg, #13161e 50%, #ffffff 50%); }
-    .theme-system .theme-preview-side { background: linear-gradient(#13161e, #13161e) left/50% 100%, linear-gradient(#ffffff, #ffffff) right/50% 100%; background-repeat: no-repeat; }
-    .theme-system .theme-preview-main { background: linear-gradient(90deg, #1a1e2a 50%, #f5f6fa 50%); }
+  
   </style>
 </head>
 <body>
