@@ -43,8 +43,8 @@
         <a href="#how" class="nav-link-dropdown">Cómo funciona <span class="arrow">▾</span></a>
         
         <div class="dropdown-menu">
-          <a href="info_candidato.html">Para candidatos</a>
-          <a href="info_empresa.html">Para empresas</a>
+          <a href="info_candidate.html">Para candidatos</a>
+          <a href="info_company.html">Para empresas</a>
         </div>
       </li>
     </ul>
@@ -315,9 +315,9 @@
 
   <script>
     // Navbar scroll effect
-    const navbar = document.getElementById('navbar');
+    const navbar = document.querySelector('nav.navbar');
     window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 40);
     });
 
     // Reveal on scroll
