@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil — TalentAI</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-candidate.js" type="module"></script>
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <link rel="stylesheet" href="../../css/profile.css" />
+
+</head>
+<body>
+
+  <div class="app-layout">
+    <div id="sidebar-root"></div>
+
+    <!-- ══════════════════════════════════════════
+        MAIN
+    ══════════════════════════════════════════ -->
+    <main class="main-content">
+
+      <div class="topbar">
+        <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+      </button>
+          <div class="topbar-title">Mi perfil</div>
+          <div class="topbar-subtitle">Completá tu información para mejorar tus chances</div>
+        </div>
+        <div class="topbar-right">
+          <a href="dashboard.html" class="icon-btn">← Volver</a>
+          <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        </div>
+      </div>
+
+      <div class="page-content">
+
+        <!-- ── Pasos de completado ── -->
+        <div class="profile-steps">
+          <div class="step-item done">
+            <div class="step-dot">✓</div>
+            <span>Datos personales</span>
+          </div>
+          <div class="step-item done">
+            <div class="step-dot">✓</div>
+            <span>Experiencia laboral</span>
+          </div>
+          <div class="step-item done">
+            <div class="step-dot">✓</div>
+            <span>CV subido</span>
+          </div>
+          <div class="step-item pending">
+            <div class="step-dot">!</div>
+            <span>Educación</span>
+          </div>
+          <div class="step-item pending">
+            <div class="step-dot">!</div>
+            <span>Idiomas</span>
+          </div>
+          <div class="step-item" style="color:var(--clr-muted)">
+            <div class="step-dot">○</div>
+            <span>Habilidades</span>
+          </div>
+        </div>
+
+        <!-- ── Tabs ── -->
+        <div class="tabs" id="tabs">
+          <button class="tab-btn active" data-tab="personal">👤 Datos personales</button>
+          <button class="tab-btn" data-tab="experience">💼 Experiencia</button>
+          <button class="tab-btn" data-tab="education">🎓 Educación</button>
+          <button class="tab-btn" data-tab="skills">🛠 Habilidades</button>
+          <button class="tab-btn" data-tab="cv" id="tab-cv">📄 CV</button>
+        </div>
+
+        <!-- ══════════════════════════════════════
+            TAB: DATOS PERSONALES
+        ══════════════════════════════════════ -->
+        <div class="tab-panel active" id="panel-personal">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Información personal</div>
+                <div class="panel-subtitle">Datos básicos de tu perfil público</div>
+              </div>
+              <span class="badge badge-green" id="badge-personal">✓ Completado</span>
+            </div>
+            <div class="panel-body">
+
+              <!-- Avatar -->
+              <div class="avatar-upload">
+                <div class="avatar-large" title="Cambiar foto">JP</div>
+                <div class="avatar-info">
+                  <div class="avatar-name">Juan Pérez</div>
+                  <div class="avatar-sub">Desarrollador Full Stack · Buenos Aires</div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;">📷 Cambiar foto</button>
+                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;color:var(--clr-muted);">Eliminar</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">📋 Información básica</div>
+                <div class="form-grid" style="margin-bottom:18px;">
+                  <div class="form-group">
+                    <label for="firstName">Nombre *</label>
+                    <input type="text" id="firstName" value="Juan" />
+                  </div>
+                  <div class="form-group">
+                    <label for="lastName">Apellido *</label>
+                    <input type="text" id="lastName" value="Pérez" />
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" value="juan.perez@email.com" />
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="tel" id="phone" placeholder="+54 11 0000-0000" value="+54 11 4567-8901" />
+                  </div>
+                </div>
+
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="jobTitle">Título profesional *</label>
+                    <input type="text" id="jobTitle" value="Desarrollador Full Stack" placeholder="Ej: Frontend Developer" />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">Ubicación *</label>
+                    <input type="text" id="location" value="Buenos Aires, Argentina" />
+                  </div>
+                  <div class="form-group">
+                    <label for="availability">Disponibilidad</label>
+                    <select id="availability">
+                      <option selected>Disponible inmediatamente</option>
+                      <option>En 2 semanas</option>
+                      <option>En 1 mes</option>
+                      <option>Solo ofertas pasivas</option>
+                      <option>No disponible</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="modality">Modalidad preferida</label>
+                    <select id="modality">
+                      <option>Remoto</option>
+                      <option selected>Híbrido</option>
+                      <option>Presencial</option>
+                      <option>Indiferente</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">📝 Sobre mí</div>
+                <div class="form-group">
+                  <label for="bio">Resumen profesional</label>
+                  <textarea id="bio" rows="4" placeholder="Describite en pocas palabras...">Desarrollador Full Stack con 4 años de experiencia en React, Node.js y TypeScript. Apasionado por construir productos digitales de calidad y aprender continuamente.</textarea>
+                </div>
+                <div style="text-align:right;font-size:0.74rem;color:var(--clr-muted);margin-top:4px;" id="bio-count">186 / 500 caracteres</div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">🔗 Redes y portfolio</div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="linkedin">LinkedIn</label>
+                    <input type="url" id="linkedin" placeholder="linkedin.com/in/tu-perfil" value="linkedin.com/in/juanperez" />
+                  </div>
+                  <div class="form-group">
+                    <label for="github">GitHub</label>
+                    <input type="url" id="github" placeholder="github.com/tu-usuario" value="github.com/juanperez" />
+                  </div>
+                  <div class="form-group">
+                    <label for="portfolio">Portfolio / Web</label>
+                    <input type="url" id="portfolio" placeholder="tuportfolio.com" />
+                  </div>
+                  <div class="form-group">
+                    <label for="salary">Expectativa salarial (USD/mes)</label>
+                    <input type="number" id="salary" placeholder="Ej: 2500" value="2500" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-primary" onclick="saveSection('personal')">💾 Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+            TAB: EXPERIENCIA
+        ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panel-experience">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Experiencia laboral</div>
+                <div class="panel-subtitle">Tus trabajos anteriores y actuales</div>
+              </div>
+              <span class="badge badge-gold" id="badge-experience">⚠ Incompleto</span>
+            </div>
+            <div class="panel-body">
+              <div class="exp-list" id="exp-list">
+
+              </div>
+
+              <button class="add-item-btn" id="add-exp-btn">
+                ➕ Agregar experiencia
+              </button>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-primary" onclick="saveSection('experience')">💾 Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+            TAB: EDUCACIÓN
+        ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panel-education">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Educación</div>
+                <div class="panel-subtitle">Tu formación académica</div>
+              </div>
+              <span class="badge badge-gold" id="badge-education">⚠ Incompleto</span>
+            </div>
+            <div class="panel-body">
+              <div class="exp-list" id="edu-list">
+
+              </div>
+
+              <button class="add-item-btn" id="add-edu-btn">
+                ➕ Agregar educación
+              </button>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-primary" onclick="saveSection('education')">💾 Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+            TAB: HABILIDADES
+        ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panel-skills">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Habilidades y herramientas</div>
+                <div class="panel-subtitle">La IA las usa para matchearte con ofertas relevantes</div>
+              </div>
+              <span class="badge badge-gold" id="badge-skills">⚠ Incompleto</span>
+            </div>
+            <div class="panel-body">
+
+              <div class="form-section">
+                <div class="form-section-title">💻 Habilidades técnicas</div>
+                <div class="tags-input-wrapper" id="tech-wrapper">
+                  <input class="tags-input" id="tech-input" placeholder="Agregá una tecnología y presioná Enter..." />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">🤝 Habilidades blandas</div>
+                <div class="tags-input-wrapper" id="soft-wrapper">
+                  <input class="tags-input" id="soft-input" placeholder="Agregá una habilidad y presioná Enter..." />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">🌍 Idiomas</div>
+                <div class="lang-list" id="lang-list">
+
+                </div>
+                <button class="add-item-btn" id="add-lang-btn">➕ Agregar idioma</button>
+              </div>
+
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-primary" onclick="saveSection('skills')">💾 Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+            TAB: CV
+        ══════════════════════════════════════ -->
+        <div class="tab-panel" id="panel-cv">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Mi currículum</div>
+                <div class="panel-subtitle">Subí tu CV y la IA completará tu perfil automáticamente</div>
+              </div>
+              <span class="badge badge-gold" id="badge-cv">⚠ Sin CV</span>
+            </div>
+            <div class="panel-body">
+
+              <!-- CV guardado -->
+              <div class="cv-current" id="cv-current" style="display:none;">
+                <span class="cv-file-icon">📄</span>
+                <div style="flex:1;">
+                  <div class="cv-file-name" id="cv-file-name">—</div>
+                  <div class="cv-file-meta" id="cv-file-meta">—</div>
+                </div>
+                <div class="cv-file-actions">
+                  <a id="cv-download-btn" href="#" class="icon-btn" style="font-size:0.8rem;" download>⬇ Descargar</a>
+                  <button class="icon-btn" style="font-size:0.8rem;color:var(--clr-error);border-color:rgba(224,92,92,0.3);" onclick="removeCv()">🗑 Eliminar</button>
+                </div>
+              </div>
+
+              <!-- Drop area -->
+              <div class="cv-drop-area" id="drop-area"
+                onclick="document.getElementById('cv-input').click()"
+                ondragover="event.preventDefault();this.classList.add('drag-over')"
+                ondragleave="this.classList.remove('drag-over')"
+                ondrop="handleDrop(event)">
+                <span class="cv-drop-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF"><path d="M446.67-315.33v-356L332-556.67l-47.33-48L480-800l195.33 195.33-47.33 48-114.67-114.66v356h-66.66ZM226.67-160q-27 0-46.84-19.83Q160-199.67 160-226.67V-362h66.67v135.33h506.66V-362H800v135.33q0 27-19.83 46.84Q760.33-160 733.33-160H226.67Z"/></svg>
+                </span>
+                <div class="cv-drop-title" id="drop-title">Subir CV</div>
+                <div class="cv-drop-sub">La IA analizará tu CV y completará tu perfil automáticamente</div>
+                <button class="btn btn-ghost" style="pointer-events:none;">Seleccionar archivo</button>
+                <div class="cv-drop-formats">Formatos aceptados: PDF · Máximo 5 MB</div>
+              </div>
+              <input type="file" id="cv-input" accept=".pdf" style="display:none;" onchange="handleFileSelect(this)" />
+
+              <!-- Progreso del análisis IA -->
+              <div id="ai-progress" style="display:none; margin-top:20px; padding:20px; background:var(--clr-surface-2); border-radius:var(--radius-md); border:1px solid var(--clr-border);">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                  <div class="spinner" style="width:20px;height:20px;border-width:2px;flex-shrink:0;"></div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.95rem;" id="ai-step-title">Analizando CV...</div>
+                    <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-step-sub">La IA está leyendo tu CV</div>
+                  </div>
+                </div>
+                <div style="background:var(--clr-border);border-radius:100px;height:4px;overflow:hidden;">
+                  <div id="ai-progress-bar" style="height:100%;background:var(--clr-accent);border-radius:100px;transition:width 0.4s ease;width:0%"></div>
+                </div>
+              </div>
+
+              <!-- Resultado del análisis -->
+              <div id="ai-result" style="display:none; margin-top:20px;">
+
+                <!-- Datos extraídos -->
+                <div style="padding:18px 20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2); margin-bottom:14px;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                    <span style="font-size:1.3rem;">✅</span>
+                    <div>
+                      <div style="font-weight:600;color:var(--clr-success);">Datos extraídos del CV</div>
+                      <div style="font-size:0.8rem;color:var(--clr-muted);" id="ai-result-summary">Gemini analizó tu CV</div>
+                    </div>
+                  </div>
+                  <div id="ai-extracted-fields" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="confirmAiData()" style="font-size:0.85rem;padding:8px 18px;">✅ Confirmar y guardar</button>
+                    <button class="btn btn-ghost" onclick="discardAiData()" style="font-size:0.85rem;padding:8px 18px;">✏️ Solo guardar CV</button>
+                  </div>
+                </div>
+
+                <!-- Comentario / análisis del CV -->
+                <div id="ai-comment-block" style="display:none; padding:18px 20px; background:rgba(201,168,76,0.06); border-radius:var(--radius-md); border:1px solid rgba(201,168,76,0.2);">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                    <span style="font-size:1.1rem;">🤖</span>
+                    <div style="font-weight:600;font-size:0.88rem;color:var(--clr-accent);">Análisis de Gemini sobre tu CV</div>
+                  </div>
+                  <p id="ai-comment-text" style="font-size:0.85rem;color:var(--clr-text);line-height:1.7;margin:0;font-style:italic;"></p>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert global -->
+        <div id="global-alert" class="alert" style="margin-top:16px;"></div>
+
+      </div><!-- /page-content -->
+    </main>
+  </div>
+
+  <script>
+    // ── Tabs ─────────────────────────────────────────
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Navegación por ancla (#) y estado activo del sidebar ───────────────────
+    window.addEventListener('load', () => {
+      const hash = window.location.hash.substring(1);
+
+      // 1. Activar la pestaña correcta
+      if (hash) {
+        const tabToActivate = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+        if (tabToActivate) {
+          tabToActivate.click(); // Simula un clic para activar la pestaña
+        }
+      }
+
+      // 2. Actualizar el estado 'active' en el sidebar
+      const sidebarLinks = document.querySelectorAll('.sidebar-nav a[href^="profile.html"]');
+      sidebarLinks.forEach(link => link.classList.remove('active'));
+
+      const activeLink = hash === 'cv'
+        ? document.querySelector('a[href="profile.html#cv"]')
+        : document.querySelector('a[href="profile.html"]');
+      if (activeLink) activeLink.classList.add('active');
+    });
+
+    // ── Bio char count ────────────────────────────────
+    const bio = document.getElementById('bio');
+    const bioCount = document.getElementById('bio-count');
+    bio.addEventListener('input', () => {
+      bioCount.textContent = `${bio.value.length} / 500 caracteres`;
+      bioCount.style.color = bio.value.length > 500 ? 'var(--clr-error)' : 'var(--clr-muted)';
+    });
+
+    // ── Tags input ────────────────────────────────────
+    function removeTag(btn) { btn.parentElement.remove(); }
+
+    ['tech', 'soft'].forEach(type => {
+      const input = document.getElementById(`${type}-input`);
+      const wrapper = document.getElementById(`${type}-wrapper`);
+      input.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) {
+          e.preventDefault();
+          const tag = document.createElement('span');
+          tag.className = 'tag-pill';
+          tag.innerHTML = `${input.value.trim()} <button class="tag-remove" onclick="removeTag(this)">×</button>`;
+          wrapper.insertBefore(tag, input);
+          input.value = '';
+        }
+      });
+    });
+
+    // ── Save sections ─────────────────────────────────
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('global-alert');
+      el.className = `alert alert-${type} visible`;
+      el.textContent = msg;
+      setTimeout(() => el.classList.remove('visible'), 3000);
+    }
+
+    // saveSection es definida por el módulo ES6 más abajo
+    // Esta función vacía evita errores si el módulo tarda en cargar
+    function saveSection(section) {
+      showAlert('⏳ Iniciando...'); 
+    }
+
+    // ── Add experience ────────────────────────────────
+    document.getElementById('add-exp-btn').addEventListener('click', () => {
+      const list = document.getElementById('exp-list');
+      const item = document.createElement('div');
+      item.className = 'exp-item';
+      item.innerHTML = `
+        <div class="exp-item-header">
+          <div>
+            <div class="exp-item-title">Nueva experiencia</div>
+            <div class="exp-item-sub">Completá los datos</div>
+          </div>
+          <div class="exp-item-actions">
+            <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group"><label>Cargo *</label><input type="text" placeholder="Ej: Backend Developer" /></div>
+          <div class="form-group"><label>Empresa *</label><input type="text" placeholder="Nombre de la empresa" /></div>
+          <div class="form-group"><label>Fecha inicio</label><input type="month" /></div>
+          <div class="form-group"><label>Fecha fin</label><input type="month" /></div>
+          <div class="form-group col-span-2"><label>Descripción</label><textarea rows="3" placeholder="Describí tus tareas y logros..."></textarea></div>
+        </div>`;
+      list.appendChild(item);
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    //f(../index.html)
+
+    // ── Add education ─────────────────────────────────
+    document.getElementById('add-edu-btn').addEventListener('click', () => {
+      const list = document.getElementById('edu-list');
+      const item = document.createElement('div');
+      item.className = 'exp-item';
+      item.innerHTML = `
+        <div class="exp-item-header">
+          <div><div class="exp-item-title">Nueva educación</div></div>
+          <div class="exp-item-actions">
+            <button class="exp-action-btn danger" onclick="this.closest('.exp-item').remove()">🗑 Eliminar</button>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group"><label>Título / Carrera *</label><input type="text" placeholder="Ej: Ingeniería en Sistemas" /></div>
+          <div class="form-group"><label>Institución *</label><input type="text" placeholder="Nombre de la institución" /></div>
+          <div class="form-group"><label>Año inicio</label><input type="number" min="1990" max="2030" /></div>
+          <div class="form-group"><label>Año fin</label><input type="number" min="1990" max="2030" /></div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select><option>Graduado</option><option>En curso</option><option>Incompleto</option></select>
+          </div>
+        </div>`;
+      list.appendChild(item);
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // ── Add language ──────────────────────────────────
+    const langs = ['🇧🇷 Portugués','🇫🇷 Francés','🇩🇪 Alemán','🇮🇹 Italiano','🇯🇵 Japonés','🇨🇳 Chino'];
+    let langIdx = 0;
+    document.getElementById('add-lang-btn').addEventListener('click', () => {
+      const list = document.getElementById('lang-list');
+      const row = document.createElement('div');
+      row.className = 'lang-row';
+      row.innerHTML = `
+        <input type="text" style="background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-sm);color:var(--clr-text);font-family:var(--font-body);font-size:0.85rem;padding:6px 10px;outline:none;min-width:100px;" placeholder="Idioma" value="${langs[langIdx % langs.length] || ''}" />
+        <div class="lang-level">
+          <select><option>Nativo</option><option>Avanzado</option><option selected>Intermedio</option><option>Básico</option></select>
+        </div>
+        <button class="lang-remove" onclick="this.parentElement.remove()">×</button>`;
+      list.appendChild(row);
+      langIdx++;
+    });
+
+    // ── CV upload ─────────────────────────────────────
+
+    // Mostrar/ocultar sección de CV según si hay archivo guardado
+    function renderCvState(user) {
+      const current   = document.getElementById('cv-current');
+      const nameEl    = document.getElementById('cv-file-name');
+      const metaEl    = document.getElementById('cv-file-meta');
+      const downloadBtn = document.getElementById('cv-download-btn');
+      const dropTitle = document.getElementById('drop-title');
+
+      if (user && user.cvFileName && user.cvUrl) {
+        // Hay CV guardado → mostrar info y botón descargar
+        if (current)   current.style.display = 'flex';
+        if (nameEl)    nameEl.textContent = user.cvFileName;
+        if (metaEl)    metaEl.textContent = `Guardado en tu perfil · PDF`;
+        if (dropTitle) dropTitle.textContent = 'Reemplazar CV';
+        // Configurar botón de descarga con el base64
+        if (downloadBtn) {
+          downloadBtn.href     = user.cvUrl;
+          downloadBtn.download = user.cvFileName;
+        }
+      } else {
+        // No hay CV
+        if (current)   current.style.display = 'none';
+        if (dropTitle) dropTitle.textContent = 'Subir CV';
+      }
+    }
+
+    function handleFileSelect(input) {
+      if (input.files[0]) processFile(input.files[0]);
+    }
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('drop-area').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'application/pdf') processFile(file);
+      else showAlert('Solo se aceptan archivos PDF.', 'error');
+    }
+
+    // Datos extraídos por la IA (pendiente de confirmación)
+    let pendingAiData = null;
+    let pendingBase64 = null;
+    let pendingFileName = null;
+
+    function setProgress(pct, title, sub) {
+      const bar   = document.getElementById('ai-progress-bar');
+      const tEl   = document.getElementById('ai-step-title');
+      const sEl   = document.getElementById('ai-step-sub');
+      if (bar) bar.style.width = pct + '%';
+      if (tEl) tEl.textContent = title;
+      if (sEl) sEl.textContent = sub;
+    }
+
+    async function processFile(file) {
+      if (file.size > 5 * 1024 * 1024) { showAlert('El archivo supera los 5 MB.', 'error'); return; }
+
+      // Ocultar resultados anteriores
+      document.getElementById('ai-progress').style.display = 'none';
+      document.getElementById('ai-result').style.display   = 'none';
+
+      // Leer PDF como base64
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const dataUrl = e.target.result;
+        const base64Only = dataUrl.split(',')[1]; // solo los bytes, sin el prefijo
+        pendingBase64   = dataUrl;
+        pendingFileName = file.name;
+
+        // Mostrar progreso
+        document.getElementById('ai-progress').style.display = 'block';
+        setProgress(10, 'Leyendo el PDF...', 'Preparando el archivo para análisis');
+
+        try {
+          setProgress(30, 'Analizando con IA...', 'Gemini está extrayendo la información de tu CV');
+
+          // ── Llamar al BACKEND (Gemini, API key segura en el servidor) ──
+          const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+          const response = await fetch('http://localhost:3001/api/cv/analyze-preview', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              base64Pdf: base64Only,
+              fileName:  file.name,
+            }),
+          });
+
+          setProgress(70, 'Procesando resultados...', 'Organizando la información extraída');
+
+          if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.message || 'Error al analizar con Gemini');
+          }
+
+          const result    = await response.json();
+          const extracted = result.extracted;
+
+          setProgress(90, 'Completando perfil...', 'Aplicando los datos extraídos');
+
+          pendingAiData = extracted;
+
+          // Mostrar preview y comentario de Gemini
+          showAiPreview(extracted);
+
+          // Mostrar el comentario/análisis del CV si viene
+          if (extracted.cvComment) {
+            const commentBlock = document.getElementById('ai-comment-block');
+            const commentText  = document.getElementById('ai-comment-text');
+            if (commentBlock && commentText) {
+              commentText.textContent = extracted.cvComment;
+              commentBlock.style.display = 'block';
+            }
+          }
+
+          setProgress(100, '¡Análisis completado!', '');
+          setTimeout(() => {
+            document.getElementById('ai-progress').style.display = 'none';
+            document.getElementById('ai-result').style.display   = 'block';
+          }, 600);
+
+        } catch(err) {
+          document.getElementById('ai-progress').style.display = 'none';
+          showAlert('✗ ' + err.message, 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function showAiPreview(data) {
+      const container = document.getElementById('ai-extracted-fields');
+      const summary   = document.getElementById('ai-result-summary');
+      if (!container) return;
+
+      container.innerHTML = '';
+      const fields = [
+        data.firstName && data.lastName ? `👤 ${data.firstName} ${data.lastName}` : null,
+        data.jobTitle  ? `💼 ${data.jobTitle}` : null,
+        data.location  ? `📍 ${data.location}` : null,
+        data.skills?.length  ? `🛠 ${data.skills.length} habilidades técnicas` : null,
+        data.experience?.length ? `📋 ${data.experience.length} experiencia(s)` : null,
+        data.education?.length  ? `🎓 ${data.education.length} educación` : null,
+        data.languages?.length  ? `🌍 ${data.languages.length} idioma(s)` : null,
+      ].filter(Boolean);
+
+      fields.forEach(f => {
+        const chip = document.createElement('span');
+        chip.style.cssText = 'background:rgba(76,175,132,0.12);color:var(--clr-success);border:1px solid rgba(76,175,132,0.25);padding:4px 10px;border-radius:100px;font-size:0.78rem;';
+        chip.textContent = f;
+        container.appendChild(chip);
+      });
+
+      if (summary) summary.textContent = `${fields.length} secciones extraídas correctamente`;
+    }
+
+    async function confirmAiData() {
+      if (!pendingAiData) return;
+      const btn = document.querySelector('#ai-result .btn-primary');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...'; }
+
+      try {
+        const token      = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const base64Only = pendingBase64.split(',')[1];
+
+        // ── Llamar al backend /api/cv/analyze → guarda CV + perfil ──
+        const res = await fetch('http://localhost:3001/api/cv/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            base64Pdf: base64Only,
+            fileName:  pendingFileName,
+          }),
+        });
+
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.message || 'Error al guardar los datos');
+        }
+
+        const result  = await res.json();
+        const updated = result.user;
+        localStorage.setItem('talentai_user', JSON.stringify(updated));
+
+        // Rellenar formulario con los datos nuevos
+        const { fillProfileForm, refreshUI } = await import('../../js/profile.js');
+        fillProfileForm(updated);
+        refreshUI(updated);
+        renderCvState(updated);
+
+        document.getElementById('ai-result').style.display = 'none';
+        showAlert('🤖 ¡Perfil completado con Gemini! Revisá los datos en cada sección.');
+
+        // Ir a datos personales para revisión
+        const personalTab = document.querySelector('[data-tab="personal"]');
+        if (personalTab) personalTab.click();
+
+        pendingAiData = null;
+      } catch(err) {
+        showAlert('✗ ' + err.message, 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar y guardar'; }
+      }
+    }
+
+    function discardAiData() {
+      pendingAiData = null;
+      document.getElementById('ai-result').style.display = 'none';
+      // Solo guardar el CV sin los datos de la IA
+      if (pendingBase64 && pendingFileName) {
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        fetch('http://localhost:3001/api/users/me', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ cvFileName: pendingFileName, cvUrl: pendingBase64 }),
+        }).then(r => r.json()).then(updated => {
+          localStorage.setItem('talentai_user', JSON.stringify(updated));
+          renderCvState(updated);
+          import('../../js/profile.js').then(({ refreshUI }) => refreshUI(updated));
+          showAlert('✓ CV guardado. Completá los datos manualmente.');
+        });
+      }
+    }
+
+    async function removeCv() {
+      if (!confirm('¿Seguro que querés eliminar tu CV?')) return;
+      try {
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const res = await fetch('http://localhost:3001/api/users/me', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cvFileName: null, cvUrl: null }),
+        });
+        if (!res.ok) throw new Error('Error al eliminar el CV');
+        const updated = await res.json();
+        localStorage.setItem('talentai_user', JSON.stringify(updated));
+        renderCvState(updated);
+        showAlert('CV eliminado', 'error');
+        const { refreshUI } = await import('../../js/profile.js');
+        refreshUI(updated);
+      } catch(err) {
+        showAlert('✗ ' + err.message, 'error');
+      }
+    }
+  </script>
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    import {
+      initProfile,
+      readCandidateForm,
+      saveProfile,
+      calcCandidatePercent,
+      updateDashboardHero,
+      refreshUI,
+    } from '../../js/profile.js';
+
+    window.cerrarSesion = function(event) {
+      if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
+      
+      // El navegador mostrará una alerta genérica preguntando esto:
+      const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+      
+      if (seguro) {
+        logout(); // Si hace clic en "Aceptar", cierra la sesión
+      }
+    }
+
+    // Cargar datos al inicio
+    const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (_u) updateDashboardHero(_u);
+    await initProfile();
+
+    // Mostrar estado del CV con datos frescos
+    const _fresh = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (_fresh) renderCvState(_fresh);
+
+    // ── saveSection: guarda SOLO los datos de la sección activa ──────────
+    // IMPORTANTE: NO llama fillProfileForm después de guardar para no
+    // borrar lo que el usuario recién ingresó en otras secciones.
+    window.saveSection = async function(section) {
+      const btn  = event.target;
+      const orig = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="border-top-color:#0d0f14;width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...';
+
+      try {
+        let data = {};
+
+        if (section === 'personal') {
+          // Solo los campos personales
+          const f = readCandidateForm();
+          data = {
+            firstName:    f.firstName,
+            lastName:     f.lastName,
+            phone:        f.phone,
+            jobTitle:     f.jobTitle,
+            location:     f.location,
+            bio:          f.bio,
+            linkedin:     f.linkedin,
+            github:       f.github,
+            portfolio:    f.portfolio,
+            salary:       f.salary,
+            availability: f.availability,
+            modality:     f.modality,
+          };
+        } else if (section === 'experience') {
+          const f = readCandidateForm();
+          data = { experience: f.experience };
+        } else if (section === 'education') {
+          const f = readCandidateForm();
+          data = { education: f.education };
+        } else if (section === 'skills') {
+          const f = readCandidateForm();
+          data = {
+            skills:     f.skills,
+            softSkills: f.softSkills,
+            languages:  f.languages,
+          };
+        }
+
+        const updated = await saveProfile(data);
+        const pct     = calcCandidatePercent(updated);
+
+        // refreshUI actualiza badges, steps y sidebar
+        // SIN tocar los inputs/listas del formulario
+        refreshUI(updated);
+        showAlert(`✓ Guardado correctamente — perfil al ${pct}%`);
+
+      } catch (err) {
+        showAlert('✗ ' + (err.message || 'Error al guardar'), 'error');
+      } finally {
+        btn.disabled  = false;
+        btn.innerHTML = orig;
+      }
+    };
+    
+  </script>
+
+  <script src="../../js/sidebar-toggle.js"></script>
+</body>
+</html>
