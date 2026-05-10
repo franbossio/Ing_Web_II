@@ -6,6 +6,7 @@ import { CvModule } from './cv/cv.module';
 import { UsersModule } from './users/users.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ApplicationsModule } from './applications/applications.module';
+import { RecommendationsModule } from './recommendations/recommendations.module';
 import { User } from './users/user.entity';
 import { Job } from './jobs/job.entity';
 import { Application } from './applications/application.entity';
@@ -35,6 +36,7 @@ import { Application } from './applications/application.entity';
     CvModule,
     JobsModule,
     ApplicationsModule,
+    RecommendationsModule,
   ],
 })
 export class AppModule {}
