@@ -111,6 +111,84 @@
     .fm-apply { flex:2;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--clr-accent);color:#0d0f14;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;transition:opacity .15s; }
     .fm-apply:hover { opacity:.88; }
     @media (max-width:600px) { .filter-modal { width:100vw; } }
+
+    /* ── Modal detalle oferta ───────────────────────────── */
+    .job-modal-overlay {
+      position:fixed;inset:0;background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(4px);z-index:300;
+      opacity:0;pointer-events:none;transition:opacity .25s;
+    }
+    .job-modal-overlay.open { opacity:1;pointer-events:all; }
+
+    .job-modal {
+      position:fixed;top:0;right:0;bottom:0;width:520px;max-width:100vw;
+      background:var(--clr-surface);border-left:1px solid var(--clr-border);
+      z-index:301;overflow-y:auto;
+      transform:translateX(100%);
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+      display:flex;flex-direction:column;
+    }
+    .job-modal.open { transform:translateX(0); }
+
+    .jm-header {
+      position:sticky;top:0;z-index:1;
+      background:var(--clr-surface);border-bottom:1px solid var(--clr-border);
+      padding:20px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .jm-close {
+      width:34px;height:34px;border-radius:50%;flex-shrink:0;
+      background:var(--clr-surface-2);border:1px solid var(--clr-border);
+      color:var(--clr-muted);cursor:pointer;font-size:1rem;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .15s;
+    }
+    .jm-close:hover { border-color:var(--clr-accent);color:var(--clr-accent); }
+
+    .jm-body { padding:24px;flex:1; }
+
+    .jm-company-row {
+      display:flex;align-items:center;gap:14px;margin-bottom:20px;
+    }
+    .jm-company-logo {
+      width:52px;height:52px;border-radius:12px;
+      background:var(--clr-surface-2);border:1px solid var(--clr-border);
+      display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;
+    }
+    .jm-title { font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--clr-text);margin-bottom:4px; }
+    .jm-company { font-size:0.85rem;color:var(--clr-muted); }
+
+    .jm-pills {
+      display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;
+    }
+    .jm-pill {
+      font-size:0.75rem;font-weight:500;padding:5px 12px;border-radius:100px;
+      border:1px solid var(--clr-border);color:var(--clr-muted);
+      background:var(--clr-surface-2);
+    }
+    .jm-pill.accent { border-color:rgba(201,168,76,.3);color:var(--clr-accent);background:rgba(201,168,76,.08); }
+
+    .jm-section { margin-bottom:22px; }
+    .jm-section-title {
+      font-size:0.72rem;font-weight:700;text-transform:uppercase;
+      letter-spacing:.1em;color:var(--clr-muted);margin-bottom:10px;
+    }
+    .jm-text { font-size:0.87rem;color:var(--clr-text);line-height:1.7;white-space:pre-wrap; }
+
+    .jm-tags { display:flex;flex-wrap:wrap;gap:6px; }
+    .jm-tag {
+      font-size:0.72rem;font-weight:500;padding:4px 10px;border-radius:100px;
+      background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);color:var(--clr-accent);
+    }
+    .jm-tag.soft { background:var(--clr-surface-2);border-color:var(--clr-border);color:var(--clr-muted); }
+
+    .jm-footer {
+      position:sticky;bottom:0;
+      background:var(--clr-surface);border-top:1px solid var(--clr-border);
+      padding:16px 24px;display:flex;gap:10px;
+    }
+    .jm-footer .btn-primary { flex:1;padding:12px;font-size:.9rem; }
+    .jm-footer .btn-ghost   { padding:12px 18px;font-size:.9rem; }
   </style>
 </head>
 <body>
@@ -173,67 +251,6 @@
 
         <!-- Ofertas -->
         <div class="jobs-list" id="jobs-list">
-
-          <div class="job-card featured" data-cat="fullstack">
-            <div class="featured-badge">⭐ Recomendado</div>
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">🏢</div><div><div class="job-card-title">Senior Full Stack Developer</div><div class="job-card-company">Globant · Buenos Aires</div></div></div>
-              <div class="job-card-right"><div class="match-badge"><div class="match-pct">92%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-            </div>
-            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +3 años exp.</span><span>📅 Hace 1 día</span><span>👁 142 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">AWS</span><span class="skill-tag missing">Microservices</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.500 – 3.500 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
-
-          <div class="job-card" data-cat="fullstack">
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">🚀</div><div><div class="job-card-title">Desarrollador Full Stack</div><div class="job-card-company">Acme Corp S.A. · Buenos Aires</div></div></div>
-              <div class="job-card-right"><div class="match-badge"><div class="match-pct">87%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-            </div>
-            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 2 días</span><span>👁 98 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">Docker</span><span class="skill-tag missing">Kubernetes</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 900k – 1.2M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
-
-          <div class="job-card" data-cat="backend">
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">🛒</div><div><div class="job-card-title">Backend Developer — NestJS</div><div class="job-card-company">MercadoLibre · Remoto</div></div></div>
-              <div class="job-card-right"><div class="match-badge"><div class="match-pct">85%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-            </div>
-            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 3 días</span><span>👁 215 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">Node.js</span><span class="skill-tag match">TypeScript</span><span class="skill-tag match">PostgreSQL</span><span class="skill-tag match">Docker</span><span class="skill-tag">Redis</span><span class="skill-tag missing">Kafka</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 2.000 – 2.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
-
-          <div class="job-card" data-cat="frontend">
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">✈️</div><div><div class="job-card-title">Frontend Developer — React</div><div class="job-card-company">Despegar · Buenos Aires</div></div></div>
-              <div class="job-card-right"><div class="match-badge"><div class="match-pct">83%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-            </div>
-            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 5 días</span><span>👁 167 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">React</span><span class="skill-tag match">TypeScript</span><span class="skill-tag">Next.js</span><span class="skill-tag">Tailwind</span><span class="skill-tag missing">GraphQL</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 800k – 1.1M / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
-
-          <div class="job-card" data-cat="devops">
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">☁️</div><div><div class="job-card-title">DevOps Engineer Junior</div><div class="job-card-company">CloudBase · Remoto</div></div></div>
-              <div class="job-card-right"><div class="match-badge" style="background:rgba(76,175,132,.08);border-color:rgba(76,175,132,.2);"><div class="match-pct" style="color:var(--clr-success);">74%</div><div class="match-label">Match IA</div></div><span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span></div>
-            </div>
-            <div class="job-card-meta"><span>🏠 Remoto</span><span>⏱ Full-time</span><span>🏆 +1 año exp.</span><span>📅 Hoy</span><span>👁 23 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">Docker</span><span class="skill-tag match">Git</span><span class="skill-tag">Linux</span><span class="skill-tag missing">Kubernetes</span><span class="skill-tag missing">Terraform</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 USD 1.200 – 1.800 / mes</span><span class="badge badge-blue">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
-
-          <div class="job-card" data-cat="data">
-            <div class="job-card-header">
-              <div class="job-card-left"><div class="job-company-logo">📊</div><div><div class="job-card-title">Data Engineer</div><div class="job-card-company">AnalyticsLab · Córdoba</div></div></div>
-              <div class="job-card-right"><div class="match-badge" style="background:rgba(122,174,232,.08);border-color:rgba(122,174,232,.2);"><div class="match-pct" style="color:#7aaee8;">68%</div><div class="match-label">Match IA</div></div><span class="badge badge-green"><span class="badge-dot"></span> Activa</span></div>
-            </div>
-            <div class="job-card-meta"><span>🔀 Híbrido</span><span>⏱ Full-time</span><span>🏆 +2 años exp.</span><span>📅 Hace 1 semana</span><span>👁 89 vistas</span></div>
-            <div class="job-card-tags"><span class="skill-tag match">PostgreSQL</span><span class="skill-tag">Python</span><span class="skill-tag missing">Spark</span><span class="skill-tag missing">Airflow</span><span class="skill-tag missing">dbt</span></div>
-            <div class="job-card-footer"><div class="job-card-footer-left"><span class="salary-text">💰 ARS 700k – 950k / mes</span><span class="badge badge-gray">Full-time</span></div><div class="job-card-footer-right"><button class="save-btn" onclick="toggleSave(this)">⭐ Guardar</button><button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJob(this)">Postularme</button></div></div>
-          </div>
 
         </div>
 
@@ -442,13 +459,245 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilters(); });
   </script>
 
-  <script type="module">
-    import { logout } from '../../js/auth.js';
-    import { updateDashboardHero } from '../../js/profile.js';
-    window.cerrarSesion = function(e) { if (e) e.preventDefault(); if (confirm('¿Cerrar sesión?')) logout(); };
-    const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-    if (u) updateDashboardHero(u);
-  </script>
+<script type="module">
+// ── Estado global de jobs ──────────────────────────────────────────────────
+let ALL_JOBS    = [];
+let APPLIED_IDS = new Set();
+let TOKEN       = '';
+
+// ── Abrir modal con detalle ────────────────────────────────────────────────
+window.openJobModal = function(jobId) {
+  const job     = ALL_JOBS.find(j => j.id === jobId);
+  if (!job) return;
+  const applied = APPLIED_IDS.has(jobId);
+  const body    = document.getElementById('jm-body');
+  const applyBtn= document.getElementById('jm-apply-btn');
+
+  const salary = job.salaryMin
+    ? `${job.currency||''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax?' – '+Number(job.salaryMax).toLocaleString():''} / mes`
+    : null;
+
+  const pills = [
+    job.modality   ? `<span class="jm-pill">${job.modality}</span>`  : '',
+    job.contract   ? `<span class="jm-pill">${job.contract}</span>`  : '',
+    job.experience ? `<span class="jm-pill">🏆 ${job.experience}</span>` : '',
+    job.location   ? `<span class="jm-pill">📍 ${job.location}</span>` : '',
+    salary         ? `<span class="jm-pill accent">💰 ${salary}</span>` : '',
+    job.deadline   ? `<span class="jm-pill">📆 Cierra ${new Date(job.deadline).toLocaleDateString('es-AR')}</span>` : '',
+  ].filter(Boolean).join('');
+
+  const techTags = (job.skills||[]).map(s=>`<span class="jm-tag">${s}</span>`).join('');
+  const softTags = (job.softSkills||[]).map(s=>`<span class="jm-tag soft">${s}</span>`).join('');
+
+  body.innerHTML = `
+    <div class="jm-company-row">
+      <div class="jm-company-logo">🏢</div>
+      <div>
+        <div class="jm-title">${job.title}</div>
+        <div class="jm-company">${job.company?.companyName||'Empresa'} · Publicada el ${new Date(job.createdAt).toLocaleDateString('es-AR')}</div>
+      </div>
+    </div>
+
+    ${pills ? `<div class="jm-pills">${pills}</div>` : ''}
+
+    ${job.description ? `
+    <div class="jm-section">
+      <div class="jm-section-title">Descripción</div>
+      <div class="jm-text">${job.description}</div>
+    </div>` : ''}
+
+    ${job.requirements ? `
+    <div class="jm-section">
+      <div class="jm-section-title">Requisitos</div>
+      <div class="jm-text">${job.requirements}</div>
+    </div>` : ''}
+
+    ${techTags ? `
+    <div class="jm-section">
+      <div class="jm-section-title">Habilidades técnicas requeridas</div>
+      <div class="jm-tags">${techTags}</div>
+    </div>` : ''}
+
+    ${softTags ? `
+    <div class="jm-section">
+      <div class="jm-section-title">Habilidades blandas</div>
+      <div class="jm-tags">${softTags}</div>
+    </div>` : ''}
+  `;
+
+  // Botón postularme en el footer
+  if (applied) {
+    applyBtn.textContent = '✓ Ya te postulaste';
+    applyBtn.disabled    = true;
+    applyBtn.style.cssText = 'flex:1;padding:12px;font-size:.9rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:600;cursor:default;';
+  } else {
+    applyBtn.textContent = 'Postularme';
+    applyBtn.disabled    = false;
+    applyBtn.style.cssText = '';
+    applyBtn.className   = 'btn btn-primary';
+    applyBtn.onclick     = () => applyFromModal(jobId, applyBtn);
+  }
+
+  document.getElementById('job-modal-overlay').classList.add('open');
+  document.getElementById('job-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeJobModal = function() {
+  document.getElementById('job-modal-overlay').classList.remove('open');
+  document.getElementById('job-modal').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+async function applyFromModal(jobId, btn) {
+  btn.disabled  = true;
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Enviando...';
+  try {
+    const res = await fetch('http://localhost:3001/api/applications', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${TOKEN}` },
+      body: JSON.stringify({ jobId }),
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({message:'Error'})); throw new Error(e.message); }
+    APPLIED_IDS.add(jobId);
+    btn.textContent = '✓ ¡Postulación enviada!';
+    btn.style.cssText = 'flex:1;padding:12px;font-size:.9rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:600;cursor:default;';
+    btn.onclick = null;
+    // Actualizar el botón en la card también
+    const card = document.querySelector(`[data-job-id="${jobId}"] .btn-primary`);
+    if (card) {
+      card.textContent = '✓ Postulado';
+      card.disabled    = true;
+      card.style.cssText = 'padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);cursor:default;font-family:var(--font-body);font-weight:600;';
+      card.onclick = null;
+    }
+  } catch(err) {
+    btn.disabled  = false;
+    btn.textContent = 'Postularme';
+    btn.className   = 'btn btn-primary';
+    alert('✗ ' + err.message);
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeJobModal(); });
+
+// ── Cargar ofertas ─────────────────────────────────────────────────────────
+async function loadJobs() {
+  TOKEN = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  const token = TOKEN;
+  if (!token) return;
+
+  const list    = document.getElementById('jobs-list');
+  const emptyEl = document.getElementById('empty-state');
+  const countEl = document.getElementById('results-num');
+  if (!list) return;
+
+  try {
+    const [jobsRes, appsRes] = await Promise.all([
+      fetch('http://localhost:3001/api/jobs',            { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('http://localhost:3001/api/applications/my', { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
+
+    const jobs   = jobsRes.ok ? await jobsRes.json() : [];
+    const myApps = appsRes.ok ? await appsRes.json() : [];
+    const appliedIds = new Set(myApps.map(a => a.jobId));
+    ALL_JOBS = jobs;
+    APPLIED_IDS = appliedIds;
+
+    if (countEl) countEl.textContent = jobs.length;
+
+    if (!jobs.length) {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+
+    list.innerHTML = jobs.map(job => {
+      const applied = appliedIds.has(job.id);
+      const salary  = job.salaryMin
+        ? `💰 ${job.currency || ''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax ? ' – ' + Number(job.salaryMax).toLocaleString() : ''} / mes`
+        : '';
+      const skills = (job.skills || []).map(s =>
+        `<span class="skill-tag match">${s}</span>`
+      ).join('');
+      const applyBtn = applied
+        ? `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);" disabled>✓ Postulado</button>`
+        : `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJobReal(this,'${job.id}')">Postularme</button>`;
+
+      return `<div class="job-card" data-cat="${(job.area||'all').toLowerCase()}" data-job-id="${job.id}" style="cursor:pointer;" onclick="if(!event.target.closest('button'))openJobModal('${job.id}')">
+        <div class="job-card-header">
+          <div class="job-card-left">
+            <div class="job-company-logo">🏢</div>
+            <div>
+              <div class="job-card-title">${job.title}</div>
+              <div class="job-card-company">${job.company?.companyName || 'Empresa'} · ${job.location || ''}</div>
+            </div>
+          </div>
+          <div class="job-card-right">
+            <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
+          </div>
+        </div>
+        <div class="job-card-meta">
+          ${job.modality  ? `<span>📍 ${job.modality}</span>`  : ''}
+          ${job.contract  ? `<span>⏱ ${job.contract}</span>`  : ''}
+          ${job.experience? `<span>🏆 ${job.experience}</span>`:''}
+          <span>📅 ${new Date(job.createdAt).toLocaleDateString('es-AR')}</span>
+        </div>
+        ${skills ? `<div class="job-card-tags">${skills}</div>` : ''}
+        <div class="job-card-footer">
+          <div class="job-card-footer-left">
+            <span class="salary-text">${salary}</span>
+          </div>
+          <div class="job-card-footer-right">
+            ${applyBtn}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch(err) {
+    console.error('Error cargando ofertas:', err);
+  }
+}
+
+window.applyJobReal = async function(btn, jobId) {
+  const token = TOKEN;
+  btn.disabled  = true;
+  btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div>';
+  try {
+    const res = await fetch('http://localhost:3001/api/applications', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body:    JSON.stringify({ jobId }),
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({message:'Error'})); throw new Error(e.message); }
+    btn.textContent = '✓ Postulado';
+    btn.style.cssText = 'padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);cursor:default;font-family:var(--font-body);font-weight:600;';
+    btn.onclick = null;
+  } catch(err) {
+    btn.disabled  = false;
+    btn.textContent = 'Postularme';
+    alert('✗ ' + err.message);
+  }
+};
+
+loadJobs();
+</script>
+
+<!-- ── Modal detalle de oferta ──────────────────────────── -->
+<div class="job-modal-overlay" id="job-modal-overlay" onclick="closeJobModal()"></div>
+<div class="job-modal" id="job-modal">
+  <div class="jm-header">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;">Detalle de la oferta</div>
+    <button class="jm-close" onclick="closeJobModal()">✕</button>
+  </div>
+  <div class="jm-body" id="jm-body">
+    <!-- se rellena dinámicamente -->
+  </div>
+  <div class="jm-footer" id="jm-footer">
+    <button class="btn btn-ghost" onclick="closeJobModal()">Cerrar</button>
+    <button class="btn btn-primary" id="jm-apply-btn">Postularme</button>
+  </div>
+</div>
 
   <script src="../../js/sidebar-toggle.js"></script>
 </body>

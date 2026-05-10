@@ -1,8 +1,7 @@
 /**
  * sidebar-toggle.js
- * Maneja el botón de colapsar/expandir el sidebar en desktop.
- * Reemplaza el bloque <script> repetido en cada página.
- * Incluir con: <script src="../../js/sidebar-toggle.js"></script>
+ * Colapsa/expande el sidebar en desktop.
+ * Espera a que sidebar-candidate/company.js inyecte el DOM.
  */
 (function () {
   function init() {
@@ -12,12 +11,20 @@
       toggleBtn.addEventListener('click', () => {
         layout.classList.toggle('collapsed');
       });
+      return true;
     }
+    return false;
+  }
+
+  // Intentar varias veces porque sidebar-candidate.js es async (module)
+  function tryInit(attempts) {
+    if (init()) return;
+    if (attempts > 0) setTimeout(() => tryInit(attempts - 1), 100);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => tryInit(10));
   } else {
-    init();
+    tryInit(10);
   }
 })();

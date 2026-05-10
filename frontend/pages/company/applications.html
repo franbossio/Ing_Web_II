@@ -579,26 +579,108 @@
     }
   </script>
   <script type="module">
-    import { logout } from '../../js/auth.js';
-    import { updateDashboardHero } from '../../js/profile.js';
+const STATUS_MAP = {
+  pendiente:  { label: 'Pendiente',       badge: 'badge-gray',  icon: '⚪' },
+  revision:   { label: 'En revisión',     badge: 'badge-gold',  icon: '🟡' },
+  entrevista: { label: 'Entrevista',      badge: 'badge-green', icon: '🟢' },
+  rechazado:  { label: 'No seleccionado', badge: 'badge-red',   icon: '🔴' },
+  aceptado:   { label: 'Aceptado',        badge: 'badge-green', icon: '🎉' },
+};
 
-  
-    window.cerrarSesion = function(event) {
-        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-        
-        // El navegador mostrará una alerta genérica preguntando esto:
-        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-        
-        if (seguro) {
-          logout(); // Si hace clic en "Aceptar", cierra la sesión
-        }
-      }
+window.changeStatus = async function(appId, newStatus, token) {
+  try {
+    const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (!res.ok) throw new Error('Error al actualizar');
+    // Actualizar badge visual
+    const card  = document.querySelector(`[data-app-id="${appId}"]`);
+    const badge = card?.querySelector('.badge');
+    const st    = STATUS_MAP[newStatus];
+    if (badge && st) {
+      badge.className  = `badge ${st.badge}`;
+      badge.innerHTML  = `<span class="badge-dot"></span>${st.label}`;
+    }
+  } catch(e) { alert('✗ ' + e.message); }
+};
 
-    // Actualizar sidebar con datos reales del usuario
-    //const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-    //if (u) updateDashboardHero(u);
-  </script>
+async function loadCompanyApplications() {
+  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  if (!token) return;
 
+  // Contenedor — buscar por distintas clases que puede tener
+  const container = document.querySelector('.apps-list') || document.querySelector('.applications-list');
+  if (!container) return;
+
+  try {
+    const res  = await fetch('http://localhost:3001/api/applications/company', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const apps = res.ok ? await res.json() : [];
+
+    if (!apps.length) {
+      container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--clr-muted);">
+        <div style="font-size:2rem;margin-bottom:12px;">📭</div>
+        <div>Todavía no recibiste postulaciones.</div>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = apps.map(app => {
+      const job  = app.job || {};
+      const cand = app.candidate || {};
+      const st   = STATUS_MAP[app.status] || STATUS_MAP.pendiente;
+      const date = new Date(app.createdAt).toLocaleDateString('es-AR');
+      const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email || '—';
+      const iniciales = nombre !== '—'
+        ? nombre.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
+        : '?';
+
+      return `
+      <div class="app-card" data-status="${app.status}" data-app-id="${app.id}">
+        <div class="app-card-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--clr-border);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#0d0f14;flex-shrink:0;">${iniciales}</div>
+            <div>
+              <div style="font-weight:600;font-size:0.9rem;color:var(--clr-text);">${nombre}</div>
+              <div style="font-size:0.75rem;color:var(--clr-muted);">${cand.jobTitle || 'Candidato'} · ${cand.location || ''}</div>
+            </div>
+          </div>
+          <span class="badge ${st.badge}" style="flex-shrink:0;"><span class="badge-dot"></span>${st.label}</span>
+        </div>
+        <div style="padding:14px 20px;">
+          <div style="font-size:0.78rem;color:var(--clr-muted);margin-bottom:10px;">
+            📋 <strong style="color:var(--clr-text);">${job.title || '—'}</strong>
+            &nbsp;·&nbsp; 📅 ${date}
+          </div>
+          ${cand.skills?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">${(cand.skills||[]).slice(0,5).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>` : ''}
+          ${app.coverLetter ? `<div style="font-size:0.8rem;color:var(--clr-muted);margin-bottom:12px;padding:8px 12px;background:var(--clr-surface-2);border-radius:var(--radius-sm);">💬 ${app.coverLetter}</div>` : ''}
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <select onchange="changeStatus('${app.id}', this.value, '${token}')"
+              style="background:var(--clr-surface-2);border:1px solid var(--clr-border);border-radius:var(--radius-sm);padding:6px 10px;font-family:var(--font-body);font-size:0.8rem;color:var(--clr-text);cursor:pointer;">
+              ${Object.entries(STATUS_MAP).map(([k,v]) =>
+                `<option value="${k}" ${app.status===k?'selected':''}>${v.icon} ${v.label}</option>`
+              ).join('')}
+            </select>
+            ${cand.cvUrl ? `<a href="${cand.cvUrl}" download="${cand.cvFileName||'cv.pdf'}" class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem;">📄 Ver CV</a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Actualizar contador
+    const countEl = document.querySelector('.apps-count, .results-count strong');
+    if (countEl) countEl.textContent = apps.length;
+
+  } catch(err) {
+    console.error('Error cargando postulaciones:', err);
+  }
+}
+
+loadCompanyApplications();
+</script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>

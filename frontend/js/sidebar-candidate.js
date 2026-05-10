@@ -95,9 +95,42 @@ window.cerrarSesion = function () {
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inject);
+    document.addEventListener('DOMContentLoaded', () => { inject(); loadUser(); });
   } else {
     inject();
+    loadUser();
+  }
+
+  async function loadUser() {
+    // Cargar desde caché inmediatamente
+    const cached = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (cached) fillSidebar(cached);
+
+    // Refrescar desde backend
+    const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const u = await res.json();
+        localStorage.setItem('talentai_user', JSON.stringify(u));
+        fillSidebar(u);
+      }
+    } catch {}
+  }
+
+  function fillSidebar(u) {
+    const nombre = [u.firstName, u.lastName].filter(Boolean).join(' ')
+      || u.companyName || u.email || '—';
+    const iniciales = nombre !== '—'
+      ? nombre.split(' ').filter(Boolean).map(w => w[0]).slice(0,2).join('').toUpperCase()
+      : '?';
+    const av = document.getElementById('sidebar-avatar');
+    const sn = document.getElementById('sidebar-name');
+    if (av) av.textContent = iniciales;
+    if (sn) sn.textContent = nombre;
   }
 
 })();

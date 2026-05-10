@@ -380,57 +380,112 @@
     </div>
   </main>
 </div>
-<script src="../../js/profile.js"></script>
 <script>
-  document.getElementById('search-input').addEventListener('input', function() {
-    let visible = 0;
-    document.querySelectorAll('.job-card').forEach(c => {
-      const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
-      c.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-  });
-  document.getElementById('filter-status').addEventListener('change', function() {
-    const val = this.value;
-    let visible = 0;
-    document.querySelectorAll('.job-card').forEach(c => {
-      const show = val === 'all' || c.dataset.status === val;
-      c.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-  });
-  const statusCycle = [
-    { key:'active',  cls:'active',  label:'Activa'  },
-    { key:'paused',  cls:'paused',  label:'Pausada' },
-    { key:'closed',  cls:'closed',  label:'Cerrada' },
-  ];
-  function cycleStatus(btn) {
-    const card = btn.closest('.job-card');
-    const cur = statusCycle.findIndex(s => s.key === card.dataset.status);
-    const next = statusCycle[(cur + 1) % statusCycle.length];
-    card.dataset.status = next.key;
-    btn.className = `status-toggle ${next.cls}`;
-    btn.innerHTML = `<span class="status-dot"></span> ${next.label}`;
-    card.style.opacity = next.key === 'closed' ? '0.6' : next.key === 'paused' ? '0.8' : '1';
+  // Filtros — se reconectan después de cargar datos
+  function setupFilters() {
+    const searchInput  = document.getElementById('search-input');
+    const filterStatus = document.getElementById('filter-status');
+    function applyFilter() {
+      const q   = searchInput?.value.toLowerCase() || '';
+      const st  = filterStatus?.value || 'all';
+      let visible = 0;
+      document.querySelectorAll('.job-card').forEach(card => {
+        const matchText   = !q  || card.textContent.toLowerCase().includes(q);
+        const matchStatus = st === 'all' || card.dataset.status === st;
+        card.style.display = matchText && matchStatus ? '' : 'none';
+        if (matchText && matchStatus) visible++;
+      });
+      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+    }
+    searchInput?.addEventListener('input', applyFilter);
+    filterStatus?.addEventListener('change', applyFilter);
+  }
+
+  async function deactivateJob(jobId, btn) {
+    if (!confirm('¿Desactivar esta oferta?')) return;
+    const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+    try {
+      const res = await fetch(`http://localhost:3001/api/jobs/${jobId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Error al desactivar');
+      btn.closest('.job-card').remove();
+      const remaining = document.querySelectorAll('.job-card').length;
+      document.getElementById('empty-state').style.display = remaining === 0 ? 'block' : 'none';
+    } catch(e) { alert('✗ ' + e.message); }
   }
 </script>
-<script type="module">
-  import { logout } from '../../js/auth.js';
-  window.cerrarSesion = function(event) {
-        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-        
-        // El navegador mostrará una alerta genérica preguntando esto:
-        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-        
-        if (seguro) {
-          logout(); // Si hace clic en "Aceptar", cierra la sesión
-        }
-      }
-  // Actualizar sidebar con datos reales del usuario
-</script>
 
+<script type="module">
+async function loadMyJobs() {
+  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  if (!token) return;
+
+  const grid     = document.querySelector('.jobs-grid');
+  const emptyEl  = document.getElementById('empty-state');
+  if (!grid) return;
+
+  try {
+    const res  = await fetch('http://localhost:3001/api/jobs/my', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const jobs = res.ok ? await res.json() : [];
+
+    if (!jobs.length) {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    grid.innerHTML = jobs.map(job => {
+      const salary = job.salaryMin
+        ? `${job.currency || ''} ${job.salaryMin.toLocaleString()}${job.salaryMax ? ' – ' + job.salaryMax.toLocaleString() : ''}`
+        : '—';
+      const date = new Date(job.createdAt).toLocaleDateString('es-AR');
+      const skills = (job.skills || []).slice(0,4).map(s =>
+        `<span class="skill-tag">${s}</span>`
+      ).join('');
+
+      return `
+      <div class="job-card" data-status="${job.active ? 'active' : 'closed'}" data-job-id="${job.id}">
+        <div class="job-card-head">
+          <div class="job-card-top">
+            <div>
+              <div class="job-card-title">${job.title}</div>
+              <div class="job-card-area">${job.area || ''} ${job.location ? '· ' + job.location : ''}</div>
+            </div>
+            <span class="status-toggle ${job.active ? 'active' : 'closed'}">
+              <span class="status-dot"></span> ${job.active ? 'Activa' : 'Cerrada'}
+            </span>
+          </div>
+          <div class="job-card-meta">
+            ${job.modality ? `<span>📍 ${job.modality}</span>` : ''}
+            ${job.contract ? `<span>⏱ ${job.contract}</span>` : ''}
+            ${job.experience ? `<span>🏆 ${job.experience}</span>` : ''}
+            <span>💰 ${salary}</span>
+          </div>
+          ${skills ? `<div class="job-card-tags" style="margin-top:8px;">${skills}</div>` : ''}
+        </div>
+        <div class="job-card-footer">
+          <span class="job-card-date">Publicada el ${date}</span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem;"
+              onclick="deactivateJob('${job.id}', this)">🗑 Desactivar</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    setupFilters();
+
+  } catch(err) {
+    console.error('Error cargando ofertas:', err);
+  }
+}
+
+loadMyJobs();
+</script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>
