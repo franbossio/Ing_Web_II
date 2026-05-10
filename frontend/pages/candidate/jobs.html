@@ -762,7 +762,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-loadJobs();
+// Al terminar de cargar los jobs, si viene ?jobId= en la URL abre el modal automáticamente
+loadJobs().then(() => {
+  const params = new URLSearchParams(window.location.search);
+  const jobIdParam = params.get('jobId');
+  if (jobIdParam) {
+    // Pequeño delay para asegurar que el DOM ya renderizó las cards
+    setTimeout(() => openJobModal(jobIdParam), 300);
+  }
+});
 </script>
 
 <!-- ── Modal detalle de oferta ──────────────────────────── -->

@@ -71,36 +71,6 @@
     .empty-msg { text-align: center; padding: 28px 16px; color: var(--clr-muted); font-size: 0.82rem; line-height: 1.9; }
     .empty-msg a { color: var(--clr-accent); text-decoration: none; }
 
-    /* Ofertas recomendadas */
-    .rec-card {
-      background: var(--clr-surface-2); border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 10px;
-      transition: all var(--transition);
-    }
-    .rec-card:last-child { margin-bottom: 0; }
-    .rec-card:hover { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.03); }
-    .rec-card-top {
-      display: flex; align-items: flex-start;
-      justify-content: space-between; gap: 8px; margin-bottom: 8px;
-    }
-    .rec-card-title   { font-weight: 600; font-size: 0.85rem; color: var(--clr-text); margin-bottom: 2px; }
-    .rec-card-company { font-size: 0.73rem; color: var(--clr-muted); }
-    .rec-match-box    { text-align: center; flex-shrink: 0; }
-    .rec-match-pct    { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--clr-accent); line-height: 1; }
-    .rec-match-label  { font-size: 0.6rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .rec-card-meta    { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.71rem; color: var(--clr-muted); margin-bottom: 10px; }
-    .rec-card-tags    { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-    .skill-tag {
-      background: var(--clr-surface); border: 1px solid var(--clr-border);
-      color: var(--clr-muted); padding: 2px 8px; border-radius: 100px;
-      font-size: 0.68rem; font-weight: 500;
-    }
-    .skill-tag.match {
-      background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent);
-    }
-    .rec-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-
-
     /* ── Skeleton recomendaciones ── */
     .skel-card {
       height: 120px;
@@ -166,7 +136,6 @@
       .dash-cols { grid-template-columns: 1fr; }
       .cv-upload-bar { flex-direction: column; align-items: flex-start; }
     }
-    
   </style>
 </head>
 <body>
@@ -176,9 +145,9 @@
     <main class="main-content">
       <div class="topbar">
         <div class="topbar-left">
-        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
-        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
-      </button>
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
           <div class="topbar-title">Inicio</div>
           <div class="topbar-subtitle" id="topbar-subtitle">Bienvenido de vuelta 👋</div>
         </div>
@@ -294,7 +263,7 @@
                 </div>
                 <div class="empty-msg" id="rec-error" style="display:none;">
                   ⚠️ No se pudieron cargar las recomendaciones.<br>
-                  <a href="#" onclick="loadRecommendations()">Reintentar →</a>
+                  <a href="#" onclick="window.loadRecommendations()">Reintentar →</a>
                 </div>
                 <div class="empty-msg" id="rec-empty" style="display:none;">
                   📋 Completá tu perfil con skills para recibir recomendaciones.<br>
@@ -315,6 +284,7 @@
 
   <div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:999;min-width:260px;max-width:380px;"></div>
 
+  <!-- ── Script utilitarios (no module, disponibles globalmente) ── -->
   <script>
     function toggleDrop() {
       document.getElementById('cv-drop-inline').classList.toggle('visible');
@@ -391,6 +361,7 @@
     }
   </script>
 
+  <!-- ── Script principal (module) — TODO junto para evitar problemas de scope ── -->
   <script type="module">
     import { logout } from '../../js/auth.js';
     import { initDashboard } from '../../js/profile.js';
@@ -399,6 +370,90 @@
       if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
     };
 
+    // ── Recomendaciones IA via Make → ChatGPT ──────────────────────────────
+    // IMPORTANTE: definida ANTES de loadDashboard para que pueda llamarla
+    async function loadRecommendations() {
+      const token  = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const skelEl = document.getElementById('rec-skeleton');
+      const errEl  = document.getElementById('rec-error');
+      const empEl  = document.getElementById('rec-empty');
+      const listEl = document.getElementById('rec-list');
+
+      // Mostrar skeleton, ocultar estados anteriores
+      if (skelEl) skelEl.style.display = 'block';
+      if (errEl)  errEl.style.display  = 'none';
+      if (empEl)  empEl.style.display  = 'none';
+
+      try {
+        const res = await fetch('http://localhost:3001/api/recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const recs = await res.json();
+
+        if (skelEl) skelEl.style.display = 'none';
+
+        if (!recs || recs.length === 0) {
+          if (empEl) empEl.style.display = 'block';
+          return;
+        }
+
+        console.log('✅ Recomendaciones recibidas:', recs);
+
+        const matchColor = pct =>
+          pct >= 80 ? 'badge-green' : pct >= 60 ? 'badge-gold' : 'badge-gray';
+        const matchLabel = pct =>
+          pct >= 80 ? '⬤ Alta compatibilidad' : pct >= 60 ? '⬤ Buena compatibilidad' : 'Compatibilidad media';
+
+        const html = recs.map(r => {
+          const salary = r.salaryMin
+            ? `💰 ${r.currency || ''} ${r.salaryMin.toLocaleString()}${r.salaryMax ? '–' + r.salaryMax.toLocaleString() : ''}`
+            : '';
+          const tags = (r.skills || []).slice(0, 4)
+            .map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+          return `<div class="rec-card" style="cursor:pointer;" onclick="window.location.href='jobs.html?jobId=${r.jobId}'">
+              <div class="rec-card-top">
+                <div>
+                  <div class="rec-card-title">${r.title}</div>
+                  <div class="rec-card-company">🏢 ${r.company}${r.location ? ' · ' + r.location : ''}</div>
+                </div>
+                <div class="rec-match-box">
+                  <div class="rec-match-pct">${r.matchPct}%</div>
+                  <div class="rec-match-label">Match</div>
+                </div>
+              </div>
+              ${r.modality || salary ? `<div class="rec-card-meta">
+                ${r.modality ? `<span>${r.modality === 'remote' ? '🏠 Remoto' : r.modality === 'hybrid' ? '🔀 Híbrido' : '🏢 Presencial'}</span>` : ''}
+                ${salary ? `<span>${salary}</span>` : ''}
+              </div>` : ''}
+              ${r.reason ? `<div class="rec-card-reason">"${r.reason}"</div>` : ''}
+              ${tags ? `<div class="rec-card-tags">${tags}</div>` : ''}
+              <div class="rec-card-footer">
+                <span class="badge ${matchColor(r.matchPct)}" style="font-size:0.7rem;">${matchLabel(r.matchPct)}</span>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Reemplazar el skeleton con las cards reales
+        if (listEl) listEl.innerHTML = html;
+
+      } catch (err) {
+        if (skelEl) skelEl.style.display = 'none';
+        if (errEl)  errEl.style.display  = 'block';
+        console.error('Recommendations error:', err);
+      }
+    }
+
+    // Exponerla globalmente para que el botón "Reintentar" del HTML pueda llamarla
+    window.loadRecommendations = loadRecommendations;
+
+    // ── Dashboard principal ─────────────────────────────────────────────────
     async function loadDashboard() {
       await initDashboard();
       const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
@@ -411,7 +466,7 @@
       // CV bar
       renderCvBar(u);
 
-      // Recomendaciones IA
+      // Recomendaciones IA — ahora sí está definida arriba
       loadRecommendations();
 
       // Postulaciones
@@ -439,87 +494,6 @@
       }
     }
 
-    // ── Recomendaciones IA via Make → ChatGPT ──────────────────────────────
-    window.loadRecommendations = async function() {
-      const token  = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-      const skelEl = document.getElementById('rec-skeleton');
-      const errEl  = document.getElementById('rec-error');
-      const empEl  = document.getElementById('rec-empty');
-      const listEl = document.getElementById('rec-list');
-
-      // Mostrar skeleton, ocultar estados anteriores
-      if (skelEl) skelEl.style.display = 'block';
-      if (errEl)  errEl.style.display  = 'none';
-      if (empEl)  empEl.style.display  = 'none';
-
-      try {
-        const res = await fetch('http://localhost:3001/api/recommendations', {
-          method: 'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const recs = await res.json();
-
-        // Ocultar skeleton
-        if (skelEl) skelEl.style.display = 'none';
-
-        if (!recs || recs.length === 0) {
-          if (empEl) empEl.style.display = 'block';
-          return;
-        }
-
-        console.log('✅ Recomendaciones recibidas:', recs);
-
-        // Renderizar cards — escribir directo en #rec-list
-        const matchColor = pct =>
-          pct >= 80 ? 'badge-green' : pct >= 60 ? 'badge-gold' : 'badge-gray';
-        const matchLabel = pct =>
-          pct >= 80 ? '⬤ Alta compatibilidad' : pct >= 60 ? '⬤ Buena compatibilidad' : 'Compatibilidad media';
-
-        const html = recs.map(r => {
-          const salary = r.salaryMin
-            ? `💰 ${r.currency || ''} ${r.salaryMin.toLocaleString()}${r.salaryMax ? '–' + r.salaryMax.toLocaleString() : ''}`
-            : '';
-          const tags = (r.skills || []).slice(0, 4)
-            .map(s => `<span class="skill-tag">${s}</span>`).join('');
-
-          return `<div class="rec-card">
-              <div class="rec-card-top">
-                <div>
-                  <div class="rec-card-title">${r.title}</div>
-                  <div class="rec-card-company">🏢 ${r.company}${r.location ? ' · ' + r.location : ''}</div>
-                </div>
-                <div class="rec-match-box">
-                  <div class="rec-match-pct">${r.matchPct}%</div>
-                  <div class="rec-match-label">Match</div>
-                </div>
-              </div>
-              ${r.modality || salary ? `<div class="rec-card-meta">
-                ${r.modality ? `<span>${r.modality === 'remote' ? '🏠 Remoto' : r.modality === 'hybrid' ? '🔀 Híbrido' : '🏢 Presencial'}</span>` : ''}
-                ${salary ? `<span>${salary}</span>` : ''}
-              </div>` : ''}
-              ${r.reason ? `<div class="rec-card-reason">"${r.reason}"</div>` : ''}
-              ${tags ? `<div class="rec-card-tags">${tags}</div>` : ''}
-              <div class="rec-card-footer">
-                <span class="badge ${matchColor(r.matchPct)}" style="font-size:0.7rem;">${matchLabel(r.matchPct)}</span>
-              </div>
-            </div>`;
-        }).join('');
-
-        // Reemplazar TODO el contenido de #rec-list con las cards
-        if (listEl) listEl.innerHTML = html;
-
-      } catch (err) {
-        if (skelEl) skelEl.style.display = 'none';
-        if (errEl)  errEl.style.display  = 'block';
-        console.error('Recommendations error:', err);
-      }
-    };
-
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', loadDashboard);
     } else {
@@ -528,7 +502,5 @@
   </script>
 
   <script src="../../js/sidebar-toggle.js"></script>
-</body>
-</html  
 </body>
 </html>
