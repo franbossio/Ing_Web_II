@@ -607,7 +607,7 @@
         setProgress(10, 'Leyendo el PDF...', 'Preparando el archivo para análisis');
 
         try {
-          setProgress(30, 'Analizando con IA...', 'Gemini está extrayendo la información de tu CV');
+          setProgress(30, 'Analizando con IA...', 'La IA está extrayendo la información de tu CV');
 
           // ── Llamar al BACKEND (Gemini, API key segura en el servidor) ──
           const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
@@ -627,7 +627,7 @@
 
           if (!response.ok) {
             const err = await response.json().catch(() => ({}));
-            throw new Error(err.message || 'Error al analizar con Gemini');
+            throw new Error(err.message || 'Error al analizar con IA');
           }
 
           const result    = await response.json();
@@ -693,22 +693,25 @@
     async function confirmAiData() {
       if (!pendingAiData) return;
       const btn = document.querySelector('#ai-result .btn-primary');
-      if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...'; }
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Guardando...';
+      }
 
       try {
-        const token      = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const base64Only = pendingBase64.split(',')[1];
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
 
-        // ── Llamar al backend /api/cv/analyze → guarda CV + perfil ──
-        const res = await fetch('http://localhost:3001/api/cv/analyze', {
-          method: 'POST',
+        // Guardar perfil + CV directamente en /api/users/me (sin volver a analizar)
+        const res = await fetch('http://localhost:3001/api/users/me', {
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
-            base64Pdf: base64Only,
-            fileName:  pendingFileName,
+            ...pendingAiData,
+            cvFileName: pendingFileName,
+            cvUrl:      pendingBase64,
           }),
         });
 
@@ -717,24 +720,22 @@
           throw new Error(e.message || 'Error al guardar los datos');
         }
 
-        const result  = await res.json();
-        const updated = result.user;
+        const updated = await res.json();
         localStorage.setItem('talentai_user', JSON.stringify(updated));
 
-        // Rellenar formulario con los datos nuevos
         const { fillProfileForm, refreshUI } = await import('../../js/profile.js');
         fillProfileForm(updated);
         refreshUI(updated);
         renderCvState(updated);
 
         document.getElementById('ai-result').style.display = 'none';
-        showAlert('🤖 ¡Perfil completado con Gemini! Revisá los datos en cada sección.');
+        showAlert('🤖 ¡Perfil completado con IA! Revisá los datos en cada sección.');
 
-        // Ir a datos personales para revisión
         const personalTab = document.querySelector('[data-tab="personal"]');
         if (personalTab) personalTab.click();
 
         pendingAiData = null;
+
       } catch(err) {
         showAlert('✗ ' + err.message, 'error');
         if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar y guardar'; }

@@ -2,19 +2,18 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { CvModule }   from './cv/cv.module';
+import { CvModule } from './cv/cv.module';
 import { UsersModule } from './users/users.module';
+import { JobsModule } from './jobs/jobs.module';
+import { ApplicationsModule } from './applications/applications.module';
 import { User } from './users/user.entity';
+import { Job } from './jobs/job.entity';
+import { Application } from './applications/application.entity';
 
 @Module({
   imports: [
-    // ── Variables de entorno (.env) ──────────────────────────────
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
 
-    // ── Conexión a PostgreSQL ────────────────────────────────────
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -25,10 +24,8 @@ import { User } from './users/user.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', ''),
         database: config.get<string>('DB_NAME', 'conectaia'),
-        entities: [User],
-        // synchronize: true → crea/actualiza tablas automáticamente
-        // En producción cambiar a false y usar migraciones
-        synchronize: true,
+        entities: [User, Job, Application],  // ← nuevas entidades
+        synchronize: true,  // crea las tablas automáticamente
         logging: false,
       }),
     }),
@@ -36,6 +33,8 @@ import { User } from './users/user.entity';
     UsersModule,
     AuthModule,
     CvModule,
+    JobsModule,
+    ApplicationsModule,
   ],
 })
 export class AppModule {}

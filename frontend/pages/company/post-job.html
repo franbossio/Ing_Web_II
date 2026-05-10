@@ -258,22 +258,111 @@
 
 </div><!-- /app-layout -->
 <script src="../../js/profile.js"></script>
-<script type="module">
-  import { logout } from '../../js/auth.js';
-  window.cerrarSesion = function(event) {
-        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-        
-        // El navegador mostrará una alerta genérica preguntando esto:
-        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-        
-        if (seguro) {
-          logout(); // Si hace clic en "Aceptar", cierra la sesión
-        }
+<script>
+// ── Alert helper ──────────────────────────────────────────────────────────
+function showAlert(msg, type = 'success') {
+  let el = document.getElementById('global-alert');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'global-alert';
+    el.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;min-width:260px;max-width:380px;';
+    document.body.appendChild(el);
+  }
+  el.className = `alert alert-${type} visible`;
+  el.textContent = msg;
+  setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+// ── Tags input ────────────────────────────────────────────────────────────
+function setupTagsInput(inputId, wrapperId) {
+  const input   = document.getElementById(inputId);
+  const wrapper = document.getElementById(wrapperId);
+  const tags    = [];
+
+  if (!input || !wrapper) return tags;
+
+  function addTag(val) {
+    const v = val.trim();
+    if (!v || tags.includes(v)) return;
+    tags.push(v);
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);color:var(--clr-accent);padding:2px 8px;border-radius:100px;font-size:0.75rem;margin:2px;';
+    chip.innerHTML = `${v} <button type="button" style="background:none;border:none;cursor:pointer;color:var(--clr-accent);font-size:0.8rem;padding:0;" onclick="this.parentElement.remove();tags.splice(tags.indexOf('${v}'),1)">&times;</button>`;
+    wrapper.insertBefore(chip, input);
+    input.value = '';
+  }
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(input.value); }
+  });
+  input.addEventListener('blur', () => addTag(input.value));
+
+  return tags; // referencia al array reactivo
+}
+
+// ── Publicar oferta ───────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const techTags = setupTagsInput('tech-input', 'tech-skills-wrapper');
+  const softTags = setupTagsInput('soft-input', 'soft-skills-wrapper');
+
+  const form = document.getElementById('post-job-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validar campos requeridos
+    const title = document.getElementById('job-title')?.value.trim();
+    const desc  = document.getElementById('job-desc')?.value.trim();
+    if (!title) { document.getElementById('job-title-error').style.display='block'; return; }
+    if (!desc)  { document.getElementById('job-desc-error').style.display='block'; return; }
+    document.getElementById('job-title-error').style.display='none';
+    document.getElementById('job-desc-error').style.display='none';
+
+    const payload = {
+      title,
+      area:         document.getElementById('job-area')?.value || null,
+      description:  desc,
+      requirements: document.getElementById('job-requirements')?.value.trim() || null,
+      skills:       [...techTags],
+      softSkills:   [...softTags],
+      experience:   document.querySelector('input[name="experience"]:checked')?.value || null,
+      modality:     document.querySelector('input[name="modality"]:checked')?.value || null,
+      contract:     document.querySelector('input[name="contract"]:checked')?.value || null,
+      location:     document.getElementById('job-location')?.value.trim() || null,
+      currency:     document.getElementById('job-currency')?.value || null,
+      salaryMin:    parseInt(document.getElementById('salary-min')?.value) || null,
+      salaryMax:    parseInt(document.getElementById('salary-max')?.value) || null,
+      deadline:     document.getElementById('job-deadline')?.value || null,
+    };
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Publicando...'; }
+
+    try {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const res   = await fetch('http://localhost:3001/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Error al publicar');
       }
 
-  // Actualizar sidebar con datos reales del usuario
-</script>
+      showAlert('✅ Oferta publicada correctamente');
+      setTimeout(() => { window.location.href = 'my-jobs.html'; }, 1200);
 
+    } catch (err) {
+      showAlert('✗ ' + err.message, 'error');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Publicar oferta'; }
+    }
+  });
+});
+</script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>
