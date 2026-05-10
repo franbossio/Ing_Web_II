@@ -506,7 +506,7 @@
                       <span class="connected-icon">💼</span>
                       <div>
                         <div class="connected-name">LinkedIn</div>
-                        <div class="connected-status linked">✓ Conectado como Juan Pérez</div>
+                        <div class="connected-status linked" id="linkedin-connected">✓ Conectado</div>
                       </div>
                       <div class="connected-actions">
                         <button class="icon-btn" style="font-size:0.78rem;">Sincronizar</button>
@@ -676,7 +676,14 @@
       try {
         const token = getToken();
         if (!token) return;
-        const res = await fetch('http://localhost:3001/api/auth/me', {
+        // Cargar nombre en conexiones
+      const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+      if (u) {
+        const nombre = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.email || '';
+        const liEl = document.getElementById('linkedin-connected');
+        if (liEl && nombre) liEl.textContent = `✓ Conectado como ${nombre}`;
+      }
+      const res = await fetch('http://localhost:3001/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

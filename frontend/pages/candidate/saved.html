@@ -134,325 +134,7 @@
         </div>
 
         <!-- ── Cards guardadas ── -->
-        <div id="saved-list">
-
-          <!-- Card 1 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">🏢</div>
-                <div>
-                  <div class="saved-job-title">Senior Full Stack Developer</div>
-                  <div class="saved-company">Globant · Buenos Aires</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">92%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🏠 Remoto</span>
-              <span>💰 USD 2.500 – 3.500</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 12 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">React</span>
-              <span class="skill-tag match">Node.js</span>
-              <span class="skill-tag match">TypeScript</span>
-              <span class="skill-tag">AWS</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 2 días</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">🛒</div>
-                <div>
-                  <div class="saved-job-title">Backend Developer — NestJS</div>
-                  <div class="saved-company">MercadoLibre · Remoto</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">85%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🏠 Remoto</span>
-              <span>💰 USD 2.000 – 2.800</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 8 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">Node.js</span>
-              <span class="skill-tag match">TypeScript</span>
-              <span class="skill-tag match">PostgreSQL</span>
-              <span class="skill-tag">Redis</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 3 días</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">✈️</div>
-                <div>
-                  <div class="saved-job-title">Frontend Developer — React</div>
-                  <div class="saved-company">Despegar · Buenos Aires</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">83%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🔀 Híbrido</span>
-              <span>💰 ARS 800k – 1.1M</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 20 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">React</span>
-              <span class="skill-tag match">TypeScript</span>
-              <span class="skill-tag">Next.js</span>
-              <span class="skill-tag">Tailwind</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 5 días</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">🚀</div>
-                <div>
-                  <div class="saved-job-title">Desarrollador Full Stack</div>
-                  <div class="saved-company">Acme Corp S.A. · Buenos Aires</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">87%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🔀 Híbrido</span>
-              <span>💰 ARS 900k – 1.2M</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 5 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">React</span>
-              <span class="skill-tag match">Node.js</span>
-              <span class="skill-tag match">Docker</span>
-              <span class="skill-tag">Kubernetes</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date" style="color:var(--clr-error);">⚠️ Vence en 5 días — ¡No te quedes sin tiempo!</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 5 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">☁️</div>
-                <div>
-                  <div class="saved-job-title">DevOps Engineer Junior</div>
-                  <div class="saved-company">CloudBase · Remoto</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">74%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🏠 Remoto</span>
-              <span>💰 USD 1.200 – 1.800</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 30 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">Docker</span>
-              <span class="skill-tag match">Git</span>
-              <span class="skill-tag">Kubernetes</span>
-              <span class="skill-tag">Terraform</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 1 semana</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 6 -->
-          <div class="saved-card" data-status="active">
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">📊</div>
-                <div>
-                  <div class="saved-job-title">Data Engineer</div>
-                  <div class="saved-company">AnalyticsLab · Córdoba</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box">
-                  <div class="match-pct">68%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-                <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🔀 Híbrido</span>
-              <span>💰 ARS 700k – 950k</span>
-              <span>⏱ Full-time</span>
-              <span>📅 Vence en 15 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">PostgreSQL</span>
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">Spark</span>
-              <span class="skill-tag">Airflow</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 1 semana</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver oferta</button>
-                <button class="btn btn-primary" style="padding:8px 18px;font-size:0.8rem;" onclick="applyJob(this)">Postularme</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 7 — Vencida -->
-          <div class="saved-card expired" data-status="expired">
-            <div class="expired-badge"><span class="badge badge-red">Vencida</span></div>
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">🏦</div>
-                <div>
-                  <div class="saved-job-title">Node.js Developer</div>
-                  <div class="saved-company">FinBank Digital · Buenos Aires</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box" style="opacity:0.5;">
-                  <div class="match-pct">71%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🏢 Presencial</span>
-              <span>💰 ARS 600k – 800k</span>
-              <span>⏱ Full-time</span>
-              <span style="color:var(--clr-error);">❌ Venció hace 3 días</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">Node.js</span>
-              <span class="skill-tag match">PostgreSQL</span>
-              <span class="skill-tag">Redis</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 2 semanas</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;opacity:0.6;" disabled>Oferta vencida</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 8 — Vencida -->
-          <div class="saved-card expired" data-status="expired">
-            <div class="expired-badge"><span class="badge badge-red">Vencida</span></div>
-            <div class="saved-card-header">
-              <div class="saved-card-left">
-                <div class="company-logo">🎮</div>
-                <div>
-                  <div class="saved-job-title">React Developer</div>
-                  <div class="saved-company">GameStudio · Remoto</div>
-                </div>
-              </div>
-              <div class="saved-card-right">
-                <div class="match-box" style="opacity:0.5;">
-                  <div class="match-pct">79%</div>
-                  <div class="match-lbl">Match IA</div>
-                </div>
-              </div>
-            </div>
-            <div class="saved-card-meta">
-              <span>🏠 Remoto</span>
-              <span>💰 USD 1.500 – 2.000</span>
-              <span>⏱ Full-time</span>
-              <span style="color:var(--clr-error);">❌ Venció hace 1 semana</span>
-            </div>
-            <div class="saved-card-tags">
-              <span class="skill-tag match">React</span>
-              <span class="skill-tag match">TypeScript</span>
-              <span class="skill-tag">WebGL</span>
-            </div>
-            <div class="saved-card-footer">
-              <div class="saved-date">⭐ Guardado hace 3 semanas</div>
-              <div class="saved-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="removeJob(this)">🗑 Quitar</button>
-                <button class="icon-btn" style="font-size:0.8rem;opacity:0.6;" disabled>Oferta vencida</button>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /saved-list -->
+        <div id="saved-list"></div><!-- /saved-list -->
 
         <div class="empty-state" id="empty-state">
           <div class="empty-icon">⭐</div>
@@ -537,24 +219,111 @@
   </script>
 
   <script type="module">
-    import { logout } from '../../js/auth.js';
-    import { updateDashboardHero } from '../../js/profile.js';
+// Saved usa localStorage para guardar IDs de ofertas guardadas
+const SAVED_KEY = 'conectaia_saved_jobs';
 
-    window.cerrarSesion = function(event) {
-        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-        
-        // El navegador mostrará una alerta genérica preguntando esto:
-        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-        
-        if (seguro) {
-          logout(); // Si hace clic en "Aceptar", cierra la sesión
-        }
-      }
-    // Actualizar sidebar con datos reales del usuario
-    const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
-    if (u) updateDashboardHero(u);
-  </script>
+function getSavedIds() {
+  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); } catch { return []; }
+}
+function saveIds(ids) {
+  localStorage.setItem(SAVED_KEY, JSON.stringify(ids));
+}
+window.removeSaved = function(jobId, btn) {
+  const ids = getSavedIds().filter(id => id !== jobId);
+  saveIds(ids);
+  btn.closest('.saved-card').remove();
+  const remaining = document.querySelectorAll('.saved-card').length;
+  document.getElementById('saved-empty').style.display = remaining === 0 ? 'block' : 'none';
+  document.querySelectorAll('.saved-count').forEach(el => el.textContent = remaining);
+};
 
-  <script src="../../js/sidebar-toggle.js"></script>
+async function loadSaved() {
+  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  const savedIds = getSavedIds();
+  const container = document.getElementById('saved-list');
+  const emptyEl   = document.getElementById('saved-empty');
+  if (!container) return;
+
+  if (!savedIds.length) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    document.querySelectorAll('.saved-count').forEach(el => el.textContent = 0);
+    return;
+  }
+
+  try {
+    const res  = await fetch('http://localhost:3001/api/jobs', { headers: { Authorization: `Bearer ${token}` } });
+    const jobs = res.ok ? await res.json() : [];
+    const saved = jobs.filter(j => savedIds.includes(j.id));
+
+    document.querySelectorAll('.saved-count').forEach(el => el.textContent = saved.length);
+
+    if (!saved.length) {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    container.innerHTML = saved.map(job => {
+      const co     = job.company || {};
+      const salary = job.salaryMin
+        ? `💰 ${job.currency||''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax?' – '+Number(job.salaryMax).toLocaleString():''}/mes`
+        : '';
+      const skills = (job.skills||[]).slice(0,4).map(sk =>
+        `<span class="skill-tag">${sk}</span>`
+      ).join('');
+
+      return `<div class="saved-card" data-job-id="${job.id}">
+        <div class="saved-card-header">
+          <div class="saved-card-left">
+            <div class="company-logo">🏢</div>
+            <div>
+              <div class="saved-job-title">${job.title}</div>
+              <div class="saved-company">${co.companyName||'Empresa'} · ${job.location||''}</div>
+            </div>
+          </div>
+          <div class="saved-card-right">
+            <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
+          </div>
+        </div>
+        <div class="saved-card-meta">
+          ${job.modality  ? `<span>📍 ${job.modality}</span>`   : ''}
+          ${job.contract  ? `<span>⏱ ${job.contract}</span>`   : ''}
+          ${job.experience? `<span>🏆 ${job.experience}</span>` : ''}
+          ${salary        ? `<span>${salary}</span>`             : ''}
+        </div>
+        ${skills ? `<div class="saved-card-tags">${skills}</div>` : ''}
+        <div class="saved-card-footer">
+          <div></div>
+          <div class="saved-card-actions">
+            <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;"
+              onclick="removeSaved('${job.id}', this)">🗑 Quitar</button>
+            <button class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;"
+              onclick="applyFromSaved('${job.id}', this)">Postularme</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch(err) { console.error('Error saved:', err); }
+}
+
+window.applyFromSaved = async function(jobId, btn) {
+  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const res = await fetch('http://localhost:3001/api/applications', {
+      method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
+      body: JSON.stringify({ jobId })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({message:'Error'})); throw new Error(e.message); }
+    btn.textContent = '✓ Postulado';
+    btn.style.cssText = 'padding:7px 14px;font-size:0.78rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:600;cursor:default;';
+    btn.onclick = null;
+  } catch(err) { btn.disabled=false; btn.textContent='Postularme'; alert('✗ '+err.message); }
+};
+
+loadSaved();
+</script>
+<script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>

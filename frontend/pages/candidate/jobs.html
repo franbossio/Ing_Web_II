@@ -464,6 +464,20 @@
 let ALL_JOBS    = [];
 let APPLIED_IDS = new Set();
 let TOKEN       = '';
+let SAVED_IDS   = new Set(JSON.parse(localStorage.getItem('conectaia_saved_jobs') || '[]'));
+
+window.toggleSaveJob = function(jobId, btn) {
+  if (SAVED_IDS.has(jobId)) {
+    SAVED_IDS.delete(jobId);
+    btn.textContent = '⭐ Guardar';
+    btn.classList.remove('saved');
+  } else {
+    SAVED_IDS.add(jobId);
+    btn.textContent = '★ Guardado';
+    btn.classList.add('saved');
+  }
+  localStorage.setItem('conectaia_saved_jobs', JSON.stringify([...SAVED_IDS]));
+};
 
 // ── Abrir modal con detalle ────────────────────────────────────────────────
 window.openJobModal = function(jobId) {
@@ -648,6 +662,7 @@ async function loadJobs() {
             <span class="salary-text">${salary}</span>
           </div>
           <div class="job-card-footer-right">
+            <button class="save-btn" id="save-${job.id}" onclick="event.stopPropagation();toggleSaveJob('${job.id}',this)">${SAVED_IDS.has('${job.id}')?'★ Guardado':'⭐ Guardar'}</button>
             ${applyBtn}
           </div>
         </div>
@@ -679,6 +694,73 @@ window.applyJobReal = async function(btn, jobId) {
     alert('✗ ' + err.message);
   }
 };
+
+// ── Filtros sobre datos reales ────────────────────────────────────────────
+function applyFiltersReal() {
+  const q        = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const matchMin = parseInt(document.getElementById('match-slider')?.value || '0');
+
+  // Checkboxes activos
+  const getChecked = (filter) => [...document.querySelectorAll(`#filter-modal input[data-filter="${filter}"]:checked`)].map(c => c.dataset.val.toLowerCase());
+  const modalities = getChecked('modalidad');
+  const contracts  = getChecked('contrato');
+  const ubicaciones= getChecked('ubicacion');
+
+  let visible = 0;
+  document.querySelectorAll('.job-card').forEach(card => {
+    const jobId = card.dataset.jobId;
+    const job   = ALL_JOBS.find(j => j.id === jobId);
+    if (!job) { card.style.display='none'; return; }
+
+    const userSkills = JSON.parse(localStorage.getItem('talentai_user') || '{}').skills || [];
+    const jSkills    = (job.skills||[]).map(s=>s.toLowerCase());
+    const matches    = jSkills.filter(s => userSkills.map(u=>u.toLowerCase()).includes(s)).length;
+    const matchPct   = jSkills.length ? Math.round((matches/jSkills.length)*100) : 50;
+
+    const matchText  = !q || card.textContent.toLowerCase().includes(q);
+    const matchMod   = !modalities.length  || modalities.some(m  => (job.modality||'').toLowerCase().includes(m));
+    const matchCont  = !contracts.length   || contracts.some(c   => (job.contract||'').toLowerCase().includes(c));
+    const matchMatch = matchPct >= matchMin;
+
+    const show = matchText && matchMod && matchCont && matchMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  const countEl = document.getElementById('results-num');
+  const emptyEl = document.getElementById('empty-state');
+  if (countEl) countEl.textContent = visible;
+  if (emptyEl) emptyEl.style.display = visible === 0 ? 'block' : 'none';
+}
+
+// Reconectar todos los listeners de filtro a la función real
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('search-input')?.addEventListener('input', applyFiltersReal);
+  document.getElementById('search-btn')?.addEventListener('click', applyFiltersReal);
+  document.getElementById('match-slider')?.addEventListener('input', applyFiltersReal);
+  document.querySelectorAll('#filter-modal input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', applyFiltersReal);
+  });
+
+  // Filtro de categorías
+  document.querySelectorAll('.cat-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const cat = pill.dataset.cat;
+      let visible = 0;
+      document.querySelectorAll('.job-card').forEach(card => {
+        const job  = ALL_JOBS.find(j => j.id === card.dataset.jobId);
+        const area = (job?.area||'').toLowerCase();
+        const show = cat === 'all' || area.includes(cat) || cat.includes(area);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('results-num').textContent = visible;
+      document.getElementById('empty-state').style.display = visible===0 ? 'block' : 'none';
+    });
+  });
+});
 
 loadJobs();
 </script>
