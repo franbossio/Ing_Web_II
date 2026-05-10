@@ -100,6 +100,68 @@
     }
     .rec-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
+
+    /* ── Skeleton recomendaciones ── */
+    .skel-card {
+      height: 120px;
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .skel-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      animation: skel-shine 1.4s ease infinite;
+    }
+    @keyframes skel-shine {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* ── Rec cards reales ── */
+    .rec-card {
+      background: var(--clr-surface-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      transition: all var(--transition);
+    }
+    .rec-card:last-child { margin-bottom: 0; }
+    .rec-card:hover { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.03); }
+    .rec-card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px; margin-bottom: 6px;
+    }
+    .rec-card-title   { font-weight: 600; font-size: 0.85rem; color: var(--clr-text); margin-bottom: 2px; }
+    .rec-card-company { font-size: 0.73rem; color: var(--clr-muted); }
+    .rec-match-box    { text-align: center; flex-shrink: 0; }
+    .rec-match-pct    { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--clr-accent); line-height: 1; }
+    .rec-match-label  { font-size: 0.58rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .rec-card-meta    { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.71rem; color: var(--clr-muted); margin-bottom: 8px; }
+    .rec-card-reason  {
+      font-size: 0.75rem; color: var(--clr-muted);
+      font-style: italic; line-height: 1.5;
+      padding: 8px 10px;
+      background: rgba(201,168,76,0.05);
+      border-left: 2px solid rgba(201,168,76,0.3);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-bottom: 10px;
+    }
+    .rec-card-tags    { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .skill-tag {
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      color: var(--clr-muted); padding: 2px 8px; border-radius: 100px;
+      font-size: 0.68rem; font-weight: 500;
+    }
+    .rec-card-footer { display: flex; align-items: center; justify-content: flex-end; }
+
     @media (max-width: 900px) {
       .dash-cols { grid-template-columns: 1fr; }
       .cv-upload-bar { flex-direction: column; align-items: flex-start; }
@@ -214,22 +276,34 @@
             </div>
           </div>
 
-          <!-- Der: Recomendadas -->
+          <!-- Der: Recomendadas IA → Make → ChatGPT -->
           <div class="panel">
             <div class="panel-header">
               <div>
                 <div class="panel-title">🤖 Recomendadas para vos</div>
-                <div class="panel-subtitle">Basadas en tu perfil y CV</div>
+                <div class="panel-subtitle">ChatGPT analizó tu perfil contra las ofertas activas</div>
               </div>
               <a href="jobs.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
             </div>
             <div class="panel-body" style="padding:14px 20px;">
-
-              <div id="rec-list"><div style="text-align:center;padding:24px;color:var(--clr-muted);font-size:0.82rem;">Cargando...</div></div>
-
+              <div id="rec-list">
+                <div class="rec-skeleton" id="rec-skeleton">
+                  <div class="skel-card"></div>
+                  <div class="skel-card"></div>
+                  <div class="skel-card"></div>
+                </div>
+                <div class="empty-msg" id="rec-error" style="display:none;">
+                  ⚠️ No se pudieron cargar las recomendaciones.<br>
+                  <a href="#" onclick="loadRecommendations()">Reintentar →</a>
+                </div>
+                <div class="empty-msg" id="rec-empty" style="display:none;">
+                  📋 Completá tu perfil con skills para recibir recomendaciones.<br>
+                  <a href="profile.html">Completar perfil →</a>
+                </div>
+              </div>
             </div>
             <div class="panel-footer">
-              <a href="jobs.html">Ver todas las recomendaciones →</a>
+              <a href="jobs.html">Ver todas las ofertas →</a>
             </div>
           </div>
 
@@ -337,6 +411,9 @@
       // CV bar
       renderCvBar(u);
 
+      // Recomendaciones IA
+      loadRecommendations();
+
       // Postulaciones
       const apps  = u.recentApplications || [];
       const list  = document.getElementById('app-list');
@@ -361,6 +438,87 @@
           </div>`).join('');
       }
     }
+
+    // ── Recomendaciones IA via Make → ChatGPT ──────────────────────────────
+    window.loadRecommendations = async function() {
+      const token  = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const skelEl = document.getElementById('rec-skeleton');
+      const errEl  = document.getElementById('rec-error');
+      const empEl  = document.getElementById('rec-empty');
+      const listEl = document.getElementById('rec-list');
+
+      // Mostrar skeleton, ocultar estados anteriores
+      if (skelEl) skelEl.style.display = 'block';
+      if (errEl)  errEl.style.display  = 'none';
+      if (empEl)  empEl.style.display  = 'none';
+
+      try {
+        const res = await fetch('http://localhost:3001/api/recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const recs = await res.json();
+
+        // Ocultar skeleton
+        if (skelEl) skelEl.style.display = 'none';
+
+        if (!recs || recs.length === 0) {
+          if (empEl) empEl.style.display = 'block';
+          return;
+        }
+
+        console.log('✅ Recomendaciones recibidas:', recs);
+
+        // Renderizar cards — escribir directo en #rec-list
+        const matchColor = pct =>
+          pct >= 80 ? 'badge-green' : pct >= 60 ? 'badge-gold' : 'badge-gray';
+        const matchLabel = pct =>
+          pct >= 80 ? '⬤ Alta compatibilidad' : pct >= 60 ? '⬤ Buena compatibilidad' : 'Compatibilidad media';
+
+        const html = recs.map(r => {
+          const salary = r.salaryMin
+            ? `💰 ${r.currency || ''} ${r.salaryMin.toLocaleString()}${r.salaryMax ? '–' + r.salaryMax.toLocaleString() : ''}`
+            : '';
+          const tags = (r.skills || []).slice(0, 4)
+            .map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+          return `<div class="rec-card">
+              <div class="rec-card-top">
+                <div>
+                  <div class="rec-card-title">${r.title}</div>
+                  <div class="rec-card-company">🏢 ${r.company}${r.location ? ' · ' + r.location : ''}</div>
+                </div>
+                <div class="rec-match-box">
+                  <div class="rec-match-pct">${r.matchPct}%</div>
+                  <div class="rec-match-label">Match</div>
+                </div>
+              </div>
+              ${r.modality || salary ? `<div class="rec-card-meta">
+                ${r.modality ? `<span>${r.modality === 'remote' ? '🏠 Remoto' : r.modality === 'hybrid' ? '🔀 Híbrido' : '🏢 Presencial'}</span>` : ''}
+                ${salary ? `<span>${salary}</span>` : ''}
+              </div>` : ''}
+              ${r.reason ? `<div class="rec-card-reason">"${r.reason}"</div>` : ''}
+              ${tags ? `<div class="rec-card-tags">${tags}</div>` : ''}
+              <div class="rec-card-footer">
+                <span class="badge ${matchColor(r.matchPct)}" style="font-size:0.7rem;">${matchLabel(r.matchPct)}</span>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Reemplazar TODO el contenido de #rec-list con las cards
+        if (listEl) listEl.innerHTML = html;
+
+      } catch (err) {
+        if (skelEl) skelEl.style.display = 'none';
+        if (errEl)  errEl.style.display  = 'block';
+        console.error('Recommendations error:', err);
+      }
+    };
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', loadDashboard);
