@@ -405,7 +405,7 @@
     if (!confirm('¿Desactivar esta oferta?')) return;
     const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
     try {
-      const res = await fetch(`http://localhost:3001/api/jobs/${jobId}`, {
+      const res = await fetch(`https://ing-web-ii.onrender.com/api/jobs/${jobId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -427,7 +427,7 @@ async function loadMyJobs() {
   if (!grid) return;
 
   try {
-    const res  = await fetch('http://localhost:3001/api/jobs/my', {
+    const res  = await fetch('https://ing-web-ii.onrender.com/api/jobs/my', {
       headers: { Authorization: `Bearer ${token}` }
     });
     const jobs = res.ok ? await res.json() : [];

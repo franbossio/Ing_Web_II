@@ -320,7 +320,7 @@
         const base64Only = e.target.result.split(',')[1];
         try {
           const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-          const res = await fetch('http://localhost:3001/api/cv/analyze', {
+          const res = await fetch('https://ing-web-ii.onrender.com/api/cv/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ base64Pdf: base64Only, fileName: file.name }),
@@ -385,7 +385,7 @@
       if (empEl)  empEl.style.display  = 'none';
 
       try {
-        const res = await fetch('http://localhost:3001/api/recommendations', {
+        const res = await fetch('https://ing-web-ii.onrender.com/api/recommendations', {
           method: 'POST',
           headers: {
             'Content-Type':  'application/json',

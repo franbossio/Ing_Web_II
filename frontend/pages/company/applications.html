@@ -510,7 +510,7 @@
   window.changeStatus = async function(appId, newStatus, selectEl) {
     selectEl.disabled = true;
     try {
-      const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
+      const res = await fetch(`https://ing-web-ii.onrender.com/api/applications/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
         body: JSON.stringify({ status: newStatus }),
@@ -661,7 +661,7 @@
 
     try {
       // 1. Cambiar estado a "entrevista"
-      const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
+      const res = await fetch(`https://ing-web-ii.onrender.com/api/applications/${appId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
         body: JSON.stringify({ status: 'entrevista', notes: noteText }),
@@ -718,7 +718,7 @@
   // ── Cargar datos ──────────────────────────────────────────────────────────
   async function load() {
     try {
-      const res = await fetch('http://localhost:3001/api/applications/company', {
+      const res = await fetch('https://ing-web-ii.onrender.com/api/applications/company', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       ALL_APPS = res.ok ? await res.json() : [];

@@ -110,7 +110,7 @@ window.cerrarSesion = function () {
     const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:3001/api/auth/me', {
+      const res = await fetch('https://ing-web-ii.onrender.com/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

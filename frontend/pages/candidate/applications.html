@@ -299,7 +299,7 @@
         </div>`;
 
       try {
-        const res  = await fetch('http://localhost:3001/api/applications/my', {
+        const res  = await fetch('https://ing-web-ii.onrender.com/api/applications/my', {
           headers: { Authorization: `Bearer ${token}` }
         });
         ALL_APPS = res.ok ? await res.json() : [];
