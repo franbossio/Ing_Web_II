@@ -1,5 +1,6 @@
 import {
-  Injectable, ConflictException, NotFoundException, OnModuleInit,
+  Injectable, ConflictException, NotFoundException,
+  BadRequestException, OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -61,13 +62,12 @@ export class UsersService implements OnModuleInit {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    // Campos permitidos para actualizar
     const allowed = [
       'firstName','lastName','phone','jobTitle','location','bio',
       'linkedin','github','portfolio','salary','availability','modality',
       'skills','softSkills','experience','education','languages',
       'companyName','industry','companySize','website',
-      'cvFileName','cvUrl','cvAnalysis',
+      'cvFileName','cvUrl','cvAnalysis','isActive',
     ];
 
     for (const key of allowed) {
@@ -105,6 +105,32 @@ export class UsersService implements OnModuleInit {
   async findAll(): Promise<SafeUser[]> {
     const users = await this.repo.find({ order: { createdAt: 'DESC' } });
     return users.map(u => this.sanitize(u));
+  }
+
+  // ── Cambiar contraseña ──────────────────────────────────────────────
+  async changePassword(id: string, currentPassword: string, newPassword: string): Promise<{ message: string }> {
+    const user = await this.repo
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.id = :id', { id })
+      .getOne();
+
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    const ok = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!ok) throw new BadRequestException('La contraseña actual es incorrecta');
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.repo.save(user);
+    return { message: 'Contraseña actualizada correctamente' };
+  }
+
+  // ── Eliminar cuenta ─────────────────────────────────────────────────
+  async deleteById(id: string): Promise<{ message: string }> {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    await this.repo.delete(id);
+    return { message: 'Cuenta eliminada correctamente' };
   }
 
   sanitize(user: User): SafeUser {

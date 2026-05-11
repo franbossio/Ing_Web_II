@@ -6,12 +6,13 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { ApplicationsModule } from '../applications/applications.module';
 
 @Module({
   imports: [
     UsersModule,
+    ApplicationsModule,   // <-- necesario para inyectar ApplicationsService
     PassportModule,
-    // Usar registerAsync para que lea el .env DESPUÉS de que ConfigModule lo cargó
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
