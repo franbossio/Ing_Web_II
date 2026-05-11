@@ -10,194 +10,185 @@
   <script src="../../js/sidebar-candidate.js" type="module"></script>
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/applications.css" />
-
 </head>
 <body>
-
   <div class="app-layout">
     <div id="sidebar-root"></div>
 
-    <!-- ══════════════════════════════════════════
-        MAIN CONTENT
-    ══════════════════════════════════════════ -->
     <main class="main-content">
-
       <div class="topbar">
         <div class="topbar-left">
-        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
-        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
-      </button>
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
           <div class="topbar-title">Mis postulaciones</div>
           <div class="topbar-subtitle">Seguí el estado de cada una de tus aplicaciones</div>
         </div>
         <div class="topbar-right">
           <button class="icon-btn">🔔<span class="notif-dot"></span></button>
-          <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">
-            🔍 Ver ofertas
-          </a>
+          <a href="jobs.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Ver ofertas</a>
         </div>
       </div>
 
       <div class="page-content">
 
-        <!-- ── Stats por estado ── -->
+        <!-- Stats por estado — se llenan desde JS -->
         <div class="app-stats">
-          <div class="app-stat active-filter" data-filter="all" onclick="filterApps('all', this)">
-            <div class="app-stat-num">5</div>
+          <div class="app-stat active-filter" data-filter="all" onclick="filterByStatus('all', this)">
+            <div class="app-stat-num" id="count-all">—</div>
             <div class="app-stat-label">Total</div>
           </div>
-          <div class="app-stat" data-filter="revision" onclick="filterApps('revision', this)">
-            <div class="app-stat-num" style="color:var(--clr-accent);">2</div>
+          <div class="app-stat" data-filter="revision" onclick="filterByStatus('revision', this)">
+            <div class="app-stat-num" id="count-revision" style="color:var(--clr-accent);">—</div>
             <div class="app-stat-label">En revisión</div>
           </div>
-          <div class="app-stat" data-filter="entrevista" onclick="filterApps('entrevista', this)">
-            <div class="app-stat-num" style="color:var(--clr-success);">1</div>
+          <div class="app-stat" data-filter="entrevista" onclick="filterByStatus('entrevista', this)">
+            <div class="app-stat-num" id="count-entrevista" style="color:var(--clr-success);">—</div>
             <div class="app-stat-label">Entrevista</div>
           </div>
-          <div class="app-stat" data-filter="pendiente" onclick="filterApps('pendiente', this)">
-            <div class="app-stat-num" style="color:var(--clr-muted);">1</div>
+          <div class="app-stat" data-filter="pendiente" onclick="filterByStatus('pendiente', this)">
+            <div class="app-stat-num" id="count-pendiente" style="color:var(--clr-muted);">—</div>
             <div class="app-stat-label">Pendiente</div>
           </div>
-          <div class="app-stat" data-filter="rechazado" onclick="filterApps('rechazado', this)">
-            <div class="app-stat-num" style="color:var(--clr-error);">1</div>
+          <div class="app-stat" data-filter="rechazado" onclick="filterByStatus('rechazado', this)">
+            <div class="app-stat-num" id="count-rechazado" style="color:var(--clr-error);">—</div>
             <div class="app-stat-label">No seleccionado</div>
           </div>
         </div>
 
-        <!-- ── Filtros ── -->
+        <!-- Filtros -->
         <div class="filters-bar">
           <div class="search-bar">
             <span class="search-icon">🔍</span>
             <input type="text" id="search-input" placeholder="Buscá por empresa o puesto..." />
           </div>
           <select class="filter-select" id="filter-order">
-            <option>Más recientes primero</option>
-            <option>Más antiguas primero</option>
-            <option>Mayor match</option>
+            <option value="recent">Más recientes primero</option>
+            <option value="oldest">Más antiguas primero</option>
           </select>
           <select class="filter-select" id="filter-modality">
             <option value="">Cualquier modalidad</option>
-            <option>Remoto</option>
-            <option>Presencial</option>
-            <option>Híbrido</option>
+            <option value="remoto">Remoto</option>
+            <option value="presencial">Presencial</option>
+            <option value="hibrido">Híbrido</option>
           </select>
-          <span class="results-info" id="results-count">5 postulaciones</span>
+          <span class="results-info" id="results-count">— postulaciones</span>
         </div>
 
-        <!-- ── Status tabs ── -->
+        <!-- Tabs de estado -->
         <div class="status-tabs">
-          <button class="status-tab active" data-status="all" onclick="switchTab('all', this)">
-            Todas <span class="status-tab-count">5</span>
+          <button class="status-tab active" data-status="all">
+            Todas <span class="status-tab-count" id="tab-count-all">—</span>
           </button>
-          <button class="status-tab" data-status="revision" onclick="switchTab('revision', this)">
-            🟡 En revisión <span class="status-tab-count">2</span>
+          <button class="status-tab" data-status="revision">
+            🟡 En revisión <span class="status-tab-count" id="tab-count-revision">—</span>
           </button>
-          <button class="status-tab" data-status="entrevista" onclick="switchTab('entrevista', this)">
-            🟢 Entrevista <span class="status-tab-count">1</span>
+          <button class="status-tab" data-status="entrevista">
+            🟢 Entrevista <span class="status-tab-count" id="tab-count-entrevista">—</span>
           </button>
-          <button class="status-tab" data-status="pendiente" onclick="switchTab('pendiente', this)">
-            ⚪ Pendiente <span class="status-tab-count">1</span>
+          <button class="status-tab" data-status="pendiente">
+            ⚪ Pendiente <span class="status-tab-count" id="tab-count-pendiente">—</span>
           </button>
-          <button class="status-tab" data-status="rechazado" onclick="switchTab('rechazado', this)">
-            🔴 No seleccionado <span class="status-tab-count">1</span>
+          <button class="status-tab" data-status="rechazado">
+            🔴 No seleccionado <span class="status-tab-count" id="tab-count-rechazado">—</span>
           </button>
         </div>
 
-        <!-- ══════════════════════════════════════
-            LISTA DE POSTULACIONES
-        ══════════════════════════════════════ -->
-        <div id="applications-list">
-        </div><!-- /applications-list -->
+        <!-- Lista -->
+        <div id="applications-list"></div>
 
-        <!-- Empty state (oculto por defecto) -->
+        <!-- Empty state -->
         <div class="empty-state" id="empty-state" style="display:none;">
           <div class="empty-icon">📭</div>
-          <div class="empty-title">Sin postulaciones en este estado</div>
-          <div class="empty-desc">No tenés postulaciones con este filtro aplicado.</div>
+          <div class="empty-title">Sin postulaciones</div>
+          <div class="empty-desc">No hay postulaciones que coincidan con los filtros aplicados.</div>
           <a href="jobs.html" class="btn btn-primary">Explorar ofertas</a>
         </div>
 
-      </div><!-- /page-content -->
+      </div>
     </main>
   </div>
-<script type="module">
-const STATUS_LABEL = {
-  pendiente:  { text: 'Pendiente',       badge: 'badge-gray'  },
-  revision:   { text: 'En revisión',     badge: 'badge-gold'  },
-  entrevista: { text: 'Entrevista',      badge: 'badge-green' },
-  rechazado:  { text: 'No seleccionado', badge: 'badge-red'   },
-  aceptado:   { text: '🎉 Aceptado',     badge: 'badge-green' },
-};
-const TIMELINE = [
-  { key:'pendiente',  icon:'📩', label:'Postulado'   },
-  { key:'revision',   icon:'👀', label:'En revisión' },
-  { key:'entrevista', icon:'💬', label:'Entrevista'  },
-  { key:'aceptado',   icon:'🎉', label:'Aceptado'    },
-];
-const T_ORDER = ['pendiente','revision','entrevista','aceptado'];
 
-async function loadApplications() {
-  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-  if (!token) return;
-  try {
-    const res  = await fetch('http://localhost:3001/api/applications/my', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const apps = res.ok ? await res.json() : [];
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    window.cerrarSesion = function(e) {
+      if (e) e.preventDefault();
+      if (confirm('¿Cerrar sesión?')) logout();
+    };
 
-    // Contadores tabs
-    const counts = { all: apps.length, pendiente: 0, revision: 0, entrevista: 0, rechazado: 0 };
-    apps.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
-    document.querySelectorAll('.status-tab').forEach(tab => {
-      const s  = tab.dataset.status;
-      const el = tab.querySelector('.status-tab-count');
-      if (el) el.textContent = s === 'all' ? counts.all : (counts[s] || 0);
-    });
+    // ── Constantes ──────────────────────────────────────────────────────
+    const STATUS_LABEL = {
+      pendiente:  { text: 'Pendiente',       badge: 'badge-gray'  },
+      revision:   { text: 'En revisión',     badge: 'badge-gold'  },
+      entrevista: { text: 'Entrevista',      badge: 'badge-green' },
+      rechazado:  { text: 'No seleccionado', badge: 'badge-red'   },
+      aceptado:   { text: '🎉 Aceptado',     badge: 'badge-green' },
+    };
+    const TIMELINE = [
+      { key:'pendiente',  icon:'📩', label:'Postulado'   },
+      { key:'revision',   icon:'👀', label:'En revisión' },
+      { key:'entrevista', icon:'💬', label:'Entrevista'  },
+      { key:'aceptado',   icon:'🎉', label:'Aceptado'    },
+    ];
+    const T_ORDER = ['pendiente','revision','entrevista','aceptado'];
 
-    const container = document.getElementById('applications-list');
-    if (!container) return;
+    // ── Estado global ───────────────────────────────────────────────────
+    let ALL_APPS       = [];   // todas las postulaciones cargadas
+    let activeStatus   = 'all';
+    let activeSearch   = '';
+    let activeModality = '';
+    let activeOrder    = 'recent';
 
-    if (!apps.length) {
-      container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--clr-muted);">
-        <div style="font-size:2rem;margin-bottom:12px;">📭</div>
-        <div style="margin-bottom:12px;">Todavía no te postulaste a ninguna oferta.</div>
-        <a href="jobs.html" style="color:var(--clr-accent);text-decoration:none;font-weight:600;">Explorar ofertas →</a>
-      </div>`;
-      return;
-    }
-
-    container.innerHTML = apps.map(app => {
-      const job  = app.job  || {};
-      const co   = job.company || {};
-      const st   = STATUS_LABEL[app.status] || STATUS_LABEL.pendiente;
-      const date = new Date(app.createdAt).toLocaleDateString('es-AR');
+    // ── Render de una card ──────────────────────────────────────────────
+    function renderCard(app) {
+      const job    = app.job  || {};
+      const co     = job.company || {};
+      const st     = STATUS_LABEL[app.status] || STATUS_LABEL.pendiente;
+      const date   = new Date(app.createdAt).toLocaleDateString('es-AR');
       const curIdx = T_ORDER.indexOf(app.status);
       const salary = job.salaryMin
         ? `💰 ${job.currency||''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax?' – '+Number(job.salaryMax).toLocaleString():''}`
         : '';
 
       const timelineHTML = app.status === 'rechazado'
-        ? `<div class="timeline-step rejected"><div class="timeline-dot">✕</div><div class="timeline-step-label">No seleccionado</div></div>`
+        ? `<div class="timeline-step rejected">
+             <div class="timeline-dot">✕</div>
+             <div class="timeline-step-label">No seleccionado</div>
+           </div>`
         : TIMELINE.map((s,i) => {
             const cls = i < curIdx ? 'done' : i === curIdx ? 'active' : '';
-            return `<div class="timeline-step ${cls}"><div class="timeline-dot">${cls==='done'?'✓':s.icon}</div><div class="timeline-step-label">${s.label}</div></div>`;
+            return `<div class="timeline-step ${cls}">
+              <div class="timeline-dot">${cls==='done' ? '✓' : s.icon}</div>
+              <div class="timeline-step-label">${s.label}</div>
+            </div>`;
           }).join('');
 
-      return `<div class="application-card" data-status="${app.status}">
+      const notesHTML = app.companyNotes
+        ? `<div class="app-card-footer">
+             <div class="app-card-footer-left">💬 ${app.companyNotes}</div>
+           </div>`
+        : '';
+
+      return `<div class="application-card"
+                   data-status="${app.status}"
+                   data-modality="${(job.modality||'').toLowerCase()}"
+                   data-title="${(job.title||'').toLowerCase()}"
+                   data-company="${(co.companyName||'').toLowerCase()}"
+                   data-date="${app.createdAt}">
         <div class="app-card-main">
           <div class="app-company-logo">🏢</div>
           <div class="app-card-info">
             <div class="app-card-top">
               <div>
                 <div class="app-job-title">${job.title || '—'}</div>
-                <div class="app-company">${co.companyName || 'Empresa'}${job.location?' · '+job.location:''}</div>
+                <div class="app-company">${co.companyName || 'Empresa'}${job.location ? ' · ' + job.location : ''}</div>
               </div>
               <span class="badge ${st.badge}"><span class="badge-dot"></span>${st.text}</span>
             </div>
             <div class="app-meta">
-              ${job.modality?`<span>📍 ${job.modality}</span>`:''}
-              ${job.contract?`<span>⏱ ${job.contract}</span>`:''}
-              ${salary?`<span>${salary}</span>`:''}
+              ${job.modality  ? `<span>📍 ${job.modality}</span>`  : ''}
+              ${job.contract  ? `<span>⏱ ${job.contract}</span>`  : ''}
+              ${salary        ? `<span>${salary}</span>`           : ''}
               <span>📅 Postulado el ${date}</span>
             </div>
           </div>
@@ -206,27 +197,174 @@ async function loadApplications() {
           <div class="timeline-label">Progreso de la postulación</div>
           <div class="timeline-steps">${timelineHTML}</div>
         </div>
-        ${app.companyNotes?`<div class="app-card-footer"><div class="app-card-footer-left">💬 ${app.companyNotes}</div></div>`:''}
+        ${notesHTML}
       </div>`;
-    }).join('');
+    }
 
-    // Filtros tabs
-    document.querySelectorAll('.status-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const s = tab.dataset.status;
-        document.querySelectorAll('.application-card').forEach(card => {
-          card.style.display = s==='all' || card.dataset.status===s ? '' : 'none';
+    // ── Aplicar todos los filtros activos ───────────────────────────────
+    function applyFilters() {
+      let filtered = [...ALL_APPS];
+
+      // 1. Filtro de status
+      if (activeStatus !== 'all') {
+        filtered = filtered.filter(a => a.status === activeStatus);
+      }
+
+      // 2. Búsqueda de texto
+      if (activeSearch) {
+        const q = activeSearch.toLowerCase();
+        filtered = filtered.filter(a => {
+          const title   = (a.job?.title || '').toLowerCase();
+          const company = (a.job?.company?.companyName || '').toLowerCase();
+          return title.includes(q) || company.includes(q);
         });
+      }
+
+      // 3. Modalidad
+      if (activeModality) {
+        filtered = filtered.filter(a =>
+          (a.job?.modality || '').toLowerCase().includes(activeModality)
+        );
+      }
+
+      // 4. Orden
+      filtered.sort((a, b) => {
+        const da = new Date(a.createdAt).getTime();
+        const db = new Date(b.createdAt).getTime();
+        return activeOrder === 'recent' ? db - da : da - db;
+      });
+
+      // ── Renderizar ──
+      const container = document.getElementById('applications-list');
+      const emptyEl   = document.getElementById('empty-state');
+      const countEl   = document.getElementById('results-count');
+
+      if (!filtered.length) {
+        container.innerHTML = '';
+        emptyEl.style.display   = 'block';
+        countEl.textContent = '0 postulaciones';
+      } else {
+        container.innerHTML = filtered.map(renderCard).join('');
+        emptyEl.style.display   = 'none';
+        countEl.textContent = `${filtered.length} postulación${filtered.length !== 1 ? 'es' : ''}`;
+      }
+    }
+
+    // ── Actualizar contadores de stats y tabs ───────────────────────────
+    function updateCounts() {
+      const counts = { all: ALL_APPS.length, pendiente: 0, revision: 0, entrevista: 0, rechazado: 0 };
+      ALL_APPS.forEach(a => {
+        if (counts[a.status] !== undefined) counts[a.status]++;
+      });
+
+      // Stats cards
+      Object.entries(counts).forEach(([key, val]) => {
+        const el = document.getElementById('count-' + key);
+        if (el) el.textContent = val;
+      });
+
+      // Tabs
+      Object.entries(counts).forEach(([key, val]) => {
+        const el = document.getElementById('tab-count-' + key);
+        if (el) el.textContent = val;
+      });
+    }
+
+    // ── Filtro por status (stats cards + tabs) ──────────────────────────
+    window.filterByStatus = function(status, clickedEl) {
+      activeStatus = status;
+
+      // Marcar stat card activa
+      document.querySelectorAll('.app-stat').forEach(el => el.classList.remove('active-filter'));
+      if (clickedEl) clickedEl.classList.add('active-filter');
+
+      // Marcar tab activa
+      document.querySelectorAll('.status-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.status === status);
+      });
+
+      applyFilters();
+    };
+
+    // ── Cargar desde backend ────────────────────────────────────────────
+    async function loadApplications() {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      if (!token) return;
+
+      const container = document.getElementById('applications-list');
+      container.innerHTML = `
+        <div style="text-align:center;padding:48px;color:var(--clr-muted);">
+          <div style="font-size:1.5rem;margin-bottom:10px;">⏳</div>
+          Cargando postulaciones...
+        </div>`;
+
+      try {
+        const res  = await fetch('https://ing-web-ii.onrender.com/api/applications/my', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        ALL_APPS = res.ok ? await res.json() : [];
+
+        updateCounts();
+        applyFilters();
+
+        // Guardar resumen en localStorage para el dashboard
+        const recent = ALL_APPS.slice(0, 5).map(a => ({
+          jobTitle: a.job?.title || '—',
+          company:  a.job?.company?.companyName || 'Empresa',
+          icon:     '🏢',
+          status:   a.status,
+          date:     new Date(a.createdAt).toLocaleDateString('es-AR'),
+        }));
+        const user = JSON.parse(localStorage.getItem('talentai_user') || '{}');
+        user.recentApplications = recent;
+        localStorage.setItem('talentai_user', JSON.stringify(user));
+
+      } catch(err) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:48px;color:var(--clr-muted);">
+            ⚠️ Error al cargar las postulaciones.
+            <br><a href="#" onclick="loadApplications()" style="color:var(--clr-accent);">Reintentar →</a>
+          </div>`;
+        console.error('Error applications:', err);
+      }
+    }
+
+    // ── Listeners de filtros ────────────────────────────────────────────
+
+    // Búsqueda en tiempo real
+    document.getElementById('search-input').addEventListener('input', function() {
+      activeSearch = this.value.trim();
+      applyFilters();
+    });
+
+    // Select de orden
+    document.getElementById('filter-order').addEventListener('change', function() {
+      activeOrder = this.value;
+      applyFilters();
+    });
+
+    // Select de modalidad
+    document.getElementById('filter-modality').addEventListener('change', function() {
+      activeModality = this.value;
+      applyFilters();
+    });
+
+    // Tabs de estado
+    document.querySelectorAll('.status-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Desmarcar stat card
+        document.querySelectorAll('.app-stat').forEach(el => el.classList.remove('active-filter'));
+        // Marcar stat card correspondiente
+        const statCard = document.querySelector(`.app-stat[data-filter="${this.dataset.status}"]`);
+        if (statCard) statCard.classList.add('active-filter');
+
+        filterByStatus(this.dataset.status, null);
       });
     });
 
-  } catch(err) { console.error('Error:', err); }
-}
+    loadApplications();
+  </script>
 
-loadApplications();
-</script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>

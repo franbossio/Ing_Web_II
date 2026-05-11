@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = 'https://ing-web-ii.onrender.com/api';
 
 export function getToken() {
   return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
@@ -25,9 +25,14 @@ export function logout() {
   localStorage.removeItem('talentai_token');
   localStorage.removeItem('talentai_user');
   sessionStorage.removeItem('talentai_token');
-  // Ruta absoluta desde la raíz del sitio — funciona desde cualquier página
-  const base = window.location.pathname.split('/frontend/')[0];
-  window.location.href = base + '/frontend/pages/index.html';
+  // Redirigir al index relativo al path actual
+  const currentPath = window.location.pathname;
+  if (currentPath.includes('/pages/')) {
+    const base = currentPath.substring(0, currentPath.indexOf('/pages/'));
+    window.location.href = base + '/pages/index.html';
+  } else {
+    window.location.href = 'index.html';
+  }
 }
 
 export function isAuthenticated() {
@@ -35,13 +40,26 @@ export function isAuthenticated() {
 }
 
 export function redirectToDashboard(role) {
-  const base = window.location.pathname.split('/frontend/')[0];
+  // Detectar el path base dinámicamente desde la URL actual
+  // login.html y register.html están en /pages/
+  // los dashboards están en /pages/candidate/ o /pages/company/
+  const currentPath = window.location.pathname;
+  
+  // Calcular base hasta la carpeta "pages"
+  let base = '';
+  if (currentPath.includes('/pages/')) {
+    base = currentPath.substring(0, currentPath.indexOf('/pages/') + '/pages/'.length);
+  } else {
+    // Fallback: asumir que estamos un nivel arriba de pages
+    base = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + 'pages/';
+  }
+
   const routes = {
-    candidate: base + '/frontend/pages/candidate/dashboard.html',
-    company:   base + '/frontend/pages/company/dashboard.html',
-    admin:     base + '/frontend/pages/candidate/dashboard.html',
+    candidate: base + 'candidate/dashboard.html',
+    company:   base + 'company/dashboard.html',
+    admin:     base + 'candidate/dashboard.html',
   };
-  window.location.href = routes[role] || base + '/frontend/pages/login.html';
+  window.location.href = routes[role] || base + 'login.html';
 }
 
 export async function authFetch(path, options = {}) {

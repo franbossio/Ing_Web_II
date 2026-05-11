@@ -9,8 +9,10 @@ import { calcProfilePercent, updateProgressRing } from './profile.js';
 
 // ─── Guard ────────────────────────────────────────────────────
 if (!isAuthenticated()) {
-  const base = window.location.pathname.split('/frontend/')[0];
-  window.location.href = base + '/frontend/pages/login.html';
+  // Redirigir a login de forma relativa desde cualquier subcarpeta
+  const depth = window.location.pathname.split('/pages/')[1]?.split('/').length || 1;
+  const back  = depth > 1 ? '../'.repeat(depth - 1) : '';
+  window.location.href = back + '../login.html';
 }
 
 // ─── Helpers ──────────────────────────────────────────────────

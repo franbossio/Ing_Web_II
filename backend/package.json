@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "nest build",
     "start": "node dist/main",
     "start:dev": "npx ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts",
     "start:simple": "npx ts-node -r tsconfig-paths/register src/main.ts",

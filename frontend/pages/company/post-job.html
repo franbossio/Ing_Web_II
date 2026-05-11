@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-      const res   = await fetch('http://localhost:3001/api/jobs', {
+      const res   = await fetch('https://ing-web-ii.onrender.com/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload),
