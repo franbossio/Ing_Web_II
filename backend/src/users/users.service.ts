@@ -102,6 +102,14 @@ export class UsersService implements OnModuleInit {
     return this.sanitize(saved);
   }
 
+  async findCandidates(): Promise<SafeUser[]> {
+    const users = await this.repo.find({
+      where: { role: 'candidate' as UserRole, isActive: true },
+      order: { createdAt: 'DESC' },
+    });
+    return users.map(u => this.sanitize(u));
+  }
+
   async findAll(): Promise<SafeUser[]> {
     const users = await this.repo.find({ order: { createdAt: 'DESC' } });
     return users.map(u => this.sanitize(u));
