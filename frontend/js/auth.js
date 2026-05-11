@@ -25,9 +25,7 @@ export function logout() {
   localStorage.removeItem('talentai_token');
   localStorage.removeItem('talentai_user');
   sessionStorage.removeItem('talentai_token');
-  // Ruta absoluta desde la raíz del sitio — funciona desde cualquier página
-  const base = window.location.pathname.split('/frontend/')[0];
-  window.location.href = base + '/frontend/pages/index.html';
+  window.location.href = '/index.html';
 }
 
 export function isAuthenticated() {
@@ -35,13 +33,12 @@ export function isAuthenticated() {
 }
 
 export function redirectToDashboard(role) {
-  const base = window.location.pathname.split('/frontend/')[0];
   const routes = {
-    candidate: base + '/frontend/pages/candidate/dashboard.html',
-    company:   base + '/frontend/pages/company/dashboard.html',
-    admin:     base + '/frontend/pages/candidate/dashboard.html',
+    candidate: '/candidate/dashboard.html',
+    company:   '/company/dashboard.html',
+    admin:     '/candidate/dashboard.html',
   };
-  window.location.href = routes[role] || base + '/frontend/pages/login.html';
+  window.location.href = routes[role] || '/login.html';
 }
 
 export async function authFetch(path, options = {}) {
