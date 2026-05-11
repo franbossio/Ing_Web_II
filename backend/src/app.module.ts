@@ -22,6 +22,7 @@ import { Application } from './applications/application.entity';
         type: 'postgres',
         host:     config.get<string>('DB_HOST', 'localhost'),
         port:     config.get<number>('DB_PORT', 5432),
+        ssl: { rejectUnauthorized: false },
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', ''),
         database: config.get<string>('DB_NAME', 'conectaia'),
