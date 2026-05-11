@@ -48,27 +48,16 @@ export class RecommendationsService {
 
     // 2. Construir payload para Make
     const payload = {
-      candidate: {
-        id:       candidateId,
-        skills:   candidateSkills,
-        jobTitle: candidateJobTitle || '',
-        bio:      candidateBio || '',
-      },
-      jobs: jobs.map(j => ({
-        jobId:        j.id,   // Groq DEBE devolver este UUID exacto
-        title:        j.title,
-        company:      j.company?.companyName || j.company?.firstName || 'Empresa',
-        skills:       j.skills || [],
-        softSkills:   j.softSkills || [],
-        description:  j.description || '',
-        requirements: j.requirements || '',
-        location:     j.location || null,
-        modality:     j.modality || null,
-        salaryMin:    j.salaryMin || null,
-        salaryMax:    j.salaryMax || null,
-        currency:     j.currency || null,
-      })),
-    };
+  candidate: {
+    id:       candidateId,
+    skills:   candidateSkills.join(', '),
+    jobTitle: candidateJobTitle || '',
+    bio:      (candidateBio || '').replace(/\n/g, ' ').replace(/"/g, "'").replace(/\\/g, ''),
+  },
+  jobsText: jobs.map(j =>
+    `ID:${j.id}|Titulo:${j.title}|Skills:${(j.skills||[]).join(',')}|Desc:${(j.description||'').slice(0,120).replace(/\n/g,' ').replace(/"/g,"'").replace(/\\/g,'')}`
+  ).join(';;;'),
+};
 
     // 3. Llamar al webhook de Make
     console.log('=== CALLING MAKE WEBHOOK:', webhookUrl.slice(0, 60) + '...');
