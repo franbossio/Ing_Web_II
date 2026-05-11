@@ -10,44 +10,31 @@
   <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
   <style>
-    /* ── Stats ────────────────────────────────── */
+    /* ── Stats ─────────────────────────────── */
     .stats-row {
-      display: grid;
-      grid-template-columns: repeat(5,1fr);
+      display: grid; grid-template-columns: repeat(5,1fr);
       gap: 14px; margin-bottom: 28px;
     }
     .stat-box {
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md);
-      padding: 18px 20px; text-align: center;
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); padding: 18px 20px; text-align: center;
       cursor: pointer; transition: all var(--transition);
     }
     .stat-box:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-1px); }
     .stat-box.active { border-color: var(--clr-accent); background: rgba(201,168,76,0.06); }
-    .stat-box-num {
-      font-family: var(--font-display);
-      font-size: 1.9rem; font-weight: 700; line-height: 1; margin-bottom: 5px;
-    }
+    .stat-box-num { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
     .stat-box-label { font-size: 0.72rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-    /* ── Toolbar ──────────────────────────────── */
-    .toolbar {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 20px; flex-wrap: wrap;
-    }
+    /* ── Toolbar ────────────────────────────── */
+    .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .search-bar { position: relative; flex: 1; min-width: 200px; }
     .search-bar input {
-      width: 100%;
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--radius-sm);
-      color: var(--clr-text); font-family: var(--font-body);
-      font-size: 0.88rem; padding: 10px 16px 10px 40px;
-      outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
+      width: 100%; background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body);
+      font-size: 0.88rem; padding: 10px 16px 10px 40px; outline: none;
+      transition: border-color var(--transition);
     }
-    .search-bar input:focus { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+    .search-bar input:focus { border-color: var(--clr-accent); }
     .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--clr-muted); pointer-events: none; }
     .filter-select {
       background: var(--clr-surface); border: 1px solid var(--clr-border);
@@ -55,122 +42,164 @@
       font-size: 0.83rem; padding: 10px 30px 10px 12px; outline: none; cursor: pointer; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 10px center;
-      transition: border-color var(--transition);
     }
-    .filter-select:focus { border-color: var(--clr-accent); outline: none; }
+    .filter-select:focus { border-color: var(--clr-accent); }
     .results-info { font-size: 0.82rem; color: var(--clr-muted); margin-left: auto; }
 
-    /* ── Status tabs ──────────────────────────── */
-    .status-tabs {
-      display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap;
-    }
+    /* ── Status tabs ────────────────────────── */
+    .status-tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
     .status-tab {
       display: flex; align-items: center; gap: 6px;
       padding: 8px 16px; background: var(--clr-surface);
       border: 1px solid var(--clr-border); border-radius: 100px;
-      font-size: 0.82rem; font-weight: 500;
-      color: var(--clr-muted); cursor: pointer;
-      transition: all var(--transition); font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 500; color: var(--clr-muted);
+      cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
     }
     .status-tab:hover { border-color: var(--clr-accent); color: var(--clr-text); }
     .status-tab.active { background: rgba(201,168,76,0.1); border-color: var(--clr-accent); color: var(--clr-accent); }
     .tab-count { background: var(--clr-surface-2); border-radius: 100px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; }
     .status-tab.active .tab-count { background: rgba(201,168,76,0.2); color: var(--clr-accent); }
 
-    /* ── Application card ─────────────────────── */
+    /* ── App card ───────────────────────────── */
     .app-card {
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md);
-      overflow: hidden; margin-bottom: 14px;
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); overflow: hidden; margin-bottom: 14px;
       transition: all var(--transition);
     }
-    .app-card:hover { border-color: rgba(201,168,76,0.25); box-shadow: 0 4px 18px rgba(0,0,0,0.18); }
-
-    .app-card-main {
-      display: flex; align-items: center;
-      gap: 16px; padding: 18px 22px;
-    }
-    .cand-avatar-lg {
-      width: 48px; height: 48px; border-radius: 50%;
+    .app-card:hover { border-color: rgba(201,168,76,0.25); box-shadow: 0 4px 18px rgba(0,0,0,0.12); }
+    .app-card-main { display: flex; align-items: center; gap: 16px; padding: 18px 22px; }
+    .cand-avatar {
+      width: 46px; height: 46px; border-radius: 50%;
       background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-display); font-size: 1rem; font-weight: 700;
-      color: #0d0f14; flex-shrink: 0;
+      color: #0d0f14; flex-shrink: 0; font-size: 0.95rem;
     }
-    .cand-avatar-lg.v2 { background: linear-gradient(135deg, #4c82c8, #2d5a9e); }
-    .cand-avatar-lg.v3 { background: linear-gradient(135deg, #4caf84, #2e8060); }
-    .cand-avatar-lg.v4 { background: linear-gradient(135deg, #c84c7a, #9e2d55); }
-    .cand-avatar-lg.v5 { background: linear-gradient(135deg, #c8844c, #9e5e2d); }
-    .cand-avatar-lg.v6 { background: linear-gradient(135deg, #844cc8, #5d2d9e); }
-
     .app-card-info { flex: 1; min-width: 0; }
-    .app-card-top {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 12px; margin-bottom: 5px;
-    }
-    .cand-name-lg { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); }
-    .cand-title-lg { font-size: 0.8rem; color: var(--clr-muted); margin-bottom: 8px; }
-    .app-card-meta {
-      display: flex; flex-wrap: wrap; gap: 12px;
-      font-size: 0.76rem; color: var(--clr-muted);
-    }
-
-    /* Match bar inline */
-    .match-inline {
-      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-    }
-    .match-bar-bg {
-      width: 72px; height: 5px; background: var(--clr-surface-2);
-      border-radius: 3px; overflow: hidden; flex-shrink: 0;
-    }
-    .match-bar-fill {
-      height: 100%; border-radius: 3px;
-      background: linear-gradient(90deg, var(--clr-accent-dim), var(--clr-accent));
-    }
-    .match-pct-text { font-size: 0.82rem; font-weight: 600; color: var(--clr-accent); min-width: 34px; }
-
-    .app-card-tags {
-      display: flex; flex-wrap: wrap; gap: 5px;
-      padding: 0 22px 14px; margin-top: -4px;
-    }
+    .app-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 5px; }
+    .cand-name { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); }
+    .cand-title { font-size: 0.78rem; color: var(--clr-muted); margin-bottom: 6px; }
+    .app-card-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.76rem; color: var(--clr-muted); }
+    .app-card-tags { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 22px 14px; margin-top: -4px; }
     .skill-tag {
       background: var(--clr-surface-2); border: 1px solid var(--clr-border);
-      color: var(--clr-muted); padding: 2px 9px;
-      border-radius: 100px; font-size: 0.7rem; font-weight: 500;
+      color: var(--clr-muted); padding: 2px 9px; border-radius: 100px; font-size: 0.7rem; font-weight: 500;
     }
-    .skill-tag.match { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent); }
-
     .app-card-footer {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 22px; border-top: 1px solid var(--clr-border);
       background: var(--clr-surface-2); flex-wrap: wrap; gap: 10px;
     }
-    .app-card-footer-left { font-size: 0.76rem; color: var(--clr-muted); display: flex; align-items: center; gap: 6px; }
-    .app-card-actions { display: flex; gap: 8px; }
-
-    /* Status change select */
+    .app-card-footer-left { font-size: 0.76rem; color: var(--clr-muted); display: flex; align-items: center; gap: 8px; }
+    .app-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .status-select {
       background: var(--clr-surface); border: 1px solid var(--clr-border);
       border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body);
       font-size: 0.78rem; padding: 6px 24px 6px 10px; outline: none; cursor: pointer; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 8px center;
-      transition: border-color var(--transition);
     }
     .status-select:focus { border-color: var(--clr-accent); }
 
-    /* Empty */
-    .empty-state { text-align: center; padding: 60px 24px; color: var(--clr-muted); display: none; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    /* ── Skeleton ───────────────────────────── */
+    .skel-card {
+      height: 130px; background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); margin-bottom: 14px; position: relative; overflow: hidden;
+    }
+    .skel-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+      animation: skel-shine 1.4s ease infinite;
+    }
+    @keyframes skel-shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    /* ── Empty ──────────────────────────────── */
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--clr-muted); }
+    .empty-icon  { font-size: 2.5rem; margin-bottom: 14px; }
     .empty-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--clr-text); margin-bottom: 8px; }
-    .empty-desc { font-size: 0.85rem; max-width: 260px; margin: 0 auto 24px; line-height: 1.6; }
+    .empty-desc  { font-size: 0.85rem; max-width: 260px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── Modal base ─────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.2s ease;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal-box {
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg); padding: 32px;
+      width: 90%; max-width: 560px; max-height: 88vh;
+      overflow-y: auto; position: relative;
+      transform: translateY(20px); transition: transform 0.2s ease;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--clr-muted);
+      font-size: 1.2rem; cursor: pointer; padding: 4px 8px;
+      border-radius: var(--radius-sm); transition: background var(--transition);
+    }
+    .modal-close:hover { background: var(--clr-surface-2); }
+    .modal-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; }
+
+    /* ── Modal perfil candidato ─────────────── */
+    .profile-modal-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+      color: #0d0f14; margin-bottom: 14px;
+    }
+    .profile-modal-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--clr-text); }
+    .profile-modal-title { font-size: 0.85rem; color: var(--clr-muted); margin-bottom: 4px; }
+    .profile-modal-loc   { font-size: 0.82rem; color: var(--clr-muted); margin-bottom: 20px; }
+    .profile-section-label {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--clr-muted); margin-bottom: 8px; margin-top: 20px;
+    }
+    .profile-bio { font-size: 0.85rem; color: var(--clr-text); line-height: 1.7; }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+    .profile-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; color: var(--clr-accent); text-decoration: none;
+      padding: 4px 10px; border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 100px; transition: background var(--transition);
+    }
+    .profile-link:hover { background: rgba(201,168,76,0.08); }
+    .cv-download-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 12px 16px;
+      background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2);
+      border-radius: var(--radius-sm); color: var(--clr-accent);
+      font-size: 0.85rem; font-weight: 500; cursor: pointer;
+      transition: background var(--transition); text-decoration: none;
+    }
+    .cv-download-btn:hover { background: rgba(201,168,76,0.12); }
+
+    /* ── Modal entrevista ───────────────────── */
+    .interview-form label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--clr-text); margin-bottom: 6px; margin-top: 16px; }
+    .interview-form input,
+    .interview-form textarea,
+    .interview-form select {
+      width: 100%; background: var(--clr-surface-2); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body);
+      font-size: 0.88rem; padding: 10px 14px; outline: none;
+      transition: border-color var(--transition); box-sizing: border-box;
+    }
+    .interview-form input:focus,
+    .interview-form textarea:focus,
+    .interview-form select:focus { border-color: var(--clr-accent); }
+    .interview-form textarea { resize: vertical; min-height: 80px; }
+    .interview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
 
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: repeat(3,1fr); }
-      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar   { flex-direction: column; align-items: stretch; }
       .results-info { margin-left: 0; }
-      .match-inline { display: none; }
+      .interview-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 500px) {
       .stats-row { grid-template-columns: 1fr 1fr; }
@@ -178,509 +207,536 @@
   </style>
 </head>
 <body>
-  <div class="app-layout">
-    <div id="sidebar-root"></div>
+<div class="app-layout">
+  <div id="sidebar-root"></div>
 
-    <main class="main-content">
-      <div class="topbar">
-        <div class="topbar-left">
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
-        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
-      </button>
-          <div class="topbar-title">Postulaciones</div>
-          <div class="topbar-subtitle">Gestioná todos los candidatos que se postularon a tus ofertas</div>
+          <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+        </button>
+        <div class="topbar-title">Postulaciones</div>
+        <div class="topbar-subtitle">Gestioná los candidatos que se postularon a tus ofertas</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔<span class="notif-dot"></span></button>
+        <a href="candidates.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Buscar candidatos</a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-box active" data-filter="all" onclick="filterStatus('all',this)">
+          <div class="stat-box-num" id="count-all">—</div>
+          <div class="stat-box-label">Total</div>
         </div>
-        <div class="topbar-right">
-          <button class="icon-btn">🔔<span class="notif-dot"></span></button>
-          <a href="candidates.html" class="btn btn-primary" style="padding:9px 18px;font-size:0.85rem;">🔍 Buscar candidatos</a>
+        <div class="stat-box" data-filter="pendiente" onclick="filterStatus('pendiente',this)">
+          <div class="stat-box-num" id="count-pendiente" style="color:var(--clr-muted);">—</div>
+          <div class="stat-box-label">Nuevas</div>
+        </div>
+        <div class="stat-box" data-filter="revision" onclick="filterStatus('revision',this)">
+          <div class="stat-box-num" id="count-revision" style="color:var(--clr-accent);">—</div>
+          <div class="stat-box-label">En revisión</div>
+        </div>
+        <div class="stat-box" data-filter="entrevista" onclick="filterStatus('entrevista',this)">
+          <div class="stat-box-num" id="count-entrevista" style="color:var(--clr-success);">—</div>
+          <div class="stat-box-label">Entrevistas</div>
+        </div>
+        <div class="stat-box" data-filter="rechazado" onclick="filterStatus('rechazado',this)">
+          <div class="stat-box-num" id="count-rechazado" style="color:var(--clr-error);">—</div>
+          <div class="stat-box-label">Rechazadas</div>
         </div>
       </div>
 
-      <div class="page-content">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscá por nombre, puesto o habilidad..." />
+        </div>
+        <select class="filter-select" id="filter-job">
+          <option value="">📋 Todas las ofertas</option>
+        </select>
+        <span class="results-info" id="results-count">— postulaciones</span>
+      </div>
 
-        <!-- Stats -->
-        <div class="stats-row">
-          <div class="stat-box active" onclick="filterByStatus('all',this)">
-            <div class="stat-box-num">148</div>
-            <div class="stat-box-label">Total</div>
+      <!-- Tabs -->
+      <div class="status-tabs">
+        <button class="status-tab active" data-status="all">Todas <span class="tab-count" id="tab-all">—</span></button>
+        <button class="status-tab" data-status="pendiente">⚪ Nuevas <span class="tab-count" id="tab-pendiente">—</span></button>
+        <button class="status-tab" data-status="revision">🟡 En revisión <span class="tab-count" id="tab-revision">—</span></button>
+        <button class="status-tab" data-status="entrevista">🟢 Entrevista <span class="tab-count" id="tab-entrevista">—</span></button>
+        <button class="status-tab" data-status="rechazado">🔴 Rechazada <span class="tab-count" id="tab-rechazado">—</span></button>
+      </div>
+
+      <!-- Lista -->
+      <div id="app-list">
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ── Modal: Perfil del candidato ─────────────────────────────── -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal-box" style="max-width:600px;">
+    <button class="modal-close" onclick="closeModal('modal-profile')">✕</button>
+    <div id="modal-profile-content">Cargando...</div>
+  </div>
+</div>
+
+<!-- ── Modal: Agendar entrevista ────────────────────────────────── -->
+<div class="modal-overlay" id="modal-interview">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-interview')">✕</button>
+    <div class="modal-title">📅 Agendar entrevista</div>
+    <div id="modal-interview-name" style="font-size:0.88rem;color:var(--clr-muted);margin-bottom:16px;"></div>
+
+    <div class="interview-form">
+      <div class="interview-row">
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="iv-date" />
+        </div>
+        <div>
+          <label>Hora</label>
+          <input type="time" id="iv-time" />
+        </div>
+      </div>
+      <label>Modalidad</label>
+      <select id="iv-modality">
+        <option value="virtual">💻 Virtual (videollamada)</option>
+        <option value="presencial">🏢 Presencial</option>
+        <option value="telefono">📞 Telefónica</option>
+      </select>
+      <label>Link de videollamada (opcional)</label>
+      <input type="url" id="iv-link" placeholder="https://meet.google.com/..." />
+      <label>Notas para el candidato</label>
+      <textarea id="iv-notes" placeholder="Indicaciones, preguntas a preparar, etc."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-interview')">Cancelar</button>
+      <button class="btn btn-primary" id="iv-confirm-btn" onclick="confirmInterview()">📅 Confirmar entrevista</button>
+    </div>
+  </div>
+</div>
+
+<div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:9999;min-width:260px;max-width:380px;"></div>
+
+<script>
+  // ── Helpers globales ─────────────────────────────────────────────────────
+  const TOKEN = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('global-alert');
+    el.className = `alert alert-${type} visible`;
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('visible'), 4000);
+  }
+
+  function openModal(id)  { document.getElementById(id).classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+
+  // Cerrar modal al hacer click en el overlay
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeModal(this.id);
+    });
+  });
+</script>
+
+<script type="module">
+  import { logout } from '../../js/auth.js';
+  window.cerrarSesion = function(e) {
+    if (e) e.preventDefault();
+    if (confirm('¿Cerrar sesión?')) logout();
+  };
+
+  // ── Estado ──────────────────────────────────────────────────────────────
+  const STATUS_MAP = {
+    pendiente:  { label: 'Nueva',          badge: 'badge-gray',  emoji: '⚪' },
+    revision:   { label: 'En revisión',    badge: 'badge-gold',  emoji: '🟡' },
+    entrevista: { label: 'Entrevista',     badge: 'badge-green', emoji: '🟢' },
+    rechazado:  { label: 'Rechazada',      badge: 'badge-red',   emoji: '🔴' },
+    aceptado:   { label: 'Aceptado',       badge: 'badge-green', emoji: '🎉' },
+  };
+
+  let ALL_APPS     = [];
+  let activeStatus = 'all';
+  let activeSearch = '';
+  let activeJob    = '';
+
+  // ── Render card ──────────────────────────────────────────────────────────
+  function renderCard(app) {
+    const cand = app.candidate || {};
+    const job  = app.job       || {};
+    const st   = STATUS_MAP[app.status] || STATUS_MAP.pendiente;
+    const nombre   = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email || '—';
+    const iniciales= nombre !== '—' ? nombre.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase() : '?';
+    const date     = new Date(app.createdAt).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' });
+    const skills   = (cand.skills || []).slice(0, 5);
+    const isRejected = app.status === 'rechazado';
+
+    const statusOptions = Object.entries(STATUS_MAP).map(([k,v]) =>
+      `<option value="${k}" ${app.status===k?'selected':''}>${v.emoji} ${v.label}</option>`
+    ).join('');
+
+    const interviewBtn = app.status === 'entrevista'
+      ? `<button class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;"
+           onclick="window.openInterviewModal('${app.id}', '${nombre.replace(/'/g,"\\'")}')">
+           ✏️ Editar entrevista
+         </button>`
+      : `<button class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;"
+           onclick="window.openInterviewModal('${app.id}', '${nombre.replace(/'/g,"\\'")}')">
+           📅 Agendar entrevista
+         </button>`;
+
+    return `
+    <div class="app-card" data-app-id="${app.id}" data-status="${app.status}"
+         data-job-title="${(job.title||'').toLowerCase()}"
+         data-name="${nombre.toLowerCase()}"
+         style="${isRejected ? 'opacity:0.65;' : ''}">
+      <div class="app-card-main">
+        <div class="cand-avatar">${iniciales}</div>
+        <div class="app-card-info">
+          <div class="app-card-top">
+            <div>
+              <div class="cand-name">${nombre}</div>
+              <div class="cand-title">${cand.jobTitle || 'Candidato'}${cand.location ? ' · ' + cand.location : ''}</div>
+            </div>
+            <span class="badge ${st.badge}"><span class="badge-dot"></span>${st.label}</span>
           </div>
-          <div class="stat-box" onclick="filterByStatus('nueva',this)">
-            <div class="stat-box-num" style="color:var(--clr-accent);">34</div>
-            <div class="stat-box-label">Nuevas</div>
-          </div>
-          <div class="stat-box" onclick="filterByStatus('revision',this)">
-            <div class="stat-box-num" style="color:#7aaee8;">63</div>
-            <div class="stat-box-label">En revisión</div>
-          </div>
-          <div class="stat-box" onclick="filterByStatus('entrevista',this)">
-            <div class="stat-box-num" style="color:var(--clr-success);">7</div>
-            <div class="stat-box-label">Entrevistas</div>
-          </div>
-          <div class="stat-box" onclick="filterByStatus('rechazado',this)">
-            <div class="stat-box-num" style="color:var(--clr-error);">44</div>
-            <div class="stat-box-label">Rechazadas</div>
+          <div class="app-card-meta">
+            <span>📋 ${job.title || '—'}</span>
+            <span>📅 ${date}</span>
+            ${app.companyNotes ? `<span style="color:var(--clr-success);">💬 ${app.companyNotes.slice(0,60)}${app.companyNotes.length>60?'...':''}</span>` : ''}
           </div>
         </div>
-
-        <!-- Toolbar -->
-        <div class="toolbar">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Buscá por nombre, puesto o habilidad..." />
-          </div>
-          <select class="filter-select" id="filter-job">
-            <option value="">📋 Todas las ofertas</option>
-            <option>Full Stack Developer</option>
-            <option>Diseñador UX/UI</option>
-            <option>Data Analyst</option>
-            <option>DevOps Engineer</option>
+      </div>
+      ${skills.length ? `
+      <div class="app-card-tags">
+        ${skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+      </div>` : ''}
+      <div class="app-card-footer">
+        <div class="app-card-footer-left">
+          <span>Estado:</span>
+          <select class="status-select"
+            onchange="window.changeStatus('${app.id}', this.value, this)">
+            ${statusOptions}
           </select>
-          <select class="filter-select" id="filter-order">
-            <option>Más recientes</option>
-            <option>Mayor match IA</option>
-            <option>A-Z por nombre</option>
-          </select>
-          <span class="results-info" id="results-count">6 postulaciones</span>
         </div>
-
-        <!-- Status tabs -->
-        <div class="status-tabs">
-          <button class="status-tab active" onclick="switchTab('all',this)">Todas <span class="tab-count">6</span></button>
-          <button class="status-tab" onclick="switchTab('nueva',this)">🟡 Nuevas <span class="tab-count">2</span></button>
-          <button class="status-tab" onclick="switchTab('revision',this)">🔵 En revisión <span class="tab-count">2</span></button>
-          <button class="status-tab" onclick="switchTab('entrevista',this)">🟢 Entrevista <span class="tab-count">1</span></button>
-          <button class="status-tab" onclick="switchTab('rechazado',this)">🔴 Rechazada <span class="tab-count">1</span></button>
+        <div class="app-card-actions">
+          ${cand.cvUrl ? `
+            <a href="${cand.cvUrl}" download="${cand.cvFileName||'cv.pdf'}" class="icon-btn" style="font-size:0.78rem;text-decoration:none;">
+              📄 Ver CV
+            </a>` : ''}
+          <button class="icon-btn" style="font-size:0.78rem;"
+            onclick="window.openProfileModal('${app.id}')">
+            👤 Ver perfil
+          </button>
+          ${interviewBtn}
         </div>
+      </div>
+    </div>`;
+  }
 
-        <!-- Lista -->
-        <div id="app-list">
+  // ── Aplicar filtros ──────────────────────────────────────────────────────
+  function applyFilters() {
+    let filtered = [...ALL_APPS];
 
-          <div class="app-card" data-status="nueva">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg">JP</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">Juan Pérez</div>
-                    <div class="cand-title-lg">Full Stack Developer · 4 años exp.</div>
-                  </div>
-                  <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 Full Stack Developer</span>
-                  <span>📍 Buenos Aires</span>
-                  <span>📅 Hace 10 min</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:87%"></div></div>
-                <span class="match-pct-text">87%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag match">React</span>
-              <span class="skill-tag match">Node.js</span>
-              <span class="skill-tag match">TypeScript</span>
-              <span class="skill-tag">Docker</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left">
-                Cambiar estado:
-                <select class="status-select" onchange="changeStatus(this)">
-                  <option value="nueva" selected>🟡 Nueva</option>
-                  <option value="revision">🔵 En revisión</option>
-                  <option value="entrevista">🟢 Entrevista</option>
-                  <option value="rechazado">🔴 Rechazar</option>
-                </select>
-              </div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-              </div>
-            </div>
-          </div>
+    if (activeStatus !== 'all')
+      filtered = filtered.filter(a => a.status === activeStatus);
 
-          <div class="app-card" data-status="nueva">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg v2">MG</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">María García</div>
-                    <div class="cand-title-lg">UX/UI Designer · 6 años exp.</div>
-                  </div>
-                  <span class="badge badge-gold"><span class="badge-dot"></span> Nueva</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 Diseñador UX/UI</span>
-                  <span>📍 Córdoba</span>
-                  <span>📅 Hace 32 min</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:92%"></div></div>
-                <span class="match-pct-text">92%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag match">Figma</span>
-              <span class="skill-tag match">UX Research</span>
-              <span class="skill-tag match">Prototyping</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left">
-                Cambiar estado:
-                <select class="status-select" onchange="changeStatus(this)">
-                  <option value="nueva" selected>🟡 Nueva</option>
-                  <option value="revision">🔵 En revisión</option>
-                  <option value="entrevista">🟢 Entrevista</option>
-                  <option value="rechazado">🔴 Rechazar</option>
-                </select>
-              </div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-              </div>
-            </div>
-          </div>
+    if (activeSearch) {
+      const q = activeSearch.toLowerCase();
+      filtered = filtered.filter(a => {
+        const nombre  = [a.candidate?.firstName, a.candidate?.lastName].filter(Boolean).join(' ').toLowerCase();
+        const title   = (a.job?.title || '').toLowerCase();
+        const skills  = (a.candidate?.skills || []).join(' ').toLowerCase();
+        return nombre.includes(q) || title.includes(q) || skills.includes(q);
+      });
+    }
 
-          <div class="app-card" data-status="revision">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg v3">LR</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">Lucas Rodríguez</div>
-                    <div class="cand-title-lg">Data Analyst · 3 años exp.</div>
-                  </div>
-                  <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 Data Analyst</span>
-                  <span>📍 Rosario</span>
-                  <span>📅 Hace 1 día</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:79%"></div></div>
-                <span class="match-pct-text">79%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag match">Python</span>
-              <span class="skill-tag match">SQL</span>
-              <span class="skill-tag">Power BI</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left">
-                Cambiar estado:
-                <select class="status-select" onchange="changeStatus(this)">
-                  <option value="nueva">🟡 Nueva</option>
-                  <option value="revision" selected>🔵 En revisión</option>
-                  <option value="entrevista">🟢 Entrevista</option>
-                  <option value="rechazado">🔴 Rechazar</option>
-                </select>
-              </div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-              </div>
-            </div>
-          </div>
+    if (activeJob)
+      filtered = filtered.filter(a => (a.job?.title||'').toLowerCase().includes(activeJob.toLowerCase()));
 
-          <div class="app-card" data-status="revision">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg v4">SF</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">Sofía Fernández</div>
-                    <div class="cand-title-lg">Backend Developer · 2 años exp.</div>
-                  </div>
-                  <span class="badge badge-blue"><span class="badge-dot"></span> En revisión</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 Full Stack Developer</span>
-                  <span>📍 Remoto</span>
-                  <span>📅 Hace 2 días</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:74%"></div></div>
-                <span class="match-pct-text">74%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag match">NestJS</span>
-              <span class="skill-tag match">PostgreSQL</span>
-              <span class="skill-tag">Redis</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left">
-                Cambiar estado:
-                <select class="status-select" onchange="changeStatus(this)">
-                  <option value="nueva">🟡 Nueva</option>
-                  <option value="revision" selected>🔵 En revisión</option>
-                  <option value="entrevista">🟢 Entrevista</option>
-                  <option value="rechazado">🔴 Rechazar</option>
-                </select>
-              </div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">📅 Agendar entrevista</button>
-              </div>
-            </div>
-          </div>
+    const list    = document.getElementById('app-list');
+    const countEl = document.getElementById('results-count');
 
-          <div class="app-card" data-status="entrevista">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg v5">DT</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">Diego Torres</div>
-                    <div class="cand-title-lg">DevOps Engineer · 5 años exp.</div>
-                  </div>
-                  <span class="badge badge-green"><span class="badge-dot"></span> Entrevista</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 DevOps Engineer</span>
-                  <span>📍 Buenos Aires</span>
-                  <span>📅 Hace 3 días</span>
-                  <span style="color:var(--clr-success);">📅 Entrevista: Lunes 23 mar — 10:00 hs</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:85%"></div></div>
-                <span class="match-pct-text">85%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag match">Docker</span>
-              <span class="skill-tag match">Kubernetes</span>
-              <span class="skill-tag match">CI/CD</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left">
-                Cambiar estado:
-                <select class="status-select" onchange="changeStatus(this)">
-                  <option value="nueva">🟡 Nueva</option>
-                  <option value="revision">🔵 En revisión</option>
-                  <option value="entrevista" selected>🟢 Entrevista</option>
-                  <option value="rechazado">🔴 Rechazar</option>
-                </select>
-              </div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">📄 Ver CV</button>
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="btn btn-ghost" style="padding:8px 16px;font-size:0.8rem;">✅ Marcar como contratado</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="app-card" data-status="rechazado" style="opacity:0.65;">
-            <div class="app-card-main">
-              <div class="cand-avatar-lg v6">AM</div>
-              <div class="app-card-info">
-                <div class="app-card-top">
-                  <div>
-                    <div class="cand-name-lg">Agustina Molina</div>
-                    <div class="cand-title-lg">Frontend Developer · 3 años exp.</div>
-                  </div>
-                  <span class="badge badge-red">Rechazada</span>
-                </div>
-                <div class="app-card-meta">
-                  <span>📋 Full Stack Developer</span>
-                  <span>📍 Mendoza</span>
-                  <span>📅 Hace 1 semana</span>
-                </div>
-              </div>
-              <div class="match-inline">
-                <div class="match-bar-bg"><div class="match-bar-fill" style="width:58%;background:var(--clr-muted)"></div></div>
-                <span class="match-pct-text" style="color:var(--clr-muted)">58%</span>
-              </div>
-            </div>
-            <div class="app-card-tags">
-              <span class="skill-tag">Vue.js</span>
-              <span class="skill-tag">CSS</span>
-            </div>
-            <div class="app-card-footer">
-              <div class="app-card-footer-left" style="color:var(--clr-error);">❌ Candidato rechazado</div>
-              <div class="app-card-actions">
-                <button class="icon-btn" style="font-size:0.8rem;">Ver perfil</button>
-                <button class="icon-btn" style="font-size:0.8rem;" onclick="restoreApp(this)">↩ Restaurar</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="empty-state" id="empty-state">
+    if (!filtered.length) {
+      list.innerHTML = `
+        <div class="empty-state">
           <div class="empty-icon">📭</div>
           <div class="empty-title">Sin postulaciones</div>
-          <div class="empty-desc">No hay postulaciones con este filtro aplicado.</div>
-        </div>
-
-      </div>
-    </main>
-  </div>
-  <script src="../../js/profile.js"></script>
-  <script>
-    function switchTab(status, btn) {
-      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      applyFilter(status);
-    }
-    function filterByStatus(status, box) {
-      document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active'));
-      box.classList.add('active');
-      document.querySelectorAll('.status-tab').forEach(t => t.classList.toggle('active', t.textContent.trim().startsWith(status === 'all' ? 'Todas' : '')));
-      applyFilter(status);
-    }
-    function applyFilter(status) {
-      let visible = 0;
-      document.querySelectorAll('.app-card').forEach(c => {
-        const show = status === 'all' || c.dataset.status === status;
-        c.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-count').textContent = `${visible} postulaciones`;
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-    }
-    document.getElementById('search-input').addEventListener('input', function() {
-      let visible = 0;
-      document.querySelectorAll('.app-card').forEach(c => {
-        const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
-        c.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-count').textContent = `${visible} postulaciones`;
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-    });
-    function changeStatus(sel) {
-      const card = sel.closest('.app-card');
-      card.dataset.status = sel.value;
-      const badge = card.querySelector('.badge');
-      const map = { nueva: ['badge-gold','🟡 Nueva'], revision: ['badge-blue','🔵 En revisión'], entrevista: ['badge-green','🟢 Entrevista'], rechazado: ['badge-red','🔴 Rechazada'] };
-      badge.className = 'badge ' + map[sel.value][0];
-      badge.innerHTML = `<span class="badge-dot"></span> ${map[sel.value][1].split(' ').slice(1).join(' ')}`;
-      card.style.opacity = sel.value === 'rechazado' ? '0.65' : '1';
-    }
-    function restoreApp(btn) {
-      const card = btn.closest('.app-card');
-      card.dataset.status = 'revision';
-      card.style.opacity = '1';
-      card.querySelector('.badge').className = 'badge badge-blue';
-      card.querySelector('.badge').innerHTML = '<span class="badge-dot"></span> En revisión';
-    }
-  </script>
-  <script type="module">
-const STATUS_MAP = {
-  pendiente:  { label: 'Pendiente',       badge: 'badge-gray',  icon: '⚪' },
-  revision:   { label: 'En revisión',     badge: 'badge-gold',  icon: '🟡' },
-  entrevista: { label: 'Entrevista',      badge: 'badge-green', icon: '🟢' },
-  rechazado:  { label: 'No seleccionado', badge: 'badge-red',   icon: '🔴' },
-  aceptado:   { label: 'Aceptado',        badge: 'badge-green', icon: '🎉' },
-};
-
-window.changeStatus = async function(appId, newStatus, token) {
-  try {
-    const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ status: newStatus }),
-    });
-    if (!res.ok) throw new Error('Error al actualizar');
-    // Actualizar badge visual
-    const card  = document.querySelector(`[data-app-id="${appId}"]`);
-    const badge = card?.querySelector('.badge');
-    const st    = STATUS_MAP[newStatus];
-    if (badge && st) {
-      badge.className  = `badge ${st.badge}`;
-      badge.innerHTML  = `<span class="badge-dot"></span>${st.label}`;
-    }
-  } catch(e) { alert('✗ ' + e.message); }
-};
-
-async function loadCompanyApplications() {
-  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-  if (!token) return;
-
-  // Contenedor — buscar por distintas clases que puede tener
-  const container = document.querySelector('.apps-list') || document.querySelector('.applications-list');
-  if (!container) return;
-
-  try {
-    const res  = await fetch('http://localhost:3001/api/applications/company', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const apps = res.ok ? await res.json() : [];
-
-    if (!apps.length) {
-      container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--clr-muted);">
-        <div style="font-size:2rem;margin-bottom:12px;">📭</div>
-        <div>Todavía no recibiste postulaciones.</div>
-      </div>`;
-      return;
+          <div class="empty-desc">No hay postulaciones con este filtro.</div>
+        </div>`;
+    } else {
+      list.innerHTML = filtered.map(renderCard).join('');
     }
 
-    container.innerHTML = apps.map(app => {
-      const job  = app.job || {};
-      const cand = app.candidate || {};
-      const st   = STATUS_MAP[app.status] || STATUS_MAP.pendiente;
-      const date = new Date(app.createdAt).toLocaleDateString('es-AR');
-      const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email || '—';
-      const iniciales = nombre !== '—'
-        ? nombre.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
-        : '?';
-
-      return `
-      <div class="app-card" data-status="${app.status}" data-app-id="${app.id}">
-        <div class="app-card-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--clr-border);">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#0d0f14;flex-shrink:0;">${iniciales}</div>
-            <div>
-              <div style="font-weight:600;font-size:0.9rem;color:var(--clr-text);">${nombre}</div>
-              <div style="font-size:0.75rem;color:var(--clr-muted);">${cand.jobTitle || 'Candidato'} · ${cand.location || ''}</div>
-            </div>
-          </div>
-          <span class="badge ${st.badge}" style="flex-shrink:0;"><span class="badge-dot"></span>${st.label}</span>
-        </div>
-        <div style="padding:14px 20px;">
-          <div style="font-size:0.78rem;color:var(--clr-muted);margin-bottom:10px;">
-            📋 <strong style="color:var(--clr-text);">${job.title || '—'}</strong>
-            &nbsp;·&nbsp; 📅 ${date}
-          </div>
-          ${cand.skills?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">${(cand.skills||[]).slice(0,5).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>` : ''}
-          ${app.coverLetter ? `<div style="font-size:0.8rem;color:var(--clr-muted);margin-bottom:12px;padding:8px 12px;background:var(--clr-surface-2);border-radius:var(--radius-sm);">💬 ${app.coverLetter}</div>` : ''}
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <select onchange="changeStatus('${app.id}', this.value, '${token}')"
-              style="background:var(--clr-surface-2);border:1px solid var(--clr-border);border-radius:var(--radius-sm);padding:6px 10px;font-family:var(--font-body);font-size:0.8rem;color:var(--clr-text);cursor:pointer;">
-              ${Object.entries(STATUS_MAP).map(([k,v]) =>
-                `<option value="${k}" ${app.status===k?'selected':''}>${v.icon} ${v.label}</option>`
-              ).join('')}
-            </select>
-            ${cand.cvUrl ? `<a href="${cand.cvUrl}" download="${cand.cvFileName||'cv.pdf'}" class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem;">📄 Ver CV</a>` : ''}
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-
-    // Actualizar contador
-    const countEl = document.querySelector('.apps-count, .results-count strong');
-    if (countEl) countEl.textContent = apps.length;
-
-  } catch(err) {
-    console.error('Error cargando postulaciones:', err);
+    countEl.textContent = `${filtered.length} postulación${filtered.length !== 1 ? 'es' : ''}`;
   }
-}
 
-loadCompanyApplications();
+  // ── Actualizar contadores ────────────────────────────────────────────────
+  function updateCounts() {
+    const counts = { all: ALL_APPS.length, pendiente:0, revision:0, entrevista:0, rechazado:0 };
+    ALL_APPS.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
+
+    Object.entries(counts).forEach(([key, val]) => {
+      const statEl = document.getElementById('count-' + key);
+      const tabEl  = document.getElementById('tab-' + key);
+      if (statEl) statEl.textContent = val;
+      if (tabEl)  tabEl.textContent  = val;
+    });
+
+    // Llenar select de ofertas
+    const jobs = [...new Set(ALL_APPS.map(a => a.job?.title).filter(Boolean))];
+    const sel  = document.getElementById('filter-job');
+    jobs.forEach(j => {
+      const opt = document.createElement('option');
+      opt.value = j; opt.textContent = j;
+      sel.appendChild(opt);
+    });
+  }
+
+  // ── Cambiar estado ───────────────────────────────────────────────────────
+  window.changeStatus = async function(appId, newStatus, selectEl) {
+    selectEl.disabled = true;
+    try {
+      const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error('Error al actualizar');
+
+      // Actualizar en el array local
+      const app = ALL_APPS.find(a => a.id === appId);
+      if (app) app.status = newStatus;
+
+      updateCounts();
+      applyFilters();
+      showAlert(`✓ Estado actualizado a "${STATUS_MAP[newStatus]?.label || newStatus}"`);
+    } catch(e) {
+      showAlert('✗ ' + e.message, 'error');
+      selectEl.disabled = false;
+    }
+  };
+
+  // ── Modal: Ver perfil ─────────────────────────────────────────────────────
+  window.openProfileModal = function(appId) {
+    const app  = ALL_APPS.find(a => a.id === appId);
+    if (!app) return;
+    const cand = app.candidate || {};
+    const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || '—';
+    const iniciales = nombre !== '—' ? nombre.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase() : '?';
+
+    const skillsHtml = (cand.skills || []).map(s =>
+      `<span class="skill-tag" style="margin:2px;">${s}</span>`
+    ).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin skills registradas</span>';
+
+    const softHtml = (cand.softSkills || []).map(s =>
+      `<span class="skill-tag" style="margin:2px;">${s}</span>`
+    ).join('');
+
+    const expHtml = (cand.experience || []).slice(0,3).map(e => `
+      <div style="margin-bottom:12px;">
+        <div style="font-weight:600;font-size:0.88rem;color:var(--clr-text);">${e.title || '—'}</div>
+        <div style="font-size:0.78rem;color:var(--clr-muted);">${e.company || ''} · ${e.startDate||''} – ${e.current?'Presente':(e.endDate||'')}</div>
+        ${e.description ? `<div style="font-size:0.8rem;color:var(--clr-muted);margin-top:3px;">${e.description}</div>` : ''}
+      </div>`).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin experiencia registrada</span>';
+
+    const eduHtml = (cand.education || []).slice(0,2).map(e => `
+      <div style="margin-bottom:8px;">
+        <div style="font-weight:600;font-size:0.88rem;color:var(--clr-text);">${e.career || '—'}</div>
+        <div style="font-size:0.78rem;color:var(--clr-muted);">${e.institution || ''} · ${e.status || ''}</div>
+      </div>`).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin educación registrada</span>';
+
+    const links = [
+      cand.linkedin  && `<a href="${cand.linkedin}"  target="_blank" class="profile-link">🔗 LinkedIn</a>`,
+      cand.github    && `<a href="${cand.github}"    target="_blank" class="profile-link">🐙 GitHub</a>`,
+      cand.portfolio && `<a href="${cand.portfolio}" target="_blank" class="profile-link">🌐 Portfolio</a>`,
+    ].filter(Boolean).join('');
+
+    const cvBtn = cand.cvUrl
+      ? `<a href="${cand.cvUrl}" download="${cand.cvFileName||'cv.pdf'}" class="cv-download-btn">
+           📄 Descargar CV — ${cand.cvFileName || 'curriculum.pdf'}
+         </a>`
+      : `<div style="font-size:0.82rem;color:var(--clr-muted);padding:10px;">Sin CV cargado</div>`;
+
+    const cvComment = cand.cvAnalysis
+      ? `<div class="profile-section-label">🤖 Análisis IA del CV</div>
+         <div style="font-size:0.82rem;color:var(--clr-muted);line-height:1.7;font-style:italic;
+           padding:12px;background:rgba(201,168,76,0.06);border-left:2px solid rgba(201,168,76,0.3);
+           border-radius:0 var(--radius-sm) var(--radius-sm) 0;">${cand.cvAnalysis}</div>`
+      : '';
+
+    document.getElementById('modal-profile-content').innerHTML = `
+      <div class="profile-modal-avatar">${iniciales}</div>
+      <div class="profile-modal-name">${nombre}</div>
+      <div class="profile-modal-title">${cand.jobTitle || 'Candidato'}</div>
+      <div class="profile-modal-loc">${cand.location ? '📍 ' + cand.location : ''}${cand.phone ? ' · 📞 ' + cand.phone : ''}</div>
+
+      ${cand.bio ? `<div class="profile-section-label">Sobre el candidato</div>
+        <div class="profile-bio">${cand.bio}</div>` : ''}
+
+      <div class="profile-section-label">Skills</div>
+      <div class="skills-wrap">${skillsHtml}</div>
+
+      ${softHtml ? `<div class="profile-section-label">Habilidades blandas</div>
+        <div class="skills-wrap">${softHtml}</div>` : ''}
+
+      <div class="profile-section-label">Experiencia</div>
+      ${expHtml}
+
+      <div class="profile-section-label">Educación</div>
+      ${eduHtml}
+
+      ${links ? `<div class="profile-section-label">Links</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">${links}</div>` : ''}
+
+      <div class="profile-section-label">CV</div>
+      ${cvBtn}
+
+      ${cvComment}
+
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-primary" style="padding:9px 20px;font-size:0.85rem;"
+          onclick="closeModal('modal-profile'); window.openInterviewModal('${appId}', '${nombre.replace(/'/g,"\\'")}')">
+          📅 Agendar entrevista
+        </button>
+      </div>`;
+
+    openModal('modal-profile');
+  };
+
+  // ── Modal: Agendar entrevista ─────────────────────────────────────────────
+  let currentInterviewAppId = null;
+
+  window.openInterviewModal = function(appId, nombre) {
+    currentInterviewAppId = appId;
+    document.getElementById('modal-interview-name').textContent = `Candidato: ${nombre}`;
+
+    // Fecha default: mañana
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('iv-date').value = tomorrow.toISOString().split('T')[0];
+    document.getElementById('iv-time').value = '10:00';
+    document.getElementById('iv-link').value  = '';
+    document.getElementById('iv-notes').value = '';
+
+    openModal('modal-interview');
+  };
+
+  window.confirmInterview = async function() {
+    const appId    = currentInterviewAppId;
+    const date     = document.getElementById('iv-date').value;
+    const time     = document.getElementById('iv-time').value;
+    const modality = document.getElementById('iv-modality').value;
+    const link     = document.getElementById('iv-link').value;
+    const notes    = document.getElementById('iv-notes').value;
+
+    if (!date || !time) { showAlert('Completá la fecha y hora', 'error'); return; }
+
+    const btn = document.getElementById('iv-confirm-btn');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+
+    const formattedDate = new Date(`${date}T${time}`).toLocaleDateString('es-AR', {
+      weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+
+    const noteText = [
+      `📅 Entrevista agendada: ${formattedDate}`,
+      modality === 'virtual'    ? '💻 Modalidad: Virtual' :
+      modality === 'presencial' ? '🏢 Modalidad: Presencial' : '📞 Modalidad: Telefónica',
+      link  ? `🔗 Link: ${link}` : '',
+      notes ? `📝 ${notes}` : '',
+    ].filter(Boolean).join(' | ');
+
+    try {
+      // 1. Cambiar estado a "entrevista"
+      const res = await fetch(`http://localhost:3001/api/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
+        body: JSON.stringify({ status: 'entrevista', notes: noteText }),
+      });
+      if (!res.ok) throw new Error('Error al guardar');
+
+      // 2. Actualizar local
+      const app = ALL_APPS.find(a => a.id === appId);
+      if (app) { app.status = 'entrevista'; app.companyNotes = noteText; }
+
+      updateCounts();
+      applyFilters();
+      closeModal('modal-interview');
+      showAlert('📅 ¡Entrevista agendada correctamente!');
+    } catch(e) {
+      showAlert('✗ ' + e.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '📅 Confirmar entrevista';
+    }
+  };
+
+  // ── Filtros UI ────────────────────────────────────────────────────────────
+  window.filterStatus = function(status, el) {
+    activeStatus = status;
+    document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.status-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.status === status));
+    applyFilters();
+  };
+
+  document.querySelectorAll('.status-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      activeStatus = this.dataset.status;
+      document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active'));
+      const statBox = document.querySelector(`.stat-box[data-filter="${activeStatus}"]`);
+      if (statBox) statBox.classList.add('active');
+      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  document.getElementById('search-input').addEventListener('input', function() {
+    activeSearch = this.value.trim();
+    applyFilters();
+  });
+
+  document.getElementById('filter-job').addEventListener('change', function() {
+    activeJob = this.value;
+    applyFilters();
+  });
+
+  // ── Cargar datos ──────────────────────────────────────────────────────────
+  async function load() {
+    try {
+      const res = await fetch('http://localhost:3001/api/applications/company', {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+      });
+      ALL_APPS = res.ok ? await res.json() : [];
+      updateCounts();
+      applyFilters();
+    } catch(err) {
+      document.getElementById('app-list').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-title">Error al cargar</div>
+          <div class="empty-desc">No se pudieron cargar las postulaciones.</div>
+        </div>`;
+      console.error(err);
+    }
+  }
+
+  load();
 </script>
-  <script src="../../js/sidebar-toggle.js"></script>
+<script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>

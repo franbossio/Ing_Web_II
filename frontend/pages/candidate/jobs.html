@@ -345,7 +345,7 @@
       document.getElementById('filter-modal').classList.remove('open');
       document.body.style.overflow = '';
     }
-    function applyAndClose() { closeFilters(); renderActiveChips(); }
+    function applyAndClose() { closeFilters(); renderActiveChips(); if (window.applyFiltersReal) window.applyFiltersReal(); }
 
     function syncFilters() {
       const unchecked = document.querySelectorAll('#filter-modal input[type=checkbox]:not(:checked)').length;
@@ -379,44 +379,16 @@
       if (cb) cb.checked = true;
       btn.parentElement.remove();
       syncFilters();
+      if (window.applyFiltersReal) window.applyFiltersReal();
     }
     function resetMatch(btn) {
       document.getElementById('match-slider').value = 0;
       document.getElementById('match-min-label').textContent = '0%';
       btn.parentElement.remove();
+      if (window.applyFiltersReal) window.applyFiltersReal();
     }
 
-    document.querySelectorAll('.cat-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const cat = pill.dataset.cat;
-        let visible = 0;
-        document.querySelectorAll('.job-card').forEach(card => {
-          const show = cat === 'all' || card.dataset.cat === cat;
-          card.style.display = show ? '' : 'none';
-          if (show) visible++;
-        });
-        document.getElementById('results-num').textContent = visible;
-        document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-        document.getElementById('pagination').style.display  = visible === 0 ? 'none' : 'flex';
-      });
-    });
-
-    document.getElementById('search-input').addEventListener('input', runSearch);
-    document.getElementById('search-btn').addEventListener('click', runSearch);
-    function runSearch() {
-      const q = document.getElementById('search-input').value.toLowerCase();
-      let visible = 0;
-      document.querySelectorAll('.job-card').forEach(card => {
-        const show = !q || card.textContent.toLowerCase().includes(q);
-        card.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-num').textContent = visible;
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-      document.getElementById('pagination').style.display  = visible === 0 ? 'none' : 'flex';
-    }
+    // cat-pills y search los maneja el script module para tener acceso a ALL_JOBS
 
     function updateMatchLabel(input) { document.getElementById('match-min-label').textContent = input.value + '%'; }
 
@@ -427,13 +399,10 @@
       document.getElementById('match-min-label').textContent = '0%';
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
       document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
-      document.querySelectorAll('.job-card').forEach(c => c.style.display = '');
-      document.getElementById('results-num').textContent = document.querySelectorAll('.job-card').length;
-      document.getElementById('empty-state').style.display = 'none';
-      document.getElementById('pagination').style.display  = 'flex';
       document.getElementById('active-filters').innerHTML  = '';
       document.getElementById('filter-badge').style.display = 'none';
       document.getElementById('filter-trigger-btn').classList.remove('has-filters');
+      if (window.applyFiltersReal) window.applyFiltersReal();
     }
 
     document.getElementById('view-list').addEventListener('click', function() {
@@ -444,17 +413,6 @@
       document.getElementById('view-list').classList.remove('active'); this.classList.add('active');
       const l = document.getElementById('jobs-list'); l.style.display='grid'; l.style.gridTemplateColumns='repeat(auto-fill,minmax(320px,1fr))';
     });
-
-    function toggleSave(btn) { btn.classList.toggle('saved'); btn.textContent = btn.classList.contains('saved') ? '★ Guardado' : '⭐ Guardar'; }
-    function applyJob(btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div>';
-      setTimeout(() => {
-        btn.disabled = false; btn.textContent = '✓ Postulado';
-        btn.style.cssText = 'padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);cursor:default;font-family:var(--font-body);font-weight:600;';
-        btn.onclick = null;
-      }, 900);
-    }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilters(); });
   </script>
@@ -696,15 +654,15 @@ window.applyJobReal = async function(btn, jobId) {
 };
 
 // ── Filtros sobre datos reales ────────────────────────────────────────────
-function applyFiltersReal() {
+window.applyFiltersReal = function applyFiltersReal() {
   const q        = (document.getElementById('search-input')?.value || '').toLowerCase();
   const matchMin = parseInt(document.getElementById('match-slider')?.value || '0');
+  const activeCat = document.querySelector('.cat-pill.active')?.dataset.cat || 'all';
 
   // Checkboxes activos
   const getChecked = (filter) => [...document.querySelectorAll(`#filter-modal input[data-filter="${filter}"]:checked`)].map(c => c.dataset.val.toLowerCase());
   const modalities = getChecked('modalidad');
   const contracts  = getChecked('contrato');
-  const ubicaciones= getChecked('ubicacion');
 
   let visible = 0;
   document.querySelectorAll('.job-card').forEach(card => {
@@ -718,11 +676,12 @@ function applyFiltersReal() {
     const matchPct   = jSkills.length ? Math.round((matches/jSkills.length)*100) : 50;
 
     const matchText  = !q || card.textContent.toLowerCase().includes(q);
-    const matchMod   = !modalities.length  || modalities.some(m  => (job.modality||'').toLowerCase().includes(m));
-    const matchCont  = !contracts.length   || contracts.some(c   => (job.contract||'').toLowerCase().includes(c));
+    const matchMod   = !modalities.length || modalities.some(m => (job.modality||'').toLowerCase().includes(m));
+    const matchCont  = !contracts.length  || contracts.some(c  => (job.contract||'').toLowerCase().includes(c));
     const matchMatch = matchPct >= matchMin;
+    const matchCat   = activeCat === 'all' || (job.area||'').toLowerCase().includes(activeCat);
 
-    const show = matchText && matchMod && matchCont && matchMatch;
+    const show = matchText && matchMod && matchCont && matchMatch && matchCat;
     card.style.display = show ? '' : 'none';
     if (show) visible++;
   });
@@ -733,31 +692,24 @@ function applyFiltersReal() {
   if (emptyEl) emptyEl.style.display = visible === 0 ? 'block' : 'none';
 }
 
-// Reconectar todos los listeners de filtro a la función real
+// Conectar todos los listeners de filtro a applyFiltersReal
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('search-input')?.addEventListener('input', applyFiltersReal);
   document.getElementById('search-btn')?.addEventListener('click', applyFiltersReal);
-  document.getElementById('match-slider')?.addEventListener('input', applyFiltersReal);
+  document.getElementById('match-slider')?.addEventListener('input', () => {
+    document.getElementById('match-min-label').textContent = document.getElementById('match-slider').value + '%';
+    applyFiltersReal();
+  });
   document.querySelectorAll('#filter-modal input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', applyFiltersReal);
+    cb.addEventListener('change', () => { syncFilters(); applyFiltersReal(); });
   });
 
-  // Filtro de categorías
+  // Filtro de categorías (cat-pills)
   document.querySelectorAll('.cat-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      const cat = pill.dataset.cat;
-      let visible = 0;
-      document.querySelectorAll('.job-card').forEach(card => {
-        const job  = ALL_JOBS.find(j => j.id === card.dataset.jobId);
-        const area = (job?.area||'').toLowerCase();
-        const show = cat === 'all' || area.includes(cat) || cat.includes(area);
-        card.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-num').textContent = visible;
-      document.getElementById('empty-state').style.display = visible===0 ? 'block' : 'none';
+      applyFiltersReal();
     });
   });
 });

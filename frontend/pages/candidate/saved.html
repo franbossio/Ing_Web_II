@@ -12,20 +12,15 @@
   <link rel="stylesheet" href="../../css/saved.css"/>
 </head>
 <body>
-
   <div class="app-layout">
     <div id="sidebar-root"></div>
 
-    <!-- ══════════════════════════════════════════
-        MAIN
-    ══════════════════════════════════════════ -->
     <main class="main-content">
-
       <div class="topbar">
         <div class="topbar-left">
-        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
-        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
-      </button>
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
           <div class="topbar-title">Guardados</div>
           <div class="topbar-subtitle">Ofertas que marcaste para revisar después</div>
         </div>
@@ -37,106 +32,67 @@
 
       <div class="page-content">
 
-        <!-- ── Stats ── -->
+        <!-- Stats — se llenan desde JS -->
         <div class="saved-stats">
           <div class="saved-stat">
             <div class="saved-stat-icon">⭐</div>
             <div>
-              <div class="saved-stat-num">8</div>
+              <div class="saved-stat-num" id="stat-total">—</div>
               <div class="saved-stat-label">Total guardadas</div>
             </div>
           </div>
           <div class="saved-stat">
             <div class="saved-stat-icon">✅</div>
             <div>
-              <div class="saved-stat-num" style="color:var(--clr-success);">6</div>
+              <div class="saved-stat-num" id="stat-active" style="color:var(--clr-success);">—</div>
               <div class="saved-stat-label">Ofertas activas</div>
             </div>
           </div>
           <div class="saved-stat">
             <div class="saved-stat-icon">⏰</div>
             <div>
-              <div class="saved-stat-num" style="color:var(--clr-error);">2</div>
+              <div class="saved-stat-num" id="stat-expired" style="color:var(--clr-error);">—</div>
               <div class="saved-stat-label">Vencidas</div>
             </div>
           </div>
         </div>
 
-        <!-- ── Colecciones ── -->
-        <div class="panel" style="margin-bottom:24px;">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Mis colecciones</div>
-              <div class="panel-subtitle">Organizá tus ofertas guardadas en carpetas</div>
-            </div>
-          </div>
-          <div class="panel-body">
-            <div class="collections-grid">
-              <div class="collection-card" onclick="filterCollection('todas')">
-                <span class="collection-icon">📁</span>
-                <div class="collection-name">Todas</div>
-                <div class="collection-count">8 ofertas</div>
-              </div>
-              <div class="collection-card" onclick="filterCollection('prioritarias')">
-                <span class="collection-icon">🔥</span>
-                <div class="collection-name">Prioritarias</div>
-                <div class="collection-count">3 ofertas</div>
-              </div>
-              <div class="collection-card" onclick="filterCollection('remote')">
-                <span class="collection-icon">🏠</span>
-                <div class="collection-name">Remotas</div>
-                <div class="collection-count">5 ofertas</div>
-              </div>
-              <div class="collection-card" onclick="filterCollection('usd')">
-                <span class="collection-icon">💰</span>
-                <div class="collection-name">En USD</div>
-                <div class="collection-count">4 ofertas</div>
-              </div>
-              <div class="collection-card add-new" onclick="addCollection()">
-                <span class="collection-icon">➕</span>
-                <div class="collection-name">Nueva carpeta</div>
-                <div class="collection-count">Organizá tus guardados</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Toolbar ── -->
+        <!-- Toolbar -->
         <div class="saved-toolbar">
           <div class="search-bar">
             <span class="search-icon">🔍</span>
             <input type="text" id="search-input" placeholder="Buscá entre tus guardados..." />
           </div>
-          <select class="filter-select">
-            <option>Más recientes primero</option>
-            <option>Mayor match</option>
-            <option>Más antiguas</option>
+          <select class="filter-select" id="filter-order">
+            <option value="saved">Orden guardado</option>
+            <option value="alpha">Alfabético</option>
           </select>
           <select class="filter-select" id="filter-status">
             <option value="all">Todas las ofertas</option>
             <option value="active">Solo activas</option>
             <option value="expired">Solo vencidas</option>
           </select>
-          <span class="results-info" id="results-count">8 guardadas</span>
+          <span class="results-info" id="results-count">— guardadas</span>
         </div>
 
-        <!-- ── Tabs ── -->
+        <!-- Tabs -->
         <div class="saved-tabs">
-          <button class="saved-tab active" onclick="switchTab('all', this)">
-            Todas <span class="tab-count">8</span>
+          <button class="saved-tab active" data-tab="all">
+            Todas <span class="tab-count" id="tab-all">—</span>
           </button>
-          <button class="saved-tab" onclick="switchTab('active', this)">
-            ✅ Activas <span class="tab-count">6</span>
+          <button class="saved-tab" data-tab="active">
+            ✅ Activas <span class="tab-count" id="tab-active">—</span>
           </button>
-          <button class="saved-tab" onclick="switchTab('expired', this)">
-            ⏰ Vencidas <span class="tab-count">2</span>
+          <button class="saved-tab" data-tab="expired">
+            ⏰ Vencidas <span class="tab-count" id="tab-expired">—</span>
           </button>
         </div>
 
-        <!-- ── Cards guardadas ── -->
-        <div id="saved-list"></div><!-- /saved-list -->
+        <!-- Cards -->
+        <div id="saved-list"></div>
 
-        <div class="empty-state" id="empty-state">
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state" style="display:none;">
           <div class="empty-icon">⭐</div>
           <div class="empty-title">Sin ofertas guardadas</div>
           <div class="empty-desc">Guardá ofertas desde el explorador para revisarlas después.</div>
@@ -147,149 +103,78 @@
     </main>
   </div>
 
-  <script>
-    // ── Tabs ──────────────────────────────────────────
-    function switchTab(status, btn) {
-      document.querySelectorAll('.saved-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      applyStatusFilter(status);
-    }
-
-    function applyStatusFilter(status) {
-      const cards = document.querySelectorAll('.saved-card');
-      let visible = 0;
-      cards.forEach(c => {
-        const show = status === 'all' || c.dataset.status === status;
-        c.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-count').textContent = `${visible} guardada${visible !== 1 ? 's' : ''}`;
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-    }
-
-    // ── Búsqueda ──────────────────────────────────────
-    document.getElementById('search-input').addEventListener('input', function() {
-      const q = this.value.toLowerCase();
-      let visible = 0;
-      document.querySelectorAll('.saved-card').forEach(c => {
-        const show = !q || c.textContent.toLowerCase().includes(q);
-        c.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('results-count').textContent = `${visible} guardada${visible !== 1 ? 's' : ''}`;
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
-    });
-
-    // ── Quitar guardado ───────────────────────────────
-    function removeJob(btn) {
-      const card = btn.closest('.saved-card');
-      card.style.transition = 'all 0.35s ease';
-      card.style.opacity = '0';
-      card.style.transform = 'translateX(16px)';
-      setTimeout(() => {
-        card.remove();
-        const visible = document.querySelectorAll('.saved-card').length;
-        document.getElementById('results-count').textContent = `${visible} guardada${visible !== 1 ? 's' : ''}`;
-        if (visible === 0) document.getElementById('empty-state').style.display = 'block';
-      }, 350);
-    }
-
-    // ── Postularme ────────────────────────────────────
-    function applyJob(btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;"></div>';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = '✓ Postulado';
-        btn.style.background = 'rgba(76,175,132,0.15)';
-        btn.style.color = 'var(--clr-success)';
-        btn.style.border = '1px solid rgba(76,175,132,0.3)';
-        btn.onclick = null;
-      }, 900);
-    }
-
-    // ── Colecciones (demo) ────────────────────────────
-    function filterCollection(name) {
-      document.querySelectorAll('.collection-card').forEach(c => c.style.borderColor = '');
-    }
-    function addCollection() {
-      const name = prompt('Nombre de la nueva carpeta:');
-      if (name && name.trim()) alert(`Carpeta "${name}" creada.`);
-    }
-  </script>
-
   <script type="module">
-// Saved usa localStorage para guardar IDs de ofertas guardadas
-const SAVED_KEY = 'conectaia_saved_jobs';
+    import { logout } from '../../js/auth.js';
+    window.cerrarSesion = function(e) {
+      if (e) e.preventDefault();
+      if (confirm('¿Cerrar sesión?')) logout();
+    };
 
-function getSavedIds() {
-  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); } catch { return []; }
-}
-function saveIds(ids) {
-  localStorage.setItem(SAVED_KEY, JSON.stringify(ids));
-}
-window.removeSaved = function(jobId, btn) {
-  const ids = getSavedIds().filter(id => id !== jobId);
-  saveIds(ids);
-  btn.closest('.saved-card').remove();
-  const remaining = document.querySelectorAll('.saved-card').length;
-  document.getElementById('saved-empty').style.display = remaining === 0 ? 'block' : 'none';
-  document.querySelectorAll('.saved-count').forEach(el => el.textContent = remaining);
-};
+    const SAVED_KEY = 'conectaia_saved_jobs';
+    const TOKEN     = () => localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
 
-async function loadSaved() {
-  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-  const savedIds = getSavedIds();
-  const container = document.getElementById('saved-list');
-  const emptyEl   = document.getElementById('saved-empty');
-  if (!container) return;
-
-  if (!savedIds.length) {
-    if (emptyEl) emptyEl.style.display = 'block';
-    document.querySelectorAll('.saved-count').forEach(el => el.textContent = 0);
-    return;
-  }
-
-  try {
-    const res  = await fetch('http://localhost:3001/api/jobs', { headers: { Authorization: `Bearer ${token}` } });
-    const jobs = res.ok ? await res.json() : [];
-    const saved = jobs.filter(j => savedIds.includes(j.id));
-
-    document.querySelectorAll('.saved-count').forEach(el => el.textContent = saved.length);
-
-    if (!saved.length) {
-      if (emptyEl) emptyEl.style.display = 'block';
-      return;
+    function getSavedIds() {
+      try { return JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); } catch { return []; }
     }
-    if (emptyEl) emptyEl.style.display = 'none';
+    function setSavedIds(ids) {
+      localStorage.setItem(SAVED_KEY, JSON.stringify(ids));
+    }
 
-    container.innerHTML = saved.map(job => {
+    // Estado global
+    let ALL_SAVED   = [];   // jobs completos que el user guardó
+    let activeTab   = 'all';
+    let activeSearch = '';
+    let activeOrder  = 'saved';
+
+    // ── Actualizar stats y tabs con datos reales ────────────────────────
+    function updateStats() {
+      const total   = ALL_SAVED.length;
+      const active  = ALL_SAVED.filter(j => j.active !== false).length;
+      const expired = total - active;
+
+      document.getElementById('stat-total').textContent   = total;
+      document.getElementById('stat-active').textContent  = active;
+      document.getElementById('stat-expired').textContent = expired;
+
+      document.getElementById('tab-all').textContent     = total;
+      document.getElementById('tab-active').textContent  = active;
+      document.getElementById('tab-expired').textContent = expired;
+    }
+
+    // ── Render de una card ──────────────────────────────────────────────
+    function renderCard(job) {
       const co     = job.company || {};
+      const isActive = job.active !== false;
       const salary = job.salaryMin
         ? `💰 ${job.currency||''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax?' – '+Number(job.salaryMax).toLocaleString():''}/mes`
         : '';
-      const skills = (job.skills||[]).slice(0,4).map(sk =>
-        `<span class="skill-tag">${sk}</span>`
-      ).join('');
+      const skills = (job.skills || []).slice(0, 4)
+        .map(sk => `<span class="skill-tag">${sk}</span>`).join('');
 
-      return `<div class="saved-card" data-job-id="${job.id}">
+      return `<div class="saved-card"
+                   data-job-id="${job.id}"
+                   data-status="${isActive ? 'active' : 'expired'}"
+                   data-title="${(job.title||'').toLowerCase()}"
+                   data-company="${(co.companyName||'').toLowerCase()}">
         <div class="saved-card-header">
           <div class="saved-card-left">
             <div class="company-logo">🏢</div>
             <div>
               <div class="saved-job-title">${job.title}</div>
-              <div class="saved-company">${co.companyName||'Empresa'} · ${job.location||''}</div>
+              <div class="saved-company">${co.companyName||'Empresa'}${job.location ? ' · ' + job.location : ''}</div>
             </div>
           </div>
           <div class="saved-card-right">
-            <span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>
+            ${isActive
+              ? `<span class="badge badge-green" style="font-size:0.7rem;"><span class="badge-dot"></span> Activa</span>`
+              : `<span class="badge badge-red"   style="font-size:0.7rem;"><span class="badge-dot"></span> Vencida</span>`}
           </div>
         </div>
         <div class="saved-card-meta">
-          ${job.modality  ? `<span>📍 ${job.modality}</span>`   : ''}
-          ${job.contract  ? `<span>⏱ ${job.contract}</span>`   : ''}
-          ${job.experience? `<span>🏆 ${job.experience}</span>` : ''}
-          ${salary        ? `<span>${salary}</span>`             : ''}
+          ${job.modality   ? `<span>📍 ${job.modality}</span>`   : ''}
+          ${job.contract   ? `<span>⏱ ${job.contract}</span>`   : ''}
+          ${job.experience ? `<span>🏆 ${job.experience}</span>` : ''}
+          ${salary         ? `<span>${salary}</span>`             : ''}
         </div>
         ${skills ? `<div class="saved-card-tags">${skills}</div>` : ''}
         <div class="saved-card-footer">
@@ -302,28 +187,150 @@ async function loadSaved() {
           </div>
         </div>
       </div>`;
-    }).join('');
+    }
 
-  } catch(err) { console.error('Error saved:', err); }
-}
+    // ── Aplicar filtros ─────────────────────────────────────────────────
+    function applyFilters() {
+      let filtered = [...ALL_SAVED];
 
-window.applyFromSaved = async function(jobId, btn) {
-  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-  btn.disabled = true; btn.textContent = '...';
-  try {
-    const res = await fetch('http://localhost:3001/api/applications', {
-      method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
-      body: JSON.stringify({ jobId })
+      // Tab / status
+      if (activeTab === 'active')  filtered = filtered.filter(j => j.active !== false);
+      if (activeTab === 'expired') filtered = filtered.filter(j => j.active === false);
+
+      // Búsqueda
+      if (activeSearch) {
+        const q = activeSearch.toLowerCase();
+        filtered = filtered.filter(j =>
+          (j.title || '').toLowerCase().includes(q) ||
+          (j.company?.companyName || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Orden
+      if (activeOrder === 'alpha') {
+        filtered.sort((a, b) => (a.title||'').localeCompare(b.title||''));
+      }
+
+      const container = document.getElementById('saved-list');
+      const emptyEl   = document.getElementById('empty-state');
+      const countEl   = document.getElementById('results-count');
+
+      if (!filtered.length) {
+        container.innerHTML = '';
+        emptyEl.style.display = 'block';
+        countEl.textContent   = '0 guardadas';
+      } else {
+        container.innerHTML   = filtered.map(renderCard).join('');
+        emptyEl.style.display = 'none';
+        countEl.textContent   = `${filtered.length} guardada${filtered.length !== 1 ? 's' : ''}`;
+      }
+    }
+
+    // ── Quitar guardado ─────────────────────────────────────────────────
+    window.removeSaved = function(jobId, btn) {
+      const ids = getSavedIds().filter(id => id !== jobId);
+      setSavedIds(ids);
+      ALL_SAVED = ALL_SAVED.filter(j => j.id !== jobId);
+      updateStats();
+      applyFilters();
+    };
+
+    // ── Postularse desde guardados — llama al backend real ──────────────
+    window.applyFromSaved = async function(jobId, btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:4px;"></div>';
+      try {
+        const res = await fetch('http://localhost:3001/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN()}` },
+          body: JSON.stringify({ jobId }),
+        });
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({ message: 'Error' }));
+          throw new Error(e.message);
+        }
+        btn.textContent = '✓ Postulado';
+        btn.style.cssText = 'padding:7px 14px;font-size:0.78rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:600;cursor:default;';
+        btn.onclick = null;
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = 'Postularme';
+        alert('✗ ' + err.message);
+      }
+    };
+
+    // ── Cargar desde backend ────────────────────────────────────────────
+    async function loadSaved() {
+      const savedIds = getSavedIds();
+
+      // Mostrar 0 si no hay nada guardado
+      if (!savedIds.length) {
+        document.getElementById('stat-total').textContent   = 0;
+        document.getElementById('stat-active').textContent  = 0;
+        document.getElementById('stat-expired').textContent = 0;
+        document.getElementById('tab-all').textContent      = 0;
+        document.getElementById('tab-active').textContent   = 0;
+        document.getElementById('tab-expired').textContent  = 0;
+        document.getElementById('results-count').textContent = '0 guardadas';
+        document.getElementById('empty-state').style.display = 'block';
+        return;
+      }
+
+      try {
+        const res  = await fetch('http://localhost:3001/api/jobs', {
+          headers: { Authorization: `Bearer ${TOKEN()}` }
+        });
+        const jobs = res.ok ? await res.json() : [];
+
+        // Filtrar solo los que el user guardó, manteniendo el orden de guardado
+        ALL_SAVED = savedIds
+          .map(id => jobs.find(j => j.id === id))
+          .filter(Boolean);
+
+        updateStats();
+        applyFilters();
+
+      } catch(err) {
+        console.error('Error saved:', err);
+      }
+    }
+
+    // ── Listeners ───────────────────────────────────────────────────────
+
+    // Tabs
+    document.querySelectorAll('.saved-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.saved-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        activeTab = this.dataset.tab;
+        applyFilters();
+      });
     });
-    if (!res.ok) { const e = await res.json().catch(()=>({message:'Error'})); throw new Error(e.message); }
-    btn.textContent = '✓ Postulado';
-    btn.style.cssText = 'padding:7px 14px;font-size:0.78rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);border-radius:var(--radius-sm);font-family:var(--font-body);font-weight:600;cursor:default;';
-    btn.onclick = null;
-  } catch(err) { btn.disabled=false; btn.textContent='Postularme'; alert('✗ '+err.message); }
-};
 
-loadSaved();
-</script>
-<script src="../../js/sidebar-toggle.js"></script>
+    // Búsqueda
+    document.getElementById('search-input').addEventListener('input', function() {
+      activeSearch = this.value.trim();
+      applyFilters();
+    });
+
+    // Orden
+    document.getElementById('filter-order').addEventListener('change', function() {
+      activeOrder = this.value;
+      applyFilters();
+    });
+
+    // Select status (sincronizado con tabs)
+    document.getElementById('filter-status').addEventListener('change', function() {
+      activeTab = this.value;
+      document.querySelectorAll('.saved-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === this.value);
+      });
+      applyFilters();
+    });
+
+    loadSaved();
+  </script>
+
+  <script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>
