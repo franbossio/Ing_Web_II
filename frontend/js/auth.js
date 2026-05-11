@@ -25,7 +25,14 @@ export function logout() {
   localStorage.removeItem('talentai_token');
   localStorage.removeItem('talentai_user');
   sessionStorage.removeItem('talentai_token');
-  window.location.href = '/index.html';
+  // Redirigir al index relativo al path actual
+  const currentPath = window.location.pathname;
+  if (currentPath.includes('/pages/')) {
+    const base = currentPath.substring(0, currentPath.indexOf('/pages/'));
+    window.location.href = base + '/pages/index.html';
+  } else {
+    window.location.href = 'index.html';
+  }
 }
 
 export function isAuthenticated() {
@@ -33,12 +40,26 @@ export function isAuthenticated() {
 }
 
 export function redirectToDashboard(role) {
+  // Detectar el path base dinámicamente desde la URL actual
+  // login.html y register.html están en /pages/
+  // los dashboards están en /pages/candidate/ o /pages/company/
+  const currentPath = window.location.pathname;
+  
+  // Calcular base hasta la carpeta "pages"
+  let base = '';
+  if (currentPath.includes('/pages/')) {
+    base = currentPath.substring(0, currentPath.indexOf('/pages/') + '/pages/'.length);
+  } else {
+    // Fallback: asumir que estamos un nivel arriba de pages
+    base = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + 'pages/';
+  }
+
   const routes = {
-    candidate: '/candidate/dashboard.html',
-    company:   '/company/dashboard.html',
-    admin:     '/candidate/dashboard.html',
+    candidate: base + 'candidate/dashboard.html',
+    company:   base + 'company/dashboard.html',
+    admin:     base + 'candidate/dashboard.html',
   };
-  window.location.href = routes[role] || '/login.html';
+  window.location.href = routes[role] || base + 'login.html';
 }
 
 export async function authFetch(path, options = {}) {

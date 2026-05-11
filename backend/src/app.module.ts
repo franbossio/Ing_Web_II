@@ -18,18 +18,25 @@ import { Application } from './applications/application.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host:     config.get<string>('DB_HOST', 'localhost'),
-        port:     config.get<number>('DB_PORT', 5432),
-        ssl: { rejectUnauthorized: false },
-        username: config.get<string>('DB_USERNAME', 'postgres'),
-        password: config.get<string>('DB_PASSWORD', ''),
-        database: config.get<string>('DB_NAME', 'conectaia'),
-        entities: [User, Job, Application],  // ← nuevas entidades
-        synchronize: true,  // crea las tablas automáticamente
-        logging: false,
-      }),
+      useFactory: (config: ConfigService) => {
+        const isProduction = config.get<string>('NODE_ENV') === 'production'
+          || !!config.get<string>('DATABASE_URL');
+        return {
+          type: 'postgres',
+          // Render provee DATABASE_URL completa — usarla si existe
+          url:      config.get<string>('DATABASE_URL') || undefined,
+          host:     config.get<string>('DB_HOST', 'localhost'),
+          port:     config.get<number>('DB_PORT', 5432),
+          username: config.get<string>('DB_USERNAME', 'postgres'),
+          password: config.get<string>('DB_PASSWORD', ''),
+          database: config.get<string>('DB_NAME', 'conectaia'),
+          // SSL solo en producción (Render lo requiere, local no)
+          ssl: isProduction ? { rejectUnauthorized: false } : false,
+          entities: [User, Job, Application],
+          synchronize: true,
+          logging: false,
+        };
+      },
     }),
 
     UsersModule,
