@@ -77,7 +77,6 @@
       background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #0d0f14;
-      overflow: hidden; background-size: cover; background-position: center;
     }
     .cand-card-name  { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); margin-bottom: 2px; }
     .cand-card-title { font-size: 0.78rem; color: var(--clr-muted); }
@@ -159,7 +158,6 @@
       background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: #0d0f14;
-      overflow: hidden; background-size: cover; background-position: center;
     }
     .pm-name  { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
     .pm-title { font-size: 0.85rem; color: var(--clr-muted); margin-bottom: 4px; }
@@ -289,21 +287,16 @@
   function renderCard(c) {
     const nombre   = [c.firstName, c.lastName].filter(Boolean).join(' ') || c.nombre || c.email || '—';
     const iniciales= nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
-    const photo    = c.photo || null;
     const skills   = (c.skills || []).slice(0, 5);
     const matchPct = c.matchPct || null;
     const reason   = c.reason   || '';
     const id       = c.id || c.candidateId || '';
 
-    const avatarStyle = photo
-      ? `style="background-image:url('${photo}');background-size:cover;background-position:center;"`
-      : '';
-
     return `
       <div class="candidate-card ${matchPct ? 'ia-match' : ''}">
         <div class="cand-card-header">
           <div class="cand-card-left">
-            <div class="cand-card-avatar" ${avatarStyle}>${photo ? '' : iniciales}</div>
+            <div class="cand-card-avatar">${iniciales}</div>
             <div>
               <div class="cand-card-name">${nombre}</div>
               <div class="cand-card-title">${c.jobTitle || c.titulo || 'Candidato'}</div>
@@ -328,6 +321,7 @@
         <div class="cand-card-actions">
           <button class="btn btn-ghost" onclick="window.viewProfile('${id}')">👤 Ver perfil</button>
           ${c.cvUrl ? `<a href="${c.cvUrl}" download class="btn btn-ghost" style="text-decoration:none;">📄 CV</a>` : ''}
+          <button class="btn btn-ghost" id="fav-btn-${id}" onclick="window.toggleFav('${id}')" title="Guardar en favoritos" style="flex:0;padding:8px 12px;"></button>
         </div>
       </div>`;
   }
@@ -388,7 +382,7 @@
       '<div class="skel-card"></div><div class="skel-card"></div><div class="skel-card"></div>';
 
     try {
-      const res = await fetch('http://localhost:3001/api/users/candidates/suggest', {
+      const res = await fetch(`${API_BASE_URL}/users/candidates/suggest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
         body: JSON.stringify({
@@ -411,6 +405,7 @@
       document.getElementById('search-input').value = '';
       document.getElementById('filter-location').value = '';
       renderList(suggestions);
+      setTimeout(updateAllFavBtns, 50);
       showAlert(`✨ IA encontró ${suggestions.length} candidatos compatibles`);
 
     } catch(e) {
@@ -430,7 +425,6 @@
 
     const nombre   = [cand.firstName, cand.lastName, cand.nombre].filter(Boolean).join(' ') || '—';
     const iniciales= nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
-    const photo    = cand.photo || null;
 
     const skillsHtml = (cand.skills || []).map(s => `<span class="skill-tag highlight" style="margin:2px;">${s}</span>`).join('')
       || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin skills registradas</span>';
@@ -454,11 +448,8 @@
       cand.portfolio && `<a href="${cand.portfolio}" target="_blank" class="pm-link">🌐 Portfolio</a>`,
     ].filter(Boolean).join('');
 
-    const pmAvatarStyle = photo
-      ? `style="background-image:url('${photo}');background-size:cover;background-position:center;"`
-      : '';
     document.getElementById('modal-profile-content').innerHTML = `
-      <div class="pm-avatar" ${pmAvatarStyle}>${photo ? '' : iniciales}</div>
+      <div class="pm-avatar">${iniciales}</div>
       <div class="pm-name">${nombre}</div>
       <div class="pm-title">${cand.jobTitle || cand.titulo || 'Candidato'}</div>
       <div class="pm-loc">${cand.location ? '📍 ' + cand.location : ''}${cand.phone ? ' · 📞 ' + cand.phone : ''}</div>
@@ -492,17 +483,79 @@
     document.body.style.overflow = 'hidden';
   };
 
+  // ── Favoritos (localStorage por empresa) ────────────────────────────────
+  const FAV_KEY = () => {
+    const u = JSON.parse(localStorage.getItem('talentai_user') || '{}');
+    return `favorites_${u.id || 'unknown'}`;
+  };
+  function getFavs() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY()) || '[]'); } catch { return []; }
+  }
+  function saveFavs(arr) { localStorage.setItem(FAV_KEY(), JSON.stringify(arr)); }
+  function isFav(id) { return getFavs().some(f => f.id === id); }
+
+  window.toggleFav = function(candidateId) {
+    const cand = ALL_CANDIDATES.find(c => c.id === candidateId)
+               || DISPLAY_LIST.find(c => (c.id || c.candidateId) === candidateId);
+    if (!cand) return;
+    const favs = getFavs();
+    const idx  = favs.findIndex(f => f.id === candidateId);
+    if (idx === -1) {
+      favs.push({
+        id:        cand.id,
+        firstName: cand.firstName || '',
+        lastName:  cand.lastName  || '',
+        jobTitle:  cand.jobTitle  || cand.titulo || '',
+        location:  cand.location  || cand.ubicacion || '',
+        skills:    (cand.skills   || []).slice(0, 8),
+        bio:       cand.bio       || '',
+        cvUrl:     cand.cvUrl     || null,
+        cvFileName:cand.cvFileName|| null,
+        cvAnalysis:cand.cvAnalysis|| null,
+        linkedin:  cand.linkedin  || null,
+        github:    cand.github    || null,
+        portfolio: cand.portfolio || null,
+        experience:cand.experience|| [],
+        education: cand.education || [],
+        savedAt:   new Date().toISOString(),
+      });
+      saveFavs(favs);
+      showAlert('⭐ Candidato guardado en favoritos');
+    } else {
+      favs.splice(idx, 1);
+      saveFavs(favs);
+      showAlert('Candidato quitado de favoritos');
+    }
+    updateFavBtn(candidateId);
+  };
+
+  function updateFavBtn(id) {
+    const btn = document.getElementById(`fav-btn-${id}`);
+    if (!btn) return;
+    const saved = isFav(id);
+    btn.textContent = saved ? '⭐' : '☆';
+    btn.title = saved ? 'Quitar de favoritos' : 'Guardar en favoritos';
+    btn.style.color = saved ? 'var(--clr-accent)' : '';
+  }
+
+  function updateAllFavBtns() {
+    const all = [...ALL_CANDIDATES, ...DISPLAY_LIST];
+    all.forEach(c => updateFavBtn(c.id || c.candidateId));
+  }
+
   // ── Cargar datos ──────────────────────────────────────────────────────────
+  const API_BASE_URL = 'https://ing-web-ii.onrender.com/api';
+
   async function load() {
     try {
       // Candidatos reales de la BD
-      const resCandidates = await fetch('http://localhost:3001/api/users/candidates', {
+      const resCandidates = await fetch(`${API_BASE_URL}/users/candidates`, {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       ALL_CANDIDATES = resCandidates.ok ? await resCandidates.json() : [];
 
       // Mis ofertas para el select de IA
-      const resJobs = await fetch('http://localhost:3001/api/jobs/my', {
+      const resJobs = await fetch(`${API_BASE_URL}/jobs/my`, {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       MY_JOBS = resJobs.ok ? await resJobs.json() : [];
@@ -525,6 +578,8 @@
       });
 
       renderList(ALL_CANDIDATES);
+      // Marcar favoritos ya guardados
+      setTimeout(updateAllFavBtns, 50);
 
     } catch(err) {
       document.getElementById('candidates-container').innerHTML = `

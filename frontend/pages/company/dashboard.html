@@ -51,7 +51,6 @@
             <span class="stat-card-icon">📋</span>
           </div>
           <div class="stat-card-value" id="stat-jobs">—</div>
-          <div class="stat-card-change" id="stat-jobs-sub">Cargando...</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header">
@@ -116,39 +115,6 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- ── Candidatos sugeridos por IA (Esto se cambia despues para que sea dinamico) ── -->
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">🤖 Candidatos sugeridos por IA</div>
-            <div class="panel-subtitle">Los mejores matches para tus ofertas activas</div>
-          </div>
-          <a href="candidates.html" class="icon-btn">Ver todos</a>
-        </div>
-        <div class="panel-body" style="padding:0;">
-          <div class="table-wrapper">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Candidato</th>
-                  <th>Oferta sugerida</th>
-                  <th>Match IA</th>
-                  <th>Habilidades clave</th>
-                  <th>Estado</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="ia-candidates-tbody">
-                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando candidatos...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="panel-footer">
-          <a href="candidates.html">Ver todos los candidatos →</a>
-        </div>
       </div>
 
     </div><!-- /page-content -->
@@ -240,13 +206,12 @@
   // ── Render helpers ───────────────────────────────────────────────────────────
 
   function renderStats(jobs, apps) {
-    const activeJobs    = jobs.filter(j => j.isActive !== false).length;
+    const activeJobs = jobs.filter(j => j.active !== false).length;
     const totalApps     = apps.length;
     const reviewed      = apps.filter(a => a.status && a.status !== 'pendiente').length;
     const interviews    = apps.filter(a => a.status === 'entrevista').length;
 
     document.getElementById('stat-jobs').textContent        = activeJobs;
-    document.getElementById('stat-jobs-sub').textContent    = `${jobs.length} oferta${jobs.length !== 1 ? 's' : ''} en total`;
     document.getElementById('stat-apps').textContent        = totalApps;
     document.getElementById('stat-apps-sub').textContent    = totalApps > 0 ? `De ${jobs.length} oferta${jobs.length !== 1 ? 's' : ''}` : 'Sin postulaciones aún';
     document.getElementById('stat-reviewed').textContent    = reviewed;
@@ -257,19 +222,21 @@
 
   function renderJobs(jobs) {
     const list = document.getElementById('jobs-list');
-    const recent = jobs.slice(0, 4);
+    
+    // Primero filtramos solo las activas, y luego tomamos las últimas 4
+    const activeJobs = jobs.filter(job => job.active !== false);
+    const recent = activeJobs.slice(0, 4);
 
     if (recent.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--clr-muted);">No publicaste ofertas aún. <a href="post-job.html">Crear primera oferta →</a></div>';
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--clr-muted);">No tenés ofertas activas. <a href="post-job.html">Crear nueva oferta →</a></div>';
       return;
     }
 
     list.innerHTML = recent.map(job => {
       const appCount = job.applicationsCount ?? 0;
-      const isActive = job.isActive !== false;
-      const badge = isActive
-        ? '<span class="badge badge-green"><span class="badge-dot"></span> Activa</span>'
-        : '<span class="badge badge-gray">Pausada</span>';
+      
+      // Como ya filtramos, sabemos que son activas
+      const badge = '<span class="badge badge-green"><span class="badge-dot"></span> Activa</span>';
 
       return `
         <div class="job-row">
@@ -319,65 +286,6 @@
     }).join('');
   }
 
-  function renderIACandidates(apps) {
-    const tbody = document.getElementById('ia-candidates-tbody');
-
-    // Tomamos hasta 5 postulaciones, priorizando las más recientes
-    const recent = [...apps]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 5);
-
-    if (recent.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--clr-muted);">No hay postulaciones aún.</td></tr>';
-      return;
-    }
-
-    const altClasses = ['', 'alt', 'alt2'];
-
-    tbody.innerHTML = recent.map((app, i) => {
-      const cand = app.candidate || {};
-      const name = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email || 'Candidato';
-      const email = cand.email || '';
-      const initials = avatarInitials(name, email);
-      const jobTitle = app.job?.title || '—';
-      const skills = (cand.skills || []).slice(0, 3);
-      const altClass = altClasses[i % 3];
-
-      // Match real si existe en cvAnalysis, si no mostramos N/A
-      const matchPct = app.matchScore ?? cand.cvAnalysis?.score ?? null;
-      const matchHtml = matchPct !== null
-        ? `<div class="match-cell">
-            <div class="match-bar-bg"><div class="match-bar-fill" style="width:${matchPct}%"></div></div>
-            <span class="match-pct">${matchPct}%</span>
-           </div>`
-        : `<span style="color:var(--clr-muted);font-size:0.8rem;">Sin análisis</span>`;
-
-      return `
-        <tr>
-          <td>
-            <div class="cell-candidate">
-              <div class="cand-avatar ${altClass}">${initials}</div>
-              <div>
-                <div class="cand-name">${name}</div>
-                <div class="cand-email">${email}</div>
-              </div>
-            </div>
-          </td>
-          <td><span style="font-size:0.85rem;">${jobTitle}</span></td>
-          <td>${matchHtml}</td>
-          <td>
-            <div class="tag-list">
-              ${skills.length > 0
-                ? skills.map((s, si) => `<span class="skill-tag ${si < 2 ? 'highlight' : ''}">${s}</span>`).join('')
-                : '<span style="color:var(--clr-muted);font-size:0.8rem;">Sin habilidades</span>'}
-            </div>
-          </td>
-          <td>${statusBadge(app.status)}</td>
-          <td><a href="candidates.html" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
-        </tr>`;
-    }).join('');
-  }
-
   // ── Carga principal ──────────────────────────────────────────────────────────
   async function loadDashboardData() {
     try {
@@ -402,7 +310,6 @@
       renderStats(jobs, apps);
       renderJobs(jobs);
       renderActivity(apps, jobs);
-      renderIACandidates(apps);
 
     } catch (err) {
       console.error('[Dashboard]', err);
@@ -411,12 +318,7 @@
         const el = document.getElementById(id);
         if (el) el.innerHTML = errMsg;
       });
-      const tbody = document.getElementById('ia-candidates-tbody');
-      if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--clr-muted);">No se pudieron cargar los datos.</td></tr>`;
-      ['stat-jobs','stat-apps','stat-reviewed','stat-interviews'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = '—';
-      });
+      
     }
   }
 

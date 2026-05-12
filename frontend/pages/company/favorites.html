@@ -16,53 +16,57 @@
     .stat-icon { width: 44px; height: 44px; background: rgba(201,168,76,0.1); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
     .stat-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; line-height: 1; }
     .stat-label { font-size: 0.74rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
-
     .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .search-bar { position: relative; flex: 1; min-width: 200px; }
-    .search-bar input { width: 100%; background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 16px 10px 40px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); }
+    .search-bar input { width: 100%; background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 16px 10px 40px; outline: none; transition: border-color var(--transition); box-sizing: border-box; }
     .search-bar input:focus { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
     .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--clr-muted); pointer-events: none; }
-    .filter-select { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.83rem; padding: 10px 30px 10px 12px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+    .filter-select { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); color: var(--clr-text); font-family: var(--font-body); font-size: 0.83rem; padding: 10px 30px 10px 12px; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
     .results-info { font-size: 0.82rem; color: var(--clr-muted); margin-left: auto; }
-
-    /* Collections */
-    .collections-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; margin-bottom: 28px; }
-    .col-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 18px 16px; text-align: center; cursor: pointer; transition: all var(--transition); }
-    .col-card:hover { border-color: var(--clr-accent); transform: translateY(-2px); }
-    .col-card.add { border-style: dashed; color: var(--clr-muted); }
-    .col-card.add:hover { color: var(--clr-accent); }
-    .col-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
-    .col-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 3px; }
-    .col-count { font-size: 0.74rem; color: var(--clr-muted); }
-
-    /* Candidate cards grid */
     .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
     .fav-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: 22px; transition: all var(--transition); }
     .fav-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
     .fav-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
     .fav-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #0d0f14; flex-shrink: 0; }
-    .av1 { background: linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim)); }
-    .av2 { background: linear-gradient(135deg,#4c82c8,#2d5a9e); }
-    .av3 { background: linear-gradient(135deg,#4caf84,#2e8060); }
-    .av4 { background: linear-gradient(135deg,#c84c7a,#9e2d55); }
-    .av5 { background: linear-gradient(135deg,#c8844c,#9e5e2d); }
+    .av-0 { background: linear-gradient(135deg,var(--clr-accent),var(--clr-accent-dim)); }
+    .av-1 { background: linear-gradient(135deg,#4c82c8,#2d5a9e); }
+    .av-2 { background: linear-gradient(135deg,#4caf84,#2e8060); }
+    .av-3 { background: linear-gradient(135deg,#c84c7a,#9e2d55); }
+    .av-4 { background: linear-gradient(135deg,#c8844c,#9e5e2d); }
     .fav-name { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); margin-bottom: 2px; }
     .fav-title { font-size: 0.78rem; color: var(--clr-muted); }
-    .fav-match { text-align: right; }
-    .fav-match-pct { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--clr-accent); line-height: 1; }
-    .fav-match-label { font-size: 0.62rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .fav-saved { font-size: 0.68rem; color: var(--clr-muted); text-align: right; flex-shrink: 0; }
     .fav-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--clr-muted); margin-bottom: 12px; }
     .fav-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
     .skill-tag { background: var(--clr-surface-2); border: 1px solid var(--clr-border); color: var(--clr-muted); padding: 2px 9px; border-radius: 100px; font-size: 0.7rem; font-weight: 500; }
-    .skill-tag.match { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent); }
     .fav-card-footer { display: flex; gap: 8px; }
     .fav-card-footer .btn { flex: 1; padding: 9px 12px; font-size: 0.8rem; }
-
-    .empty-state { text-align: center; padding: 60px 24px; color: var(--clr-muted); display: none; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
-    .empty-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--clr-text); margin-bottom: 8px; }
-    .empty-desc { font-size: 0.85rem; max-width: 260px; margin: 0 auto 24px; line-height: 1.6; }
-
+    .empty-state { text-align: center; padding: 70px 24px; color: var(--clr-muted); }
+    .empty-icon { font-size: 2.8rem; margin-bottom: 16px; }
+    .empty-title { font-family: var(--font-display); font-size: 1.15rem; color: var(--clr-text); margin-bottom: 10px; }
+    .empty-desc { font-size: 0.85rem; max-width: 280px; margin: 0 auto 24px; line-height: 1.6; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.2s ease; }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal-box { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg); padding: 32px; width: 90%; max-width: 560px; max-height: 88vh; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.2s ease; }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--clr-muted); font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); }
+    .modal-close:hover { background: var(--clr-surface-2); }
+    .pm-avatar { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 14px; background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: #0d0f14; }
+    .pm-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+    .pm-title { font-size: 0.85rem; color: var(--clr-muted); margin-bottom: 4px; }
+    .pm-loc { font-size: 0.82rem; color: var(--clr-muted); margin-bottom: 20px; }
+    .pm-section { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--clr-muted); margin: 18px 0 8px; }
+    .pm-bio { font-size: 0.85rem; line-height: 1.7; color: var(--clr-text); }
+    .pm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pm-exp { font-size: 0.84rem; margin-bottom: 10px; }
+    .pm-exp-title { font-weight: 600; color: var(--clr-text); }
+    .pm-exp-sub { font-size: 0.76rem; color: var(--clr-muted); }
+    .pm-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--clr-accent); text-decoration: none; padding: 4px 10px; border: 1px solid rgba(201,168,76,0.3); border-radius: 100px; margin-right: 6px; }
+    .pm-link:hover { background: rgba(201,168,76,0.08); }
+    .cv-btn { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2); border-radius: var(--radius-sm); color: var(--clr-accent); font-size: 0.85rem; font-weight: 500; text-decoration: none; }
+    .cv-btn:hover { background: rgba(201,168,76,0.12); }
+    #global-alert { transition: opacity 0.3s; opacity: 0; }
+    #global-alert.visible { opacity: 1; }
     @media (max-width:900px) {
       .stats-row { grid-template-columns: 1fr; }
       .fav-grid { grid-template-columns: 1fr; }
@@ -73,14 +77,13 @@
 </head>
 <body>
 <div class="app-layout">
-    <div id="sidebar-root"></div>
-
+  <div id="sidebar-root"></div>
   <main class="main-content">
     <div class="topbar">
       <div class="topbar-left">
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
-        <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
-      </button>
+          <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+        </button>
         <div class="topbar-title">Candidatos favoritos</div>
         <div class="topbar-subtitle">Perfiles que guardaste para contactar después</div>
       </div>
@@ -95,216 +98,236 @@
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-icon">⭐</div>
-          <div><div class="stat-num">5</div><div class="stat-label">Total favoritos</div></div>
+          <div><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total favoritos</div></div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">📬</div>
-          <div><div class="stat-num" style="color:var(--clr-success);">2</div><div class="stat-label">Ya contactados</div></div>
+          <div class="stat-icon">📄</div>
+          <div><div class="stat-num" id="stat-cv" style="color:var(--clr-success);">0</div><div class="stat-label">Con CV cargado</div></div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div><div class="stat-num" style="color:var(--clr-accent);">3</div><div class="stat-label">Pendientes de contacto</div></div>
+          <div class="stat-icon">🤖</div>
+          <div><div class="stat-num" id="stat-ia" style="color:var(--clr-accent);">0</div><div class="stat-label">Con análisis IA</div></div>
         </div>
       </div>
 
-      <!-- Colecciones -->
-      <div class="panel" style="margin-bottom:24px;">
-        <div class="panel-header">
-          <div><div class="panel-title">Mis listas</div><div class="panel-subtitle">Organizá candidatos por vacante o criterio</div></div>
-        </div>
-        <div class="panel-body">
-          <div class="collections-row">
-            <div class="col-card"><span class="col-icon">📁</span><div class="col-name">Todos</div><div class="col-count">5 candidatos</div></div>
-            <div class="col-card"><span class="col-icon">💻</span><div class="col-name">Full Stack</div><div class="col-count">2 candidatos</div></div>
-            <div class="col-card"><span class="col-icon">🎨</span><div class="col-name">UX/UI</div><div class="col-count">1 candidato</div></div>
-            <div class="col-card"><span class="col-icon">⭐</span><div class="col-name">Top perfiles</div><div class="col-count">3 candidatos</div></div>
-            <div class="col-card add" onclick="addList()"><span class="col-icon">➕</span><div class="col-name">Nueva lista</div><div class="col-count">Organizá tus favoritos</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Toolbar -->
       <div class="toolbar">
         <div class="search-bar">
           <span class="search-icon">🔍</span>
           <input type="text" id="search-input" placeholder="Buscá por nombre o habilidad..." />
         </div>
-        <select class="filter-select">
-          <option>Mayor match</option>
-          <option>Más recientes</option>
-          <option>A-Z por nombre</option>
+        <select class="filter-select" id="sort-select">
+          <option value="recent">Más recientes</option>
+          <option value="az">A-Z por nombre</option>
+          <option value="skills">Más habilidades</option>
         </select>
-        <select class="filter-select">
-          <option>Todas las áreas</option>
-          <option>Full Stack</option>
-          <option>UX/UI</option>
-          <option>Data</option>
-          <option>DevOps</option>
-        </select>
-        <span class="results-info" id="results-count">5 favoritos</span>
+        <button class="btn btn-ghost" id="clear-all-btn" style="color:var(--clr-error,#e05252);border-color:var(--clr-error,#e05252);opacity:0.8;" onclick="clearAll()">🗑 Limpiar todo</button>
+        <span class="results-info" id="results-count">0 favoritos</span>
       </div>
 
-      <!-- Grid favoritos -->
-      <div class="fav-grid" id="fav-grid">
+      <div class="fav-grid" id="fav-grid"></div>
 
-        <div class="fav-card">
-          <div class="fav-card-top">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="fav-avatar av1">JP</div>
-              <div><div class="fav-name">Juan Pérez</div><div class="fav-title">Full Stack Developer</div></div>
-            </div>
-            <div class="fav-match"><div class="fav-match-pct">92%</div><div class="fav-match-label">Match IA</div></div>
-          </div>
-          <div class="fav-meta"><span>📍 Buenos Aires</span><span>🏆 4 años</span><span>🎓 Ing. Sistemas</span></div>
-          <div class="fav-tags">
-            <span class="skill-tag match">React</span>
-            <span class="skill-tag match">Node.js</span>
-            <span class="skill-tag match">TypeScript</span>
-            <span class="skill-tag">Docker</span>
-          </div>
-          <div class="fav-card-footer">
-            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
-            <button class="btn btn-primary">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="fav-card">
-          <div class="fav-card-top">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="fav-avatar av2">MG</div>
-              <div><div class="fav-name">María García</div><div class="fav-title">UX/UI Designer</div></div>
-            </div>
-            <div class="fav-match"><div class="fav-match-pct">88%</div><div class="fav-match-label">Match IA</div></div>
-          </div>
-          <div class="fav-meta"><span>📍 Córdoba</span><span>🏆 6 años</span><span>🎓 Diseño Gráfico</span></div>
-          <div class="fav-tags">
-            <span class="skill-tag match">Figma</span>
-            <span class="skill-tag match">UX Research</span>
-            <span class="skill-tag">Framer</span>
-          </div>
-          <div class="fav-card-footer">
-            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
-            <button class="btn btn-primary">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="fav-card">
-          <div class="fav-card-top">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="fav-avatar av3">LR</div>
-              <div><div class="fav-name">Lucas Rodríguez</div><div class="fav-title">Data Analyst</div></div>
-            </div>
-            <div class="fav-match"><div class="fav-match-pct">79%</div><div class="fav-match-label">Match IA</div></div>
-          </div>
-          <div class="fav-meta"><span>📍 Rosario</span><span>🏆 3 años</span><span>🎓 Lic. Matemática</span></div>
-          <div class="fav-tags">
-            <span class="skill-tag match">Python</span>
-            <span class="skill-tag match">SQL</span>
-            <span class="skill-tag">Power BI</span>
-          </div>
-          <div class="fav-card-footer">
-            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
-            <button class="btn btn-primary">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="fav-card">
-          <div class="fav-card-top">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="fav-avatar av4">SF</div>
-              <div><div class="fav-name">Sofía Fernández</div><div class="fav-title">Backend Developer</div></div>
-            </div>
-            <div class="fav-match"><div class="fav-match-pct">84%</div><div class="fav-match-label">Match IA</div></div>
-          </div>
-          <div class="fav-meta"><span>📍 Remoto</span><span>🏆 2 años</span><span>🎓 Ing. Informática</span></div>
-          <div class="fav-tags">
-            <span class="skill-tag match">NestJS</span>
-            <span class="skill-tag match">PostgreSQL</span>
-            <span class="skill-tag">Redis</span>
-          </div>
-          <div class="fav-card-footer">
-            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
-            <button class="btn btn-primary">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="fav-card">
-          <div class="fav-card-top">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="fav-avatar av5">DT</div>
-              <div><div class="fav-name">Diego Torres</div><div class="fav-title">DevOps Engineer</div></div>
-            </div>
-            <div class="fav-match"><div class="fav-match-pct">85%</div><div class="fav-match-label">Match IA</div></div>
-          </div>
-          <div class="fav-meta"><span>📍 Buenos Aires</span><span>🏆 5 años</span><span>🎓 Tec. Sistemas</span></div>
-          <div class="fav-tags">
-            <span class="skill-tag match">Docker</span>
-            <span class="skill-tag match">Kubernetes</span>
-            <span class="skill-tag">Terraform</span>
-          </div>
-          <div class="fav-card-footer">
-            <button class="btn btn-ghost" onclick="removeFav(this)">🗑 Quitar</button>
-            <button class="btn btn-primary">Ver perfil</button>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="empty-state" id="empty-state">
+      <div class="empty-state" id="empty-state" style="display:none;">
         <div class="empty-icon">⭐</div>
-        <div class="empty-title">Sin favoritos</div>
-        <div class="empty-desc">Guardá candidatos desde el buscador para verlos acá.</div>
+        <div class="empty-title">Sin favoritos guardados</div>
+        <div class="empty-desc">Guardá candidatos desde el buscador tocando el ☆ en cada tarjeta.</div>
         <a href="candidates.html" class="btn btn-primary">Buscar candidatos</a>
       </div>
 
     </div>
   </main>
 </div>
-<script src="../../js/profile.js"></script>
+
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content">Cargando...</div>
+  </div>
+</div>
+
+<div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:9999;min-width:260px;max-width:380px;"></div>
 
 <script type="module">
   import { logout } from '../../js/auth.js';
   window.cerrarSesion = function(event) {
-        if (event) event.preventDefault(); // Evita que salte de página de golpe    logout();
-        
-        // El navegador mostrará una alerta genérica preguntando esto:
-        const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
-        
-        if (seguro) {
-          logout(); // Si hace clic en "Aceptar", cierra la sesión
-        }
-      }
+    if (event) event.preventDefault();
+    const seguro = confirm("¿Estás seguro de que deseas cerrar sesión?");
+    if (seguro) logout();
+  }
+</script>
 
-  // Actualizar sidebar con datos reales del usuario
-</script>
 <script>
-  document.getElementById('search-input').addEventListener('input', function() {
-    let visible = 0;
-    document.querySelectorAll('.fav-card').forEach(c => {
-      const show = !this.value || c.textContent.toLowerCase().includes(this.value.toLowerCase());
-      c.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    document.getElementById('results-count').textContent = `${visible} favorito${visible !== 1 ? 's' : ''}`;
-    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  function showAlert(msg, type = 'success') {
+    const el = document.getElementById('global-alert');
+    el.className = `alert alert-${type} visible`;
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('visible'), 3500);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-profile').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modal-profile').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
   });
-  function removeFav(btn) {
-    const card = btn.closest('.fav-card');
-    card.style.transition = 'all 0.35s ease';
-    card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
+
+  function getFavKey() {
+    const u = JSON.parse(localStorage.getItem('talentai_user') || '{}');
+    return `favorites_${u.id || 'unknown'}`;
+  }
+  function getFavs() {
+    try { return JSON.parse(localStorage.getItem(getFavKey()) || '[]'); } catch { return []; }
+  }
+  function saveFavs(arr) {
+    localStorage.setItem(getFavKey(), JSON.stringify(arr));
+  }
+
+  window.removeFav = function(id) {
+    const card = document.getElementById(`fav-card-${id}`);
+    if (card) {
+      card.style.transition = 'all 0.3s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.95)';
+    }
     setTimeout(() => {
-      card.remove();
-      const v = document.querySelectorAll('.fav-card').length;
-      document.getElementById('results-count').textContent = `${v} favorito${v !== 1 ? 's' : ''}`;
-      document.getElementById('empty-state').style.display = v === 0 ? 'block' : 'none';
-    }, 350);
+      saveFavs(getFavs().filter(f => f.id !== id));
+      render();
+    }, 300);
+  };
+
+  window.clearAll = function() {
+    if (!confirm('¿Eliminar todos los favoritos?')) return;
+    saveFavs([]);
+    render();
+    showAlert('Lista de favoritos vaciada');
+  };
+
+  window.viewProfile = function(id) {
+    const cand = getFavs().find(f => f.id === id);
+    if (!cand) return;
+    const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || '—';
+    const iniciales = nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() : '?';
+    const skillsHtml = (cand.skills || []).map(s =>
+      `<span class="skill-tag" style="background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.25);color:var(--clr-accent);margin:2px;">${s}</span>`
+    ).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin skills registradas</span>';
+    const expHtml = (cand.experience || []).slice(0,3).map(e => `
+      <div class="pm-exp">
+        <div class="pm-exp-title">${e.title || '—'} — ${e.company || ''}</div>
+        <div class="pm-exp-sub">${e.startDate || ''} – ${e.current ? 'Presente' : (e.endDate || '')}</div>
+        ${e.description ? `<div style="font-size:0.8rem;color:var(--clr-muted);margin-top:3px;">${e.description}</div>` : ''}
+      </div>`).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin experiencia registrada</span>';
+    const eduHtml = (cand.education || []).slice(0,2).map(e => `
+      <div class="pm-exp">
+        <div class="pm-exp-title">${e.career || '—'}</div>
+        <div class="pm-exp-sub">${e.institution || ''} · ${e.status || ''}</div>
+      </div>`).join('') || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin educación registrada</span>';
+    const links = [
+      cand.linkedin  && `<a href="${cand.linkedin}"  target="_blank" class="pm-link">🔗 LinkedIn</a>`,
+      cand.github    && `<a href="${cand.github}"    target="_blank" class="pm-link">🐙 GitHub</a>`,
+      cand.portfolio && `<a href="${cand.portfolio}" target="_blank" class="pm-link">🌐 Portfolio</a>`,
+    ].filter(Boolean).join('');
+    document.getElementById('modal-content').innerHTML = `
+      <div class="pm-avatar">${iniciales}</div>
+      <div class="pm-name">${nombre}</div>
+      <div class="pm-title">${cand.jobTitle || 'Candidato'}</div>
+      <div class="pm-loc">${cand.location ? '📍 ' + cand.location : ''}</div>
+      ${cand.bio ? `<div class="pm-section">Sobre el candidato</div><div class="pm-bio">${cand.bio}</div>` : ''}
+      <div class="pm-section">Skills técnicas</div>
+      <div class="pm-tags">${skillsHtml}</div>
+      <div class="pm-section">Experiencia laboral</div>${expHtml}
+      <div class="pm-section">Educación</div>${eduHtml}
+      ${links ? `<div class="pm-section">Links</div><div style="margin-bottom:8px;">${links}</div>` : ''}
+      ${cand.cvUrl ? `<div class="pm-section">CV</div><a href="${cand.cvUrl}" download="${cand.cvFileName || 'cv.pdf'}" class="cv-btn">📄 Descargar CV — ${cand.cvFileName || 'curriculum.pdf'}</a>` : ''}
+      ${cand.cvAnalysis ? `<div class="pm-section">🤖 Análisis IA del CV</div>
+        <div style="font-size:0.82rem;color:var(--clr-muted);line-height:1.7;font-style:italic;padding:12px;background:rgba(201,168,76,0.06);border-left:2px solid rgba(201,168,76,0.3);border-radius:0 4px 4px 0;">${cand.cvAnalysis}</div>` : ''}
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--clr-border);display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="flex:1;color:var(--clr-error,#e05252);border-color:var(--clr-error,#e05252);"
+          onclick="removeFav('${id}');closeModal();">🗑 Quitar de favoritos</button>
+      </div>`;
+    document.getElementById('modal-profile').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function render() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    const sort  = document.getElementById('sort-select').value;
+    const allFavs = getFavs();
+    let favs = [...allFavs];
+
+    if (query) {
+      favs = favs.filter(f => {
+        const nombre = [f.firstName, f.lastName].filter(Boolean).join(' ').toLowerCase();
+        const title  = (f.jobTitle || '').toLowerCase();
+        const skills = (f.skills   || []).join(' ').toLowerCase();
+        return nombre.includes(query) || title.includes(query) || skills.includes(query);
+      });
+    }
+
+    if (sort === 'az') {
+      favs.sort((a,b) => [a.firstName,a.lastName].join(' ').localeCompare([b.firstName,b.lastName].join(' ')));
+    } else if (sort === 'skills') {
+      favs.sort((a,b) => (b.skills||[]).length - (a.skills||[]).length);
+    } else {
+      favs.sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
+    }
+
+    document.getElementById('stat-total').textContent = allFavs.length;
+    document.getElementById('stat-cv').textContent    = allFavs.filter(f => f.cvUrl).length;
+    document.getElementById('stat-ia').textContent    = allFavs.filter(f => f.cvAnalysis).length;
+
+    const grid     = document.getElementById('fav-grid');
+    const empty    = document.getElementById('empty-state');
+    const countEl  = document.getElementById('results-count');
+    const clearBtn = document.getElementById('clear-all-btn');
+
+    countEl.textContent = `${favs.length} favorito${favs.length !== 1 ? 's' : ''}`;
+    clearBtn.style.display = allFavs.length ? '' : 'none';
+
+    if (!favs.length) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    grid.innerHTML = favs.map((f, idx) => {
+      const nombre   = [f.firstName, f.lastName].filter(Boolean).join(' ') || '—';
+      const iniciales = nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() : '?';
+      const avClass  = `av-${idx % 5}`;
+      const skills   = (f.skills || []).slice(0, 5);
+      const savedDate = f.savedAt ? new Date(f.savedAt).toLocaleDateString('es-AR', {day:'2-digit',month:'short'}) : '';
+      return `
+        <div class="fav-card" id="fav-card-${f.id}">
+          <div class="fav-card-top">
+            <div style="display:flex;gap:12px;align-items:center;flex:1;min-width:0;">
+              <div class="fav-avatar ${avClass}">${iniciales}</div>
+              <div style="min-width:0;">
+                <div class="fav-name">${nombre}</div>
+                <div class="fav-title">${f.jobTitle || 'Candidato'}</div>
+              </div>
+            </div>
+            <div class="fav-saved">${savedDate ? '📅 ' + savedDate : ''}</div>
+          </div>
+          <div class="fav-meta">
+            ${f.location ? `<span>📍 ${f.location}</span>` : ''}
+            ${(f.experience||[]).length ? `<span>🏆 ${f.experience.length} exp.</span>` : ''}
+            ${(f.education||[]).length  ? `<span>🎓 ${f.education[0]?.career || ''}</span>` : ''}
+            ${f.cvUrl      ? '<span style="color:var(--clr-success);">📄 CV</span>' : ''}
+            ${f.cvAnalysis ? '<span style="color:var(--clr-accent);">🤖 IA</span>' : ''}
+          </div>
+          ${skills.length ? `<div class="fav-tags">${skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>` : ''}
+          <div class="fav-card-footer">
+            <button class="btn btn-ghost" style="color:var(--clr-error,#e05252);" onclick="removeFav('${f.id}')">🗑 Quitar</button>
+            <button class="btn btn-primary" onclick="viewProfile('${f.id}')">👤 Ver perfil</button>
+          </div>
+        </div>`;
+    }).join('');
   }
-  function addList() {
-    const name = prompt('Nombre de la nueva lista:');
-    if (name && name.trim()) alert(`Lista "${name}" creada.`);
-  }
+
+  document.getElementById('search-input').addEventListener('input', render);
+  document.getElementById('sort-select').addEventListener('change', render);
+  render();
 </script>
-  
-  <script src="../../js/sidebar-toggle.js"></script>
+<script src="../../js/sidebar-toggle.js"></script>
 </body>
 </html>
