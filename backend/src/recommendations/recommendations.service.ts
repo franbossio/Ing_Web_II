@@ -19,6 +19,15 @@ export interface RecommendationResult {
   reason:    string;
 }
 
+/** Elimina saltos de línea, tabs y espacios múltiples de un string */
+function sanitize(str: string, maxLen = 500): string {
+  return (str || '')
+    .replace(/[\r\n\t]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLen);
+}
+
 @Injectable()
 export class RecommendationsService {
   constructor(
@@ -43,24 +52,22 @@ export class RecommendationsService {
 
     if (!jobs.length) return [];
 
-    // Mandar al webhook en el formato que espera el Tools module de Make
-    // candidate.skills = array, candidate.jobTitle = string
-    // jobs = array de objetos con jobId, title, skills
+    // ── Payload limpio: sin \n ni \t en ningún string ──────────────────
     const payload = {
       candidate: {
-        skills:   candidateSkills,
-        jobTitle: candidateJobTitle || '',
-        bio:      (candidateBio || '').slice(0, 200),
+        skills:   candidateSkills.map(s => sanitize(s, 100)),
+        jobTitle: sanitize(candidateJobTitle || '', 150),
+        bio:      sanitize(candidateBio || '', 200),
       },
       jobs: jobs.map(j => ({
         jobId:  j.id,
-        title:  j.title,
-        skills: j.skills || [],
+        title:  sanitize(j.title, 200),
+        skills: (j.skills || []).map(s => sanitize(s, 100)),
       })),
     };
 
     console.log('=== CALLING MAKE:', webhookUrl.slice(0, 50));
-    console.log('=== CANDIDATE SKILLS:', candidateSkills);
+    console.log('=== CANDIDATE SKILLS:', payload.candidate.skills);
     console.log('=== JOBS COUNT:', jobs.length);
 
     let response: Response;
@@ -68,7 +75,7 @@ export class RecommendationsService {
       response = await fetch(webhookUrl, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(payload),
+        body:    JSON.stringify(payload),   // ahora sin \n sueltos
       });
     } catch (e: any) {
       throw new BadRequestException('No se pudo conectar con Make: ' + e.message);
@@ -82,26 +89,33 @@ export class RecommendationsService {
       throw new BadRequestException(`Make error ${response.status}: ${responseText.slice(0, 100)}`);
     }
 
-    // Parsear
+    // ── Parsear respuesta de Make/OpenAI ───────────────────────────────
     let recs: any[] = [];
     try {
-      const clean = responseText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+      // Quitar posibles bloques ```json ... ```
+      const clean = responseText
+        .replace(/```json\s*/gi, '')
+        .replace(/```\s*/g, '')
+        .trim();
+
       let parsed: any;
       try   { parsed = JSON.parse(clean); }
       catch {
         const m = clean.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
         parsed = m ? JSON.parse(m[0]) : [];
       }
+
       recs = Array.isArray(parsed)
         ? parsed
         : (parsed.recommendations || parsed.data || []);
+
       console.log('=== RECS COUNT:', recs.length);
     } catch (e: any) {
       console.log('=== PARSE ERROR:', e.message);
-      throw new BadRequestException('Error al parsear: ' + e.message);
+      throw new BadRequestException('Error al parsear respuesta de Make: ' + e.message);
     }
 
-    // Cruzar con DB
+    // ── Cruzar con DB y armar resultado final ──────────────────────────
     const jobById = new Map(jobs.map(j => [j.id, j]));
     const results: RecommendationResult[] = [];
 
@@ -121,7 +135,7 @@ export class RecommendationsService {
         currency:  job.currency  || null,
         skills:    job.skills    || [],
         matchPct:  Number(rec.matchPct || 0),
-        reason:    rec.reason || 'Compatible con tu perfil',
+        reason:    sanitize(rec.reason || 'Compatible con tu perfil', 300),
       });
 
       if (results.length === 3) break;
