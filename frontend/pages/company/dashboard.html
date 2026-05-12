@@ -50,32 +50,32 @@
             <span class="stat-card-label">Ofertas activas</span>
             <span class="stat-card-icon">📋</span>
           </div>
-          <div class="stat-card-value">12</div>
-          <div class="stat-card-change change-up">↑ 3 este mes</div>
+          <div class="stat-card-value" id="stat-jobs">—</div>
+          <div class="stat-card-change" id="stat-jobs-sub">Cargando...</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header">
             <span class="stat-card-label">Postulaciones</span>
             <span class="stat-card-icon">📬</span>
           </div>
-          <div class="stat-card-value">148</div>
-          <div class="stat-card-change change-up">↑ 24 esta semana</div>
+          <div class="stat-card-value" id="stat-apps">—</div>
+          <div class="stat-card-change" id="stat-apps-sub">Cargando...</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header">
             <span class="stat-card-label">Candidatos revisados</span>
             <span class="stat-card-icon">👁</span>
           </div>
-          <div class="stat-card-value">63</div>
-          <div class="stat-card-change">De 148 totales</div>
+          <div class="stat-card-value" id="stat-reviewed">—</div>
+          <div class="stat-card-change" id="stat-reviewed-sub">Cargando...</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header">
             <span class="stat-card-label">Entrevistas agendadas</span>
             <span class="stat-card-icon">📅</span>
           </div>
-          <div class="stat-card-value">7</div>
-          <div class="stat-card-change change-up">↑ 2 nuevas</div>
+          <div class="stat-card-value" id="stat-interviews">—</div>
+          <div class="stat-card-change" id="stat-interviews-sub">Cargando...</div>
         </div>
       </div>
 
@@ -92,80 +92,12 @@
             <a href="post-job.html" class="icon-btn">➕ Nueva</a>
           </div>
           <div class="panel-body" style="padding:16px;">
-            <div class="job-list">
-
-              <div class="job-row">
-                <div class="job-row-left">
-                  <div class="job-row-icon">💻</div>
-                  <div>
-                    <div class="job-row-title">Desarrollador Full Stack</div>
-                    <div class="job-row-meta">
-                      <span>🏠 Remoto</span>
-                      <span>📅 Hace 2 días</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="job-row-right">
-                  <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
-                  <span style="font-size:0.8rem;color:var(--clr-muted);">34 postulantes</span>
-                </div>
-              </div>
-
-              <div class="job-row">
-                <div class="job-row-left">
-                  <div class="job-row-icon">🎨</div>
-                  <div>
-                    <div class="job-row-title">Diseñador UX/UI</div>
-                    <div class="job-row-meta">
-                      <span>🏢 Presencial</span>
-                      <span>📅 Hace 5 días</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="job-row-right">
-                  <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
-                  <span style="font-size:0.8rem;color:var(--clr-muted);">21 postulantes</span>
-                </div>
-              </div>
-
-              <div class="job-row">
-                <div class="job-row-left">
-                  <div class="job-row-icon">📊</div>
-                  <div>
-                    <div class="job-row-title">Data Analyst</div>
-                    <div class="job-row-meta">
-                      <span>🔀 Híbrido</span>
-                      <span>📅 Hace 1 semana</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="job-row-right">
-                  <span class="badge badge-gold"><span class="badge-dot"></span> En revisión</span>
-                  <span style="font-size:0.8rem;color:var(--clr-muted);">18 postulantes</span>
-                </div>
-              </div>
-
-              <div class="job-row">
-                <div class="job-row-left">
-                  <div class="job-row-icon">🔧</div>
-                  <div>
-                    <div class="job-row-title">DevOps Engineer</div>
-                    <div class="job-row-meta">
-                      <span>🏠 Remoto</span>
-                      <span>📅 Hace 2 semanas</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="job-row-right">
-                  <span class="badge badge-gray">Pausada</span>
-                  <span style="font-size:0.8rem;color:var(--clr-muted);">9 postulantes</span>
-                </div>
-              </div>
-
+            <div class="job-list" id="jobs-list">
+              <div style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando ofertas...</div>
             </div>
           </div>
           <div class="panel-footer">
-            <a href="#">Ver todas las ofertas →</a>
+            <a href="my-jobs.html">Ver todas las ofertas →</a>
           </div>
         </div>
 
@@ -178,49 +110,8 @@
             </div>
           </div>
           <div class="panel-body" style="padding:16px 24px;">
-            <div class="activity-list">
-              <div class="activity-item">
-                <div class="activity-icon">📄</div>
-                <div class="activity-text">
-                  <strong>Lucía Fernández</strong> se postuló a <strong>Desarrollador Full Stack</strong>
-                </div>
-                <div class="activity-time">Hace 10 min</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">🤖</div>
-                <div class="activity-text">
-                  IA analizó el CV de <strong>Martín López</strong> — Score: <strong style="color:var(--clr-accent)">87%</strong>
-                </div>
-                <div class="activity-time">Hace 32 min</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">⭐</div>
-                <div class="activity-text">
-                  Guardaste a <strong>Ana Gómez</strong> en favoritos
-                </div>
-                <div class="activity-time">Hace 1 h</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">📬</div>
-                <div class="activity-text">
-                  <strong>Carlos Ruiz</strong> se postuló a <strong>Diseñador UX/UI</strong>
-                </div>
-                <div class="activity-time">Hace 2 h</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">📋</div>
-                <div class="activity-text">
-                  Publicaste la oferta <strong>Data Analyst</strong>
-                </div>
-                <div class="activity-time">Hace 1 semana</div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">✅</div>
-                <div class="activity-text">
-                  Agendaste entrevista con <strong>Diego Torres</strong>
-                </div>
-                <div class="activity-time">Hace 1 semana</div>
-              </div>
+            <div class="activity-list" id="activity-list">
+              <div style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando actividad...</div>
             </div>
           </div>
         </div>
@@ -249,88 +140,8 @@
                   <th>Acción</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="cell-candidate">
-                      <div class="cand-avatar">JP</div>
-                      <div>
-                        <div class="cand-name">Juan Pérez</div>
-                        <div class="cand-email">juan@email.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span style="font-size:0.85rem;">Full Stack Dev</span></td>
-                  <td>
-                    <div class="match-cell">
-                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:87%"></div></div>
-                      <span class="match-pct">87%</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="tag-list">
-                      <span class="skill-tag highlight">React</span>
-                      <span class="skill-tag highlight">Node.js</span>
-                      <span class="skill-tag">PostgreSQL</span>
-                    </div>
-                  </td>
-                  <td><span class="badge badge-gold">Nuevo</span></td>
-                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="cell-candidate">
-                      <div class="cand-avatar alt">MG</div>
-                      <div>
-                        <div class="cand-name">María García</div>
-                        <div class="cand-email">mgarcia@email.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span style="font-size:0.85rem;">UX/UI Designer</span></td>
-                  <td>
-                    <div class="match-cell">
-                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:92%"></div></div>
-                      <span class="match-pct">92%</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="tag-list">
-                      <span class="skill-tag highlight">Figma</span>
-                      <span class="skill-tag highlight">UX Research</span>
-                      <span class="skill-tag">Prototyping</span>
-                    </div>
-                  </td>
-                  <td><span class="badge badge-green">Revisado</span></td>
-                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="cell-candidate">
-                      <div class="cand-avatar alt2">LR</div>
-                      <div>
-                        <div class="cand-name">Lucas Rodríguez</div>
-                        <div class="cand-email">lrodriguez@email.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span style="font-size:0.85rem;">Data Analyst</span></td>
-                  <td>
-                    <div class="match-cell">
-                      <div class="match-bar-bg"><div class="match-bar-fill" style="width:79%"></div></div>
-                      <span class="match-pct">79%</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="tag-list">
-                      <span class="skill-tag highlight">Python</span>
-                      <span class="skill-tag highlight">SQL</span>
-                      <span class="skill-tag">Power BI</span>
-                    </div>
-                  </td>
-                  <td><span class="badge badge-gold">Nuevo</span></td>
-                  <td><a href="#" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
-                </tr>
+              <tbody id="ia-candidates-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando candidatos...</td></tr>
               </tbody>
             </table>
           </div>
@@ -362,6 +173,254 @@
 
   // Actualizar hero y ring con datos reales del usuario
   initDashboard();
+
+  // ── Dashboard dinámico ───────────────────────────────────────────────────────
+  const API = 'https://ing-web-ii.onrender.com/api';
+
+  function getToken() {
+    return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  }
+
+  function authHeaders() {
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` };
+  }
+
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1)  return 'Hace un momento';
+    if (m < 60) return `Hace ${m} min`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `Hace ${h} h`;
+    const d = Math.floor(h / 24);
+    if (d < 7)  return `Hace ${d} día${d > 1 ? 's' : ''}`;
+    const w = Math.floor(d / 7);
+    return `Hace ${w} semana${w > 1 ? 's' : ''}`;
+  }
+
+  function modalityIcon(mod) {
+    if (!mod) return '📍';
+    const m = mod.toLowerCase();
+    if (m.includes('remoto'))    return '🏠';
+    if (m.includes('presencial')) return '🏢';
+    return '🔀';
+  }
+
+  function jobIcon(title) {
+    if (!title) return '💼';
+    const t = title.toLowerCase();
+    if (t.includes('design') || t.includes('ux') || t.includes('ui')) return '🎨';
+    if (t.includes('data') || t.includes('analyst'))                   return '📊';
+    if (t.includes('devops') || t.includes('infra'))                   return '🔧';
+    if (t.includes('mobile') || t.includes('android') || t.includes('ios')) return '📱';
+    if (t.includes('qa') || t.includes('test'))                        return '🧪';
+    if (t.includes('product') || t.includes('pm'))                     return '📋';
+    return '💻';
+  }
+
+  function avatarInitials(name, email) {
+    if (name && name.trim()) {
+      const parts = name.trim().split(' ');
+      return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+    }
+    return (email?.[0] || '?').toUpperCase();
+  }
+
+  function statusBadge(status) {
+    const map = {
+      pendiente:  '<span class="badge badge-gold">Nuevo</span>',
+      revision:   '<span class="badge badge-green">Revisado</span>',
+      entrevista: '<span class="badge badge-green"><span class="badge-dot"></span> Entrevista</span>',
+      rechazado:  '<span class="badge badge-gray">Rechazado</span>',
+      aceptado:   '<span class="badge badge-green">Aceptado</span>',
+    };
+    return map[status] || '<span class="badge badge-gold">Nuevo</span>';
+  }
+
+  // ── Render helpers ───────────────────────────────────────────────────────────
+
+  function renderStats(jobs, apps) {
+    const activeJobs    = jobs.filter(j => j.isActive !== false).length;
+    const totalApps     = apps.length;
+    const reviewed      = apps.filter(a => a.status && a.status !== 'pendiente').length;
+    const interviews    = apps.filter(a => a.status === 'entrevista').length;
+
+    document.getElementById('stat-jobs').textContent        = activeJobs;
+    document.getElementById('stat-jobs-sub').textContent    = `${jobs.length} oferta${jobs.length !== 1 ? 's' : ''} en total`;
+    document.getElementById('stat-apps').textContent        = totalApps;
+    document.getElementById('stat-apps-sub').textContent    = totalApps > 0 ? `De ${jobs.length} oferta${jobs.length !== 1 ? 's' : ''}` : 'Sin postulaciones aún';
+    document.getElementById('stat-reviewed').textContent    = reviewed;
+    document.getElementById('stat-reviewed-sub').textContent = `De ${totalApps} totales`;
+    document.getElementById('stat-interviews').textContent  = interviews;
+    document.getElementById('stat-interviews-sub').textContent = interviews > 0 ? 'Agendadas' : 'Sin entrevistas aún';
+  }
+
+  function renderJobs(jobs) {
+    const list = document.getElementById('jobs-list');
+    const recent = jobs.slice(0, 4);
+
+    if (recent.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--clr-muted);">No publicaste ofertas aún. <a href="post-job.html">Crear primera oferta →</a></div>';
+      return;
+    }
+
+    list.innerHTML = recent.map(job => {
+      const appCount = job.applicationsCount ?? 0;
+      const isActive = job.isActive !== false;
+      const badge = isActive
+        ? '<span class="badge badge-green"><span class="badge-dot"></span> Activa</span>'
+        : '<span class="badge badge-gray">Pausada</span>';
+
+      return `
+        <div class="job-row">
+          <div class="job-row-left">
+            <div class="job-row-icon">${jobIcon(job.title)}</div>
+            <div>
+              <div class="job-row-title">${job.title || 'Sin título'}</div>
+              <div class="job-row-meta">
+                <span>${modalityIcon(job.modality)} ${job.modality || 'No especificado'}</span>
+                <span>📅 ${timeAgo(job.createdAt)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="job-row-right">
+            ${badge}
+            <span style="font-size:0.8rem;color:var(--clr-muted);">${appCount} postulante${appCount !== 1 ? 's' : ''}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderActivity(apps, jobs) {
+    const list = document.getElementById('activity-list');
+
+    if (apps.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--clr-muted);">Sin actividad reciente.</div>';
+      return;
+    }
+
+    // Ordenar por fecha descendente y tomar las últimas 6
+    const sorted = [...apps].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6);
+
+    list.innerHTML = sorted.map(app => {
+      const candidateName = app.candidate
+        ? [app.candidate.firstName, app.candidate.lastName].filter(Boolean).join(' ') || app.candidate.email
+        : 'Un candidato';
+      const jobTitle = app.job?.title || 'una oferta';
+
+      return `
+        <div class="activity-item">
+          <div class="activity-icon">📄</div>
+          <div class="activity-text">
+            <strong>${candidateName}</strong> se postuló a <strong>${jobTitle}</strong>
+          </div>
+          <div class="activity-time">${timeAgo(app.createdAt)}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderIACandidates(apps) {
+    const tbody = document.getElementById('ia-candidates-tbody');
+
+    // Tomamos hasta 5 postulaciones, priorizando las más recientes
+    const recent = [...apps]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5);
+
+    if (recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--clr-muted);">No hay postulaciones aún.</td></tr>';
+      return;
+    }
+
+    const altClasses = ['', 'alt', 'alt2'];
+
+    tbody.innerHTML = recent.map((app, i) => {
+      const cand = app.candidate || {};
+      const name = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email || 'Candidato';
+      const email = cand.email || '';
+      const initials = avatarInitials(name, email);
+      const jobTitle = app.job?.title || '—';
+      const skills = (cand.skills || []).slice(0, 3);
+      const altClass = altClasses[i % 3];
+
+      // Match real si existe en cvAnalysis, si no mostramos N/A
+      const matchPct = app.matchScore ?? cand.cvAnalysis?.score ?? null;
+      const matchHtml = matchPct !== null
+        ? `<div class="match-cell">
+            <div class="match-bar-bg"><div class="match-bar-fill" style="width:${matchPct}%"></div></div>
+            <span class="match-pct">${matchPct}%</span>
+           </div>`
+        : `<span style="color:var(--clr-muted);font-size:0.8rem;">Sin análisis</span>`;
+
+      return `
+        <tr>
+          <td>
+            <div class="cell-candidate">
+              <div class="cand-avatar ${altClass}">${initials}</div>
+              <div>
+                <div class="cand-name">${name}</div>
+                <div class="cand-email">${email}</div>
+              </div>
+            </div>
+          </td>
+          <td><span style="font-size:0.85rem;">${jobTitle}</span></td>
+          <td>${matchHtml}</td>
+          <td>
+            <div class="tag-list">
+              ${skills.length > 0
+                ? skills.map((s, si) => `<span class="skill-tag ${si < 2 ? 'highlight' : ''}">${s}</span>`).join('')
+                : '<span style="color:var(--clr-muted);font-size:0.8rem;">Sin habilidades</span>'}
+            </div>
+          </td>
+          <td>${statusBadge(app.status)}</td>
+          <td><a href="candidates.html" class="icon-btn" style="font-size:0.8rem;">Ver perfil</a></td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ── Carga principal ──────────────────────────────────────────────────────────
+  async function loadDashboardData() {
+    try {
+      const [jobsRes, appsRes] = await Promise.all([
+        fetch(`${API}/jobs/my`,             { headers: authHeaders() }),
+        fetch(`${API}/applications/company`, { headers: authHeaders() }),
+      ]);
+
+      if (!jobsRes.ok || !appsRes.ok) throw new Error('Error al cargar datos');
+
+      const jobs = await jobsRes.json();
+      const apps = await appsRes.json();
+
+      // Enriquecer jobs con conteo de postulaciones
+      const appsByJob = {};
+      apps.forEach(a => {
+        const jid = a.job?.id || a.jobId;
+        if (jid) appsByJob[jid] = (appsByJob[jid] || 0) + 1;
+      });
+      jobs.forEach(j => { j.applicationsCount = appsByJob[j.id] || 0; });
+
+      renderStats(jobs, apps);
+      renderJobs(jobs);
+      renderActivity(apps, jobs);
+      renderIACandidates(apps);
+
+    } catch (err) {
+      console.error('[Dashboard]', err);
+      const errMsg = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">No se pudieron cargar los datos. Verificá tu conexión.</div>';
+      ['jobs-list', 'activity-list'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = errMsg;
+      });
+      const tbody = document.getElementById('ia-candidates-tbody');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--clr-muted);">No se pudieron cargar los datos.</td></tr>`;
+      ['stat-jobs','stat-apps','stat-reviewed','stat-interviews'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '—';
+      });
+    }
+  }
+
+  loadDashboardData();
 </script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>

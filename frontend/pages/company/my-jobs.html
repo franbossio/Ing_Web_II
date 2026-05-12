@@ -103,22 +103,22 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-card-header"><span class="stat-card-label">Total publicadas</span><span class="stat-card-icon">📋</span></div>
-          <div class="stat-card-value">12</div>
+          <div class="stat-card-value" id="stat-total">—</div>
           <div class="stat-card-sub">Historial completo</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header"><span class="stat-card-label">Activas</span><span class="stat-card-icon">✅</span></div>
-          <div class="stat-card-value" style="color:var(--clr-success);">7</div>
+          <div class="stat-card-value" id="stat-active" style="color:var(--clr-success);">—</div>
           <div class="stat-card-sub">Recibiendo postulaciones</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-header"><span class="stat-card-label">Pausadas</span><span class="stat-card-icon">⏸</span></div>
-          <div class="stat-card-value" style="color:var(--clr-accent);">3</div>
-          <div class="stat-card-sub">Sin recibir postulaciones</div>
+          <div class="stat-card-header"><span class="stat-card-label">Postulaciones</span><span class="stat-card-icon">📬</span></div>
+          <div class="stat-card-value" id="stat-apps" style="color:var(--clr-accent);">—</div>
+          <div class="stat-card-sub">Total recibidas</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-header"><span class="stat-card-label">Cerradas</span><span class="stat-card-icon">🔒</span></div>
-          <div class="stat-card-value" style="color:var(--clr-muted);">2</div>
+          <div class="stat-card-value" id="stat-closed" style="color:var(--clr-muted);">—</div>
           <div class="stat-card-sub">Posición cubierta</div>
         </div>
       </div>
@@ -142,232 +142,7 @@
       </div>
 
       <div class="jobs-grid" id="jobs-grid">
-
-        <!-- Job 1 — Activa -->
-        <div class="job-card" data-status="active">
-          <div class="job-card-head">
-            <div class="job-card-top">
-              <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div class="job-icon">💻</div>
-                <div>
-                  <div class="job-title">Desarrollador Full Stack</div>
-                  <div class="job-sub">Publicada hace 2 días</div>
-                </div>
-              </div>
-              <button class="status-toggle active" onclick="cycleStatus(this)">
-                <span class="status-dot"></span> Activa
-              </button>
-            </div>
-            <div class="job-card-meta">
-              <span>🏠 Remoto</span>
-              <span>⏱ Full-time</span>
-              <span>💰 ARS 900k–1.2M</span>
-              <span>📅 Vence en 28 días</span>
-            </div>
-          </div>
-          <div class="job-card-stats">
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-accent);">34</div>
-              <div class="job-stat-label">Postulantes</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:#7aaee8;">142</div>
-              <div class="job-stat-label">Vistas</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-success);">87%</div>
-              <div class="job-stat-label">Match avg</div>
-            </div>
-          </div>
-          <div class="job-card-footer">
-            <span class="job-card-date">Publicada el 27 mar 2026</span>
-            <div style="display:flex;gap:6px;">
-              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
-              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Job 2 — Activa -->
-        <div class="job-card" data-status="active">
-          <div class="job-card-head">
-            <div class="job-card-top">
-              <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div class="job-icon">🎨</div>
-                <div>
-                  <div class="job-title">Diseñador UX/UI</div>
-                  <div class="job-sub">Publicada hace 5 días</div>
-                </div>
-              </div>
-              <button class="status-toggle active" onclick="cycleStatus(this)">
-                <span class="status-dot"></span> Activa
-              </button>
-            </div>
-            <div class="job-card-meta">
-              <span>🏢 Presencial</span>
-              <span>⏱ Full-time</span>
-              <span>💰 ARS 700k–950k</span>
-              <span>📅 Vence en 25 días</span>
-            </div>
-          </div>
-          <div class="job-card-stats">
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-accent);">21</div>
-              <div class="job-stat-label">Postulantes</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:#7aaee8;">98</div>
-              <div class="job-stat-label">Vistas</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-success);">91%</div>
-              <div class="job-stat-label">Match avg</div>
-            </div>
-          </div>
-          <div class="job-card-footer">
-            <span class="job-card-date">Publicada el 24 mar 2026</span>
-            <div style="display:flex;gap:6px;">
-              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
-              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Job 3 — Activa -->
-        <div class="job-card" data-status="active">
-          <div class="job-card-head">
-            <div class="job-card-top">
-              <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div class="job-icon">📊</div>
-                <div>
-                  <div class="job-title">Data Analyst</div>
-                  <div class="job-sub">Publicada hace 1 semana</div>
-                </div>
-              </div>
-              <button class="status-toggle active" onclick="cycleStatus(this)">
-                <span class="status-dot"></span> Activa
-              </button>
-            </div>
-            <div class="job-card-meta">
-              <span>🔀 Híbrido</span>
-              <span>⏱ Full-time</span>
-              <span>💰 ARS 800k–1.1M</span>
-              <span>📅 Vence en 21 días</span>
-            </div>
-          </div>
-          <div class="job-card-stats">
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-accent);">18</div>
-              <div class="job-stat-label">Postulantes</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:#7aaee8;">74</div>
-              <div class="job-stat-label">Vistas</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-success);">79%</div>
-              <div class="job-stat-label">Match avg</div>
-            </div>
-          </div>
-          <div class="job-card-footer">
-            <span class="job-card-date">Publicada el 22 mar 2026</span>
-            <div style="display:flex;gap:6px;">
-              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
-              <a href="applications.html" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Job 4 — Pausada -->
-        <div class="job-card" data-status="paused" style="opacity:0.8;">
-          <div class="job-card-head">
-            <div class="job-card-top">
-              <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div class="job-icon">🔧</div>
-                <div>
-                  <div class="job-title">DevOps Engineer</div>
-                  <div class="job-sub">Publicada hace 2 semanas</div>
-                </div>
-              </div>
-              <button class="status-toggle paused" onclick="cycleStatus(this)">
-                <span class="status-dot"></span> Pausada
-              </button>
-            </div>
-            <div class="job-card-meta">
-              <span>🏠 Remoto</span>
-              <span>⏱ Full-time</span>
-              <span>💰 USD 2k–3k</span>
-              <span>📅 Vence en 14 días</span>
-            </div>
-          </div>
-          <div class="job-card-stats">
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-accent);">9</div>
-              <div class="job-stat-label">Postulantes</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:#7aaee8;">52</div>
-              <div class="job-stat-label">Vistas</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num" style="color:var(--clr-success);">82%</div>
-              <div class="job-stat-label">Match avg</div>
-            </div>
-          </div>
-          <div class="job-card-footer">
-            <span class="job-card-date">Publicada el 15 mar 2026</span>
-            <div style="display:flex;gap:6px;">
-              <button class="icon-btn" style="font-size:0.78rem;">✏️ Editar</button>
-              <a href="applications.html" class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;">Ver postulantes</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Job 5 — Cerrada -->
-        <div class="job-card" data-status="closed" style="opacity:0.6;">
-          <div class="job-card-head">
-            <div class="job-card-top">
-              <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div class="job-icon">🤝</div>
-                <div>
-                  <div class="job-title">Product Manager</div>
-                  <div class="job-sub">Publicada hace 1 mes</div>
-                </div>
-              </div>
-              <button class="status-toggle closed" onclick="cycleStatus(this)">
-                <span class="status-dot"></span> Cerrada
-              </button>
-            </div>
-            <div class="job-card-meta">
-              <span>🔀 Híbrido</span>
-              <span>⏱ Full-time</span>
-              <span>💰 USD 3k–4k</span>
-              <span style="color:var(--clr-success);">✅ Posición cubierta</span>
-            </div>
-          </div>
-          <div class="job-card-stats">
-            <div class="job-stat">
-              <div class="job-stat-num">66</div>
-              <div class="job-stat-label">Postulantes</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num">312</div>
-              <div class="job-stat-label">Vistas</div>
-            </div>
-            <div class="job-stat">
-              <div class="job-stat-num">88%</div>
-              <div class="job-stat-label">Match avg</div>
-            </div>
-          </div>
-          <div class="job-card-footer">
-            <span class="job-card-date">Cerrada el 10 mar 2026</span>
-            <div style="display:flex;gap:6px;">
-              <button class="icon-btn" style="font-size:0.78rem;opacity:0.6;" disabled>✏️ Editar</button>
-              <a href="applications.html" class="btn btn-ghost" style="padding:7px 14px;font-size:0.78rem;">Ver historial</a>
-            </div>
-          </div>
-        </div>
-
+        <!-- cargado dinámicamente -->
       </div>
 
       <div class="empty-state" id="empty-state">
@@ -381,16 +156,123 @@
   </main>
 </div>
 <script>
-  // Filtros — se reconectan después de cargar datos
+  const API = 'https://ing-web-ii.onrender.com/api';
+  function getToken() { return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token'); }
+  function authHeaders() { return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }; }
+
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 60)  return `Hace ${m || 1} min`;
+    const h = Math.floor(m / 60);
+    if (h < 24)  return `Hace ${h} h`;
+    const d = Math.floor(h / 24);
+    if (d < 7)   return `Hace ${d} día${d > 1 ? 's' : ''}`;
+    const w = Math.floor(d / 7);
+    if (w < 5)   return `Hace ${w} semana${w > 1 ? 's' : ''}`;
+    const mo = Math.floor(d / 30);
+    return `Hace ${mo} mes${mo > 1 ? 'es' : ''}`;
+  }
+
+  function jobIcon(title) {
+    if (!title) return '💼';
+    const t = title.toLowerCase();
+    if (t.includes('design') || t.includes('ux') || t.includes('ui')) return '🎨';
+    if (t.includes('data') || t.includes('analyst'))                   return '📊';
+    if (t.includes('devops') || t.includes('infra'))                   return '🔧';
+    if (t.includes('mobile') || t.includes('android') || t.includes('ios')) return '📱';
+    if (t.includes('qa') || t.includes('test'))                        return '🧪';
+    if (t.includes('product') || t.includes('pm'))                     return '📋';
+    if (t.includes('marketing'))                                        return '📣';
+    return '💻';
+  }
+
+  function modalityIcon(mod) {
+    if (!mod) return '📍';
+    const m = mod.toLowerCase();
+    if (m.includes('remoto'))     return '🏠';
+    if (m.includes('presencial')) return '🏢';
+    return '🔀';
+  }
+
+  function renderStats(jobs, totalApps) {
+    document.getElementById('stat-total').textContent  = jobs.length;
+    document.getElementById('stat-active').textContent = jobs.filter(j => j.isActive !== false).length;
+    document.getElementById('stat-apps').textContent   = totalApps;
+    document.getElementById('stat-closed').textContent = jobs.filter(j => j.isActive === false).length;
+  }
+
+  function renderJob(job, appCount) {
+    const isActive  = job.isActive !== false;
+    const statusKey = isActive ? 'active' : 'closed';
+    const statusLabel = isActive ? 'Activa' : 'Cerrada';
+    const statusClass = isActive ? 'active' : 'closed';
+    const opacity   = isActive ? '' : 'style="opacity:0.65;"';
+    const date      = new Date(job.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+    const skills    = (job.skills || []).slice(0, 4)
+                        .map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+    const salary = job.salaryMin
+      ? `${job.currency || 'ARS'} ${Number(job.salaryMin).toLocaleString('es-AR')}${job.salaryMax ? ' – ' + Number(job.salaryMax).toLocaleString('es-AR') : ''}`
+      : null;
+
+    return `
+    <div class="job-card" data-status="${statusKey}" data-job-id="${job.id}" ${opacity}>
+      <div class="job-card-head">
+        <div class="job-card-top">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div class="job-icon">${jobIcon(job.title)}</div>
+            <div>
+              <div class="job-title">${job.title || 'Sin título'}</div>
+              <div class="job-sub">Publicada ${timeAgo(job.createdAt)}</div>
+            </div>
+          </div>
+          <button class="status-toggle ${statusClass}" onclick="toggleJobStatus('${job.id}', this)">
+            <span class="status-dot"></span> ${statusLabel}
+          </button>
+        </div>
+        <div class="job-card-meta">
+          <span>${modalityIcon(job.modality)} ${job.modality || 'No especificado'}</span>
+          ${job.contractType ? `<span>⏱ ${job.contractType}</span>` : ''}
+          ${job.experienceRequired ? `<span>🏆 ${job.experienceRequired}</span>` : ''}
+          ${salary ? `<span>💰 ${salary}</span>` : ''}
+        </div>
+        ${skills ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">${skills}</div>` : ''}
+      </div>
+      <div class="job-card-stats">
+        <div class="job-stat">
+          <div class="job-stat-num" style="color:var(--clr-accent);">${appCount}</div>
+          <div class="job-stat-label">Postulantes</div>
+        </div>
+        <div class="job-stat">
+          <div class="job-stat-num" style="color:#7aaee8;">${job.location || '—'}</div>
+          <div class="job-stat-label">Ubicación</div>
+        </div>
+        <div class="job-stat">
+          <div class="job-stat-num" style="font-size:0.85rem;color:var(--clr-muted);">${date}</div>
+          <div class="job-stat-label">Publicación</div>
+        </div>
+      </div>
+      <div class="job-card-footer">
+        <span class="job-card-date">${job.description ? job.description.substring(0,60) + (job.description.length > 60 ? '…' : '') : 'Sin descripción'}</span>
+        <div style="display:flex;gap:6px;">
+          <a href="applications.html?jobId=${job.id}" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">
+            Ver postulantes ${appCount > 0 ? `(${appCount})` : ''}
+          </a>
+        </div>
+      </div>
+    </div>`;
+  }
+
   function setupFilters() {
     const searchInput  = document.getElementById('search-input');
     const filterStatus = document.getElementById('filter-status');
     function applyFilter() {
-      const q   = searchInput?.value.toLowerCase() || '';
-      const st  = filterStatus?.value || 'all';
+      const q  = searchInput?.value.toLowerCase() || '';
+      const st = filterStatus?.value || 'all';
       let visible = 0;
       document.querySelectorAll('.job-card').forEach(card => {
-        const matchText   = !q  || card.textContent.toLowerCase().includes(q);
+        const matchText   = !q || card.textContent.toLowerCase().includes(q);
         const matchStatus = st === 'all' || card.dataset.status === st;
         card.style.display = matchText && matchStatus ? '' : 'none';
         if (matchText && matchStatus) visible++;
@@ -401,90 +283,81 @@
     filterStatus?.addEventListener('change', applyFilter);
   }
 
-  async function deactivateJob(jobId, btn) {
-    if (!confirm('¿Desactivar esta oferta?')) return;
-    const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  async function toggleJobStatus(jobId, btn) {
+    const card     = btn.closest('.job-card');
+    const isActive = card.dataset.status === 'active';
+    const action   = isActive ? 'desactivar' : 'activar';
+    if (!confirm(`¿Querés ${action} esta oferta?`)) return;
+
     try {
-      const res = await fetch(`https://ing-web-ii.onrender.com/api/jobs/${jobId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await fetch(`${API}/jobs/${jobId}`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ isActive: !isActive }),
       });
-      if (!res.ok) throw new Error('Error al desactivar');
-      btn.closest('.job-card').remove();
-      const remaining = document.querySelectorAll('.job-card').length;
-      document.getElementById('empty-state').style.display = remaining === 0 ? 'block' : 'none';
-    } catch(e) { alert('✗ ' + e.message); }
-  }
-</script>
+      if (!res.ok) throw new Error();
 
-<script type="module">
-async function loadMyJobs() {
-  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-  if (!token) return;
+      // Actualizar UI sin recargar
+      const newActive = !isActive;
+      card.dataset.status = newActive ? 'active' : 'closed';
+      card.style.opacity  = newActive ? '' : '0.65';
+      btn.className       = `status-toggle ${newActive ? 'active' : 'closed'}`;
+      btn.innerHTML       = `<span class="status-dot"></span> ${newActive ? 'Activa' : 'Cerrada'}`;
 
-  const grid     = document.querySelector('.jobs-grid');
-  const emptyEl  = document.getElementById('empty-state');
-  if (!grid) return;
-
-  try {
-    const res  = await fetch('https://ing-web-ii.onrender.com/api/jobs/my', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const jobs = res.ok ? await res.json() : [];
-
-    if (!jobs.length) {
-      if (emptyEl) emptyEl.style.display = 'block';
-      return;
+      // Actualizar stats
+      const jobs   = [...document.querySelectorAll('.job-card')];
+      const active = jobs.filter(c => c.dataset.status === 'active').length;
+      const closed = jobs.filter(c => c.dataset.status === 'closed').length;
+      document.getElementById('stat-active').textContent = active;
+      document.getElementById('stat-closed').textContent = closed;
+    } catch {
+      alert('No se pudo cambiar el estado. Intentá de nuevo.');
     }
-    if (emptyEl) emptyEl.style.display = 'none';
-
-    grid.innerHTML = jobs.map(job => {
-      const salary = job.salaryMin
-        ? `${job.currency || ''} ${job.salaryMin.toLocaleString()}${job.salaryMax ? ' – ' + job.salaryMax.toLocaleString() : ''}`
-        : '—';
-      const date = new Date(job.createdAt).toLocaleDateString('es-AR');
-      const skills = (job.skills || []).slice(0,4).map(s =>
-        `<span class="skill-tag">${s}</span>`
-      ).join('');
-
-      return `
-      <div class="job-card" data-status="${job.active ? 'active' : 'closed'}" data-job-id="${job.id}">
-        <div class="job-card-head">
-          <div class="job-card-top">
-            <div>
-              <div class="job-card-title">${job.title}</div>
-              <div class="job-card-area">${job.area || ''} ${job.location ? '· ' + job.location : ''}</div>
-            </div>
-            <span class="status-toggle ${job.active ? 'active' : 'closed'}">
-              <span class="status-dot"></span> ${job.active ? 'Activa' : 'Cerrada'}
-            </span>
-          </div>
-          <div class="job-card-meta">
-            ${job.modality ? `<span>📍 ${job.modality}</span>` : ''}
-            ${job.contract ? `<span>⏱ ${job.contract}</span>` : ''}
-            ${job.experience ? `<span>🏆 ${job.experience}</span>` : ''}
-            <span>💰 ${salary}</span>
-          </div>
-          ${skills ? `<div class="job-card-tags" style="margin-top:8px;">${skills}</div>` : ''}
-        </div>
-        <div class="job-card-footer">
-          <span class="job-card-date">Publicada el ${date}</span>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost" style="padding:6px 14px;font-size:0.78rem;"
-              onclick="deactivateJob('${job.id}', this)">🗑 Desactivar</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-
-    setupFilters();
-
-  } catch(err) {
-    console.error('Error cargando ofertas:', err);
   }
-}
 
-loadMyJobs();
+  async function loadMyJobs() {
+    const grid    = document.getElementById('jobs-grid');
+    const emptyEl = document.getElementById('empty-state');
+    grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--clr-muted);">Cargando ofertas...</div>';
+
+    try {
+      const [jobsRes, appsRes] = await Promise.all([
+        fetch(`${API}/jobs/my`,             { headers: authHeaders() }),
+        fetch(`${API}/applications/company`, { headers: authHeaders() }),
+      ]);
+
+      if (!jobsRes.ok) throw new Error('No se pudieron cargar las ofertas');
+
+      const jobs = await jobsRes.json();
+      const apps = appsRes.ok ? await appsRes.json() : [];
+
+      // Contar postulaciones por oferta
+      const appsByJob = {};
+      apps.forEach(a => {
+        const jid = a.job?.id || a.jobId;
+        if (jid) appsByJob[jid] = (appsByJob[jid] || 0) + 1;
+      });
+
+      renderStats(jobs, apps.length);
+
+      if (!jobs.length) {
+        grid.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+      grid.innerHTML = jobs.map(job => renderJob(job, appsByJob[job.id] || 0)).join('');
+      setupFilters();
+
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `<div style="text-align:center;padding:40px;color:var(--clr-muted);">
+        No se pudieron cargar las ofertas. <a href="javascript:loadMyJobs()">Reintentar</a></div>`;
+    }
+  }
+
+  loadMyJobs();
 </script>
   <script src="../../js/sidebar-toggle.js"></script>
 </body>
