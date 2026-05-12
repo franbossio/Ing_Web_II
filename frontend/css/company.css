@@ -64,6 +64,9 @@
   box-shadow: 0 2px 10px rgba(201, 168, 76, 0.3); /* Brillo del avatar */
   position: relative;
   flex-shrink: 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
 }
 
 /* El puntito verde de "Online/Activo" en el avatar */

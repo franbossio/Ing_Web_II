@@ -31,6 +31,9 @@ export class UpdateUserDto {
   @IsOptional() @IsString() companySize?: string;
   @IsOptional() @IsString() website?: string;
 
+  // Photo
+  @IsOptional() @IsString() photo?: string;
+
   // CV
   @IsOptional() @IsString() cvFileName?: string;
   @IsOptional() @IsString() cvUrl?: string;

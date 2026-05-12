@@ -4,11 +4,29 @@
  */
 import { getToken, getUser, saveUser } from './auth.js';
 
-const API = 'https://ing-web-ii.onrender.com/api';
+const API = 'http://localhost:3001/api';
 
 // ══════════════════════════════════════════════════════════
 // CÁLCULO DE COMPLETITUD
 // ══════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════
+// FOTO DE PERFIL
+// ══════════════════════════════════════════════════════════
+
+/** Aplica la foto o las iniciales a un elemento avatar */
+export function applyPhoto(el, photo, initials) {
+  if (!el) return;
+  if (photo) {
+    el.style.backgroundImage = `url(${photo})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.textContent = '';
+  } else {
+    el.style.backgroundImage = '';
+    el.textContent = initials || '?';
+  }
+}
 
 export function calcSections(u) {
   return {
@@ -352,7 +370,8 @@ function updatePanelBadges(u) {
 
 function updateProfileHero(u) {
   const av = document.querySelector('.avatar-large');
-  if (av) av.textContent = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase() || '?';
+  const initials = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase() || '?';
+  applyPhoto(av, u.photo, initials);
   const nm = document.querySelector('.avatar-name');
   if (nm) nm.textContent = `${u.firstName||''} ${u.lastName||''}`.trim();
   const sb = document.querySelector('.avatar-sub');
@@ -377,7 +396,7 @@ export function updateDashboardHero(u) {
 
   // Sidebar
   const $ = id => document.getElementById(id);
-  if ($('sidebar-avatar')) $('sidebar-avatar').textContent = iniciales;
+  applyPhoto($('sidebar-avatar'), u.photo, iniciales);
   if ($('sidebar-name'))   $('sidebar-name').textContent   = nombre;
   if ($('sidebar-role'))   $('sidebar-role').textContent   = u.role === 'company' ? 'Empresa' : 'Candidato';
 
@@ -389,7 +408,7 @@ export function updateDashboardHero(u) {
   const heroName = document.querySelector('.hero-name');
   if (heroName) heroName.textContent = nombre;
   const heroAvatar = document.querySelector('.hero-avatar');
-  if (heroAvatar) heroAvatar.textContent = iniciales;
+  applyPhoto(heroAvatar, u.photo, iniciales);
   const heroTitle = document.querySelector('.hero-title');
   if (heroTitle && u.jobTitle) heroTitle.textContent = u.jobTitle;
   const metas = document.querySelectorAll('.hero-meta span');

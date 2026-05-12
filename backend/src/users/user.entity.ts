@@ -42,6 +42,7 @@ export class User {
   @Column({ nullable: true, length: 100 })                       industry?: string;
   @Column({ name: 'company_size', nullable: true, length: 50 })  companySize?: string;
   @Column({ nullable: true, length: 255 })                       website?: string;
+  @Column({ nullable: true, type: 'text' })                       photo?: string;
   @Column({ name: 'cv_file_name', nullable: true, length: 255 }) cvFileName?: string;
   @Column({ name: 'cv_url',       nullable: true, type: 'text'  }) cvUrl?: string;
   @Column({ name: 'cv_analysis',  nullable: true, type: 'text' }) cvAnalysis?: string;

@@ -123,6 +123,7 @@ export class UsersController {
           nombre:      cand ? [cand.firstName, cand.lastName].filter(Boolean).join(' ') : '—',
           titulo:      cand?.jobTitle  || '—',
           ubicacion:   cand?.location  || '',
+          photo:       cand?.photo     || null,
           skills:      cand?.skills    || [],
           bio:         cand?.bio       || '',
           cvUrl:       cand?.cvUrl     || null,

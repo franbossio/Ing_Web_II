@@ -82,11 +82,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const initials = getInitials(displayName);
 
   // ══════════════════════════════════════════════════════════
+  // Helper: aplicar foto a un selector
+  // ══════════════════════════════════════════════════════════
+  function applyPhotoToEl(el, photo, initials) {
+    if (!el) return;
+    if (photo) {
+      el.style.backgroundImage = `url(${photo})`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.textContent = '';
+    } else {
+      el.style.backgroundImage = '';
+      el.textContent = initials;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
   // 1. SIDEBAR — aplica en TODAS las páginas
   // ══════════════════════════════════════════════════════════
-  setText('.profile-avatar', initials);   // candidato
+  document.querySelectorAll('.profile-avatar').forEach(el => applyPhotoToEl(el, user.photo, initials));
+  // para el caso de que .profile-avatar también sea .company-avatar
+  document.querySelectorAll('.company-avatar').forEach(el => applyPhotoToEl(el, user.photo, initials));
   setText('.profile-name',   displayName);
-  setText('.company-avatar', initials);   // empresa
   setText('.company-name',   displayName);
 
   // ══════════════════════════════════════════════════════════
@@ -102,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════════
   // 3. DASHBOARD CANDIDATO — hero
   // ══════════════════════════════════════════════════════════
-  setText('.hero-avatar', initials);
+  document.querySelectorAll('.hero-avatar').forEach(el => applyPhotoToEl(el, user.photo, initials));
   setText('.hero-name',   displayName);
 
   if (user.jobTitle) setText('.hero-title', user.jobTitle);
@@ -117,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════════
 
   // Avatar grande y nombre sobre el formulario
-  setText('.avatar-large', initials);
+  document.querySelectorAll('.avatar-large').forEach(el => applyPhotoToEl(el, user.photo, initials));
   setText('.avatar-name',  displayName);
 
   // Inputs que SÍ tienen id definido
@@ -157,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════════
 
   // Logo grande dentro del formulario de empresa
-  setText('.company-logo-lg', initials);
+  document.querySelectorAll('.company-logo-lg').forEach(el => applyPhotoToEl(el, user.photo, initials));
   setText('.logo-info-name',  displayName);
   setText('.logo-info-sub',   user.location ?? '');
 

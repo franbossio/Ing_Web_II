@@ -91,13 +91,14 @@
 
               <!-- Avatar -->
               <div class="avatar-upload">
-                <div class="avatar-large" title="Cambiar foto">JP</div>
+                <div class="avatar-large" id="avatar-large" title="Cambiar foto">JP</div>
                 <div class="avatar-info">
                   <div class="avatar-name">Juan Pérez</div>
                   <div class="avatar-sub">Desarrollador Full Stack · Buenos Aires</div>
                   <div style="display:flex;gap:8px;">
-                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;">📷 Cambiar foto</button>
-                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;color:var(--clr-muted);">Eliminar</button>
+                    <input type="file" id="photo-input" accept="image/*" style="display:none" />
+                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;" id="btn-change-photo">📷 Cambiar foto</button>
+                    <button class="btn btn-ghost" style="padding:7px 14px;font-size:0.8rem;color:var(--clr-muted);" id="btn-remove-photo">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -794,6 +795,7 @@
       calcCandidatePercent,
       updateDashboardHero,
       refreshUI,
+      applyPhoto,
     } from '../../js/profile.js';
 
     window.cerrarSesion = function(event) {
@@ -811,6 +813,54 @@
     const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
     if (_u) updateDashboardHero(_u);
     await initProfile();
+
+    // ── Photo upload ─────────────────────────────────────────────
+    const photoInput = document.getElementById('photo-input');
+    const btnPhoto = document.getElementById('btn-change-photo');
+    const btnRemove = document.getElementById('btn-remove-photo');
+
+    btnPhoto.addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) { console.log('No file selected'); return; }
+      console.log('File selected:', file.name, file.size);
+      if (file.size > 5 * 1024 * 1024) { showAlert('La imagen supera los 5 MB.', 'error'); return; }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const dataUrl = e.target.result;
+        console.log('FileReader done, dataUrl length:', dataUrl.length);
+        try {
+          console.log('Calling saveProfile with photo...');
+          const updated = await saveProfile({ photo: dataUrl });
+          console.log('saveProfile response received, photo present:', !!updated.photo);
+          applyPhoto(document.getElementById('avatar-large'), updated.photo,
+            `${(updated.firstName||'')[0]||''}${(updated.lastName||'')[0]||''}`.toUpperCase() || '?');
+          refreshUI(updated);
+          showAlert('✓ Foto actualizada correctamente');
+        } catch(err) {
+          console.error('Photo upload error:', err);
+          showAlert('✗ ' + err.message, 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    btnRemove.addEventListener('click', async function() {
+      if (!confirm('¿Eliminar foto de perfil?')) return;
+      try {
+        const updated = await saveProfile({ photo: null });
+        const av = document.getElementById('avatar-large');
+        applyPhoto(av, null,
+          `${(updated.firstName||'')[0]||''}${(updated.lastName||'')[0]||''}`.toUpperCase() || '?');
+        refreshUI(updated);
+        showAlert('✓ Foto eliminada');
+      } catch(err) {
+        showAlert('✗ ' + err.message, 'error');
+      }
+    });
 
     // Mostrar estado del CV con datos frescos
     const _fresh = JSON.parse(localStorage.getItem('talentai_user') || 'null');
