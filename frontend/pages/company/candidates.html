@@ -388,7 +388,7 @@
       '<div class="skel-card"></div><div class="skel-card"></div><div class="skel-card"></div>';
 
     try {
-      const res = await fetch('http://localhost:3001/api/users/candidates/suggest', {
+      const res = await fetch('https://ing-web-ii.onrender.com/api/users/candidates/suggest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
         body: JSON.stringify({
@@ -496,13 +496,13 @@
   async function load() {
     try {
       // Candidatos reales de la BD
-      const resCandidates = await fetch('http://localhost:3001/api/users/candidates', {
+      const resCandidates = await fetch('https://ing-web-ii.onrender.com/api/users/candidates', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       ALL_CANDIDATES = resCandidates.ok ? await resCandidates.json() : [];
 
       // Mis ofertas para el select de IA
-      const resJobs = await fetch('http://localhost:3001/api/jobs/my', {
+      const resJobs = await fetch('https://ing-web-ii.onrender.com/api/jobs/my', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       MY_JOBS = resJobs.ok ? await resJobs.json() : [];
