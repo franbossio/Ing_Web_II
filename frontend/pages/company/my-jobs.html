@@ -197,20 +197,20 @@
 
   function renderStats(jobs, totalApps) {
     document.getElementById('stat-total').textContent  = jobs.length;
-    document.getElementById('stat-active').textContent = jobs.filter(j => j.isActive !== false).length;
+    document.getElementById('stat-active').textContent = jobs.filter(j => j.active !== false).length;
     document.getElementById('stat-apps').textContent   = totalApps;
-    document.getElementById('stat-closed').textContent = jobs.filter(j => j.isActive === false).length;
+    document.getElementById('stat-closed').textContent = jobs.filter(j => j.active === false).length;
   }
 
   function renderJob(job, appCount) {
-    const isActive  = job.isActive !== false;
-    const statusKey = isActive ? 'active' : 'closed';
+    const isActive    = job.active !== false;
+    const statusKey   = isActive ? 'active' : 'closed';
     const statusLabel = isActive ? 'Activa' : 'Cerrada';
     const statusClass = isActive ? 'active' : 'closed';
-    const opacity   = isActive ? '' : 'style="opacity:0.65;"';
-    const date      = new Date(job.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
-    const skills    = (job.skills || []).slice(0, 4)
-                        .map(s => `<span class="skill-tag">${s}</span>`).join('');
+    const opacity     = isActive ? '' : 'style="opacity:0.65;"';
+    const date        = new Date(job.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+    const skills      = (job.skills || []).slice(0, 4)
+                          .map(s => `<span class="skill-tag">${s}</span>`).join('');
 
     const salary = job.salaryMin
       ? `${job.currency || 'ARS'} ${Number(job.salaryMin).toLocaleString('es-AR')}${job.salaryMax ? ' – ' + Number(job.salaryMax).toLocaleString('es-AR') : ''}`
@@ -233,8 +233,8 @@
         </div>
         <div class="job-card-meta">
           <span>${modalityIcon(job.modality)} ${job.modality || 'No especificado'}</span>
-          ${job.contractType ? `<span>⏱ ${job.contractType}</span>` : ''}
-          ${job.experienceRequired ? `<span>🏆 ${job.experienceRequired}</span>` : ''}
+          ${job.contract ? `<span>⏱ ${job.contract}</span>` : ''}
+          ${job.experience ? `<span>🏆 ${job.experience}</span>` : ''}
           ${salary ? `<span>💰 ${salary}</span>` : ''}
         </div>
         ${skills ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">${skills}</div>` : ''}
@@ -256,6 +256,9 @@
       <div class="job-card-footer">
         <span class="job-card-date">${job.description ? job.description.substring(0,60) + (job.description.length > 60 ? '…' : '') : 'Sin descripción'}</span>
         <div style="display:flex;gap:6px;">
+          <button class="icon-btn" style="font-size:0.78rem;color:var(--clr-error,#e05c5c);" onclick="deleteJob('${job.id}', this)" title="Eliminar oferta">
+            🗑 Eliminar
+          </button>
           <a href="applications.html?jobId=${job.id}" class="btn btn-primary" style="padding:7px 14px;font-size:0.78rem;">
             Ver postulantes ${appCount > 0 ? `(${appCount})` : ''}
           </a>
@@ -283,6 +286,46 @@
     filterStatus?.addEventListener('change', applyFilter);
   }
 
+  async function deleteJob(jobId, btn) {
+    if (!confirm('¿Eliminar esta oferta? Se desactivará y dejará de aparecer.')) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Eliminando...';
+
+    try {
+      const res = await fetch(`${API}/jobs/${jobId}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      });
+      console.log('[deleteJob] status:', res.status);
+      const body = await res.text();
+      console.log('[deleteJob] body:', body);
+      if (!res.ok) throw new Error(`${res.status}: ${body}`);
+
+      // Animar y remover la card
+      const card = btn.closest('.job-card');
+      card.style.transition = 'opacity 0.3s, transform 0.3s';
+      card.style.opacity    = '0';
+      card.style.transform  = 'scale(0.95)';
+      setTimeout(() => {
+        card.remove();
+        const remaining = document.querySelectorAll('.job-card');
+        const active    = [...remaining].filter(c => c.dataset.status === 'active').length;
+        const closed    = [...remaining].filter(c => c.dataset.status === 'closed').length;
+        document.getElementById('stat-total').textContent  = remaining.length;
+        document.getElementById('stat-active').textContent = active;
+        document.getElementById('stat-closed').textContent = closed;
+        if (!remaining.length) document.getElementById('empty-state').style.display = 'block';
+      }, 300);
+
+    } catch (err) {
+      console.error('[deleteJob] error:', err);
+      btn.disabled    = false;
+      btn.textContent = '🗑 Eliminar';
+      alert('No se pudo eliminar la oferta. Intentá de nuevo.');
+    }
+  }
+
   async function toggleJobStatus(jobId, btn) {
     const card     = btn.closest('.job-card');
     const isActive = card.dataset.status === 'active';
@@ -293,7 +336,7 @@
       const res = await fetch(`${API}/jobs/${jobId}`, {
         method: 'PATCH',
         headers: authHeaders(),
-        body: JSON.stringify({ isActive: !isActive }),
+        body: JSON.stringify({ active: !isActive }),
       });
       if (!res.ok) throw new Error();
 

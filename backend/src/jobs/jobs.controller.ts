@@ -44,7 +44,14 @@ export class JobsController {
     return this.jobsService.update(id, req.user.id, body);
   }
 
-  // DELETE /api/jobs/:id — desactivar oferta
+  // DELETE /api/jobs/:id/hard — eliminar oferta definitivamente (debe ir ANTES de /:id)
+  @Delete(':id/hard')
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string, @Request() req) {
+    return this.jobsService.remove(id, req.user.id);
+  }
+
+  // DELETE /api/jobs/:id — desactivar oferta (soft delete)
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   deactivate(@Param('id') id: string, @Request() req) {

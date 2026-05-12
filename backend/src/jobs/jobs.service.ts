@@ -53,4 +53,12 @@ export class JobsService {
     job.active = false;
     await this.repo.save(job);
   }
+
+  // Eliminar oferta definitivamente
+  async remove(id: string, companyId: string): Promise<{ message: string }> {
+    const job = await this.findOne(id);
+    if (job.companyId !== companyId) throw new ForbiddenException('No tenés permiso');
+    await this.repo.delete(id);
+    return { message: 'Oferta eliminada correctamente' };
+  }
 }
