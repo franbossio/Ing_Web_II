@@ -8,6 +8,11 @@ import { RolesGuard }    from '../common/guards/roles.guard';
 import { Roles }         from '../common/decorators/roles.decorator';
 import { UsersService }  from './users.service';
 
+/** Elimina saltos de línea y tabs de un string para no romper JSON */
+function clean(str: string, max = 500): string {
+  return (str || '').replace(/[\r\n\t]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -55,21 +60,18 @@ export class UsersController {
     const candidates = await this.usersService.findCandidates();
     if (!candidates.length) return [];
 
-    // Construir prompt texto plano — sin JSON anidado que rompe Make
-    const candLines = candidates.map(c =>
-      `ID:${c.id} | ${[c.firstName, c.lastName].filter(Boolean).join(' ') || c.email} | titulo:${c.jobTitle || ''} | skills:${(c.skills || []).join(',')}`
-    ).join('\n');
+    // Cada candidato en UNA sola línea, sin \n internos
+    const candList = candidates.map(c =>
+      `ID:${c.id} NOMBRE:${clean([c.firstName, c.lastName].filter(Boolean).join(' ') || c.email, 60)} TITULO:${clean(c.jobTitle || '', 80)} SKILLS:${(c.skills || []).map(s => clean(s, 40)).join(',')}`
+    );
 
-    const prompt =
-      `Oferta:\n` +
-      `- Título: ${body.jobTitle}\n` +
-      `- Skills requeridas: ${(body.jobSkills || []).join(', ')}\n` +
-      `- Descripción: ${(body.jobDescription || '').slice(0, 200)}\n\n` +
-      `Candidatos disponibles (copiá el ID exacto):\n${candLines}\n\n` +
-      `Devolvé SOLO un array JSON con los 5 candidatos más compatibles:\n` +
-      `[{"candidateId":"ID_EXACTO","matchPct":90,"reason":"razón en español"},` +
-      `{"candidateId":"ID_EXACTO","matchPct":80,"reason":"razón"},` +
-      `{"candidateId":"ID_EXACTO","matchPct":70,"reason":"razón"}]`;
+    // Payload limpio: el prompt es un string sin \n
+    const payload = {
+      jobTitle:       clean(body.jobTitle, 150),
+      jobSkills:      (body.jobSkills || []).map(s => clean(s, 60)),
+      jobDescription: clean(body.jobDescription || '', 300),
+      candidates:     candList,   // array de strings limpios, sin \n
+    };
 
     console.log('=== CALLING MAKE CANDIDATES:', webhookUrl.slice(0, 50));
     console.log('=== CANDIDATES COUNT:', candidates.length);
@@ -77,7 +79,7 @@ export class UsersController {
     const response = await fetch(webhookUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ prompt }),  // ← solo { prompt }
+      body:    JSON.stringify(payload),
     });
 
     const rawText = await response.text();
@@ -86,13 +88,19 @@ export class UsersController {
 
     if (!response.ok) throw new Error(`Make error ${response.status}: ${rawText.slice(0, 100)}`);
 
-    const clean = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    // Si Make devuelve "Accepted" significa que el Webhook Response
+    // no está configurado para esperar — ver README de Make
+    if (rawText.trim() === 'Accepted') {
+      throw new Error('Make respondió "Accepted" en lugar de JSON. Configurá el Webhook Response para devolver la respuesta del HTTP module.');
+    }
+
+    const clean2 = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
     let parsed: any;
-    try { parsed = JSON.parse(clean); }
+    try { parsed = JSON.parse(clean2); }
     catch {
-      const match = clean.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
+      const match = clean2.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
       if (match) parsed = JSON.parse(match[0]);
-      else throw new Error('Respuesta inválida de Make');
+      else throw new Error('Respuesta inválida de Make: ' + rawText.slice(0, 100));
     }
 
     const suggestions = Array.isArray(parsed)
@@ -100,21 +108,29 @@ export class UsersController {
       : (parsed.suggestions || parsed.recommendations || []);
 
     const candMap = new Map(candidates.map(c => [c.id, c]));
-    return suggestions.slice(0, 10).map((s: any) => {
-      const cand = candMap.get(s.candidateId);
-      return {
-        candidateId: s.candidateId,
-        nombre:      cand ? [cand.firstName, cand.lastName].filter(Boolean).join(' ') : '—',
-        titulo:      cand?.jobTitle  || '—',
-        ubicacion:   cand?.location  || '',
-        skills:      cand?.skills    || [],
-        bio:         cand?.bio       || '',
-        cvUrl:       cand?.cvUrl     || null,
-        cvFileName:  cand?.cvFileName || null,
-        matchPct:    Number(s.matchPct || 0),
-        reason:      s.reason || '',
-      };
-    }).filter(r => r.nombre !== '—');
+    const seen = new Set<string>();
+    return suggestions
+      .filter((s: any) => {
+        if (seen.has(s.candidateId)) return false;
+        seen.add(s.candidateId);
+        return true;
+      })
+      .slice(0, 10)
+      .map((s: any) => {
+        const cand = candMap.get(s.candidateId);
+        return {
+          candidateId: s.candidateId,
+          nombre:      cand ? [cand.firstName, cand.lastName].filter(Boolean).join(' ') : '—',
+          titulo:      cand?.jobTitle  || '—',
+          ubicacion:   cand?.location  || '',
+          skills:      cand?.skills    || [],
+          bio:         cand?.bio       || '',
+          cvUrl:       cand?.cvUrl     || null,
+          cvFileName:  cand?.cvFileName || null,
+          matchPct:    Number(s.matchPct || 0),
+          reason:      s.reason || '',
+        };
+      }).filter(r => r.nombre !== '—');
   }
 
   /** GET /api/users — solo admin */
