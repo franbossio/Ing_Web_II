@@ -195,13 +195,21 @@
                     <label>Ubicación</label>
                     <input type="text" id="location" value="" />
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" style="position:relative;">
                     <label>Sitio web</label>
-                    <input type="url" id="website" value="" />
+                    <input type="url" id="website" value="" placeholder="https://tusitio.com"
+                      oninput="validateUrl(this, 'website-error')" />
+                    <div id="website-error" style="font-size:0.72rem;color:var(--clr-error,#e05c5c);min-height:1rem;visibility:hidden;">
+                      ⚠ Ingresá una URL válida (ej: https://tusitio.com)
+                    </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" style="position:relative;">
                     <label>LinkedIn</label>
-                    <input type="url" id="linkedin" placeholder="linkedin.com/company/..." value="" />
+                    <input type="url" id="linkedin" placeholder="https://linkedin.com/company/..."
+                      oninput="validateUrl(this, 'linkedin-error')" />
+                    <div id="linkedin-error" style="font-size:0.72rem;color:var(--clr-error,#e05c5c);min-height:1rem;visibility:hidden;">
+                      ⚠ Ingresá una URL válida (ej: https://linkedin.com/company/tuempresa)
+                    </div>
                   </div>
                   <div class="form-group col-span-2">
                     <label>Descripción de la empresa</label>
@@ -356,13 +364,13 @@
               <div class="settings-block-header"><div class="settings-block-title">🔑 Cambiar contraseña</div></div>
               <div class="settings-block-body">
                 <div style="display:grid;grid-template-columns:1fr;gap:16px;max-width:420px;">
-                  <div class="form-group"><label>Contraseña actual</label><input type="password" id="pass-current" placeholder="••••••••" /></div>
-                  <div class="form-group"><label>Nueva contraseña</label><input type="password" id="pass-new" placeholder="Mínimo 8 caracteres" /></div>
-                  <div class="form-group"><label>Confirmar contraseña</label><input type="password" id="pass-confirm" placeholder="••••••••" /></div>
+                  <div class="form-group"><label>Contraseña actual</label><input type="password" placeholder="••••••••" /></div>
+                  <div class="form-group"><label>Nueva contraseña</label><input type="password" placeholder="Mínimo 8 caracteres" /></div>
+                  <div class="form-group"><label>Confirmar contraseña</label><input type="password" placeholder="••••••••" /></div>
                 </div>
               </div>
               <div class="settings-block-footer">
-                <button class="btn btn-primary" onclick="changePassword(this)">🔑 Cambiar contraseña</button>
+                <button class="btn btn-primary" onclick="saveSettings(this)">🔑 Cambiar contraseña</button>
               </div>
             </div>
             <div class="settings-block">
@@ -490,6 +498,21 @@
   </main>
 </div>
 <script>
+
+  function validateUrl(input, errorId) {
+    const val = input.value.trim();
+    const errorEl = document.getElementById(errorId);
+    if (!val) {
+      errorEl.style.visibility = 'hidden';
+      input.style.borderColor = '';
+      return true;
+    }
+    const isValid = /^https?:\/\/.+\..+/.test(val);
+    errorEl.style.visibility = isValid ? 'hidden' : 'visible';
+    input.style.borderColor  = isValid ? '' : 'var(--clr-error, #e05c5c)';
+    return isValid;
+  }
+  
   function toggleCustomIndustry(val) {
     const input = document.getElementById('customIndustry');
     if (val === 'Otro') {
@@ -558,7 +581,7 @@
   setInterval(updateClock, 1000);
 </script>
 <script type="module">
-  import { logout, getToken } from '../../js/auth.js';
+  import { logout } from '../../js/auth.js';
     import { initProfile, readCompanyForm, saveProfile, calcCompanyPercent, updateDashboardHero, applyPhoto } from '../../js/profile.js';
 
   window.cerrarSesion = function(event) {
@@ -577,25 +600,6 @@
   await initProfile();
 
   // ── Photo upload ─────────────────────────────────────────────
-  function compressImage(file, maxSize = 400, quality = 0.75) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        let { width, height } = img;
-        if (width > height) { if (width > maxSize) { height = Math.round(height * maxSize / width); width = maxSize; } }
-        else                { if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize; } }
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.onerror = reject;
-      img.src = url;
-    });
-  }
-
   const photoInput = document.getElementById('photo-input');
   const btnPhoto = document.getElementById('btn-change-photo');
   const btnRemove = document.getElementById('btn-remove-photo');
@@ -607,16 +611,20 @@
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { showAlert('La imagen supera los 5 MB.', 'error'); return; }
 
-    try {
-      const dataUrl = await compressImage(file, 400, 0.75);
-      const updated = await saveProfile({ photo: dataUrl });
-      const iniciales = (updated.companyName||'E').substring(0,2).toUpperCase();
-      applyPhoto(document.getElementById('company-logo-lg'), updated.photo, iniciales);
-      updateDashboardHero(updated);
-      showAlert('✓ Logo actualizado correctamente');
-    } catch(err) {
-      showAlert('✗ ' + err.message, 'error');
-    }
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const dataUrl = e.target.result;
+      try {
+        const updated = await saveProfile({ photo: dataUrl });
+        const iniciales = (updated.companyName||'E').substring(0,2).toUpperCase();
+        applyPhoto(document.getElementById('company-logo-lg'), updated.photo, iniciales);
+        updateDashboardHero(updated);
+        showAlert('✓ Logo actualizado correctamente');
+      } catch(err) {
+        showAlert('✗ ' + err.message, 'error');
+      }
+    };
+    reader.readAsDataURL(file);
     this.value = '';
   });
 
@@ -633,48 +641,17 @@
     }
   });
 
-  // ── Cambiar contraseña ───────────────────────────────────────────────
-  window.changePassword = async function(btn) {
-    const current = document.getElementById('pass-current').value.trim();
-    const newPass  = document.getElementById('pass-new').value;
-    const confirm  = document.getElementById('pass-confirm').value;
-
-    if (!current)           return showAlert('Ingresá tu contraseña actual.', 'error');
-    if (newPass.length < 8) return showAlert('La nueva contraseña debe tener al menos 8 caracteres.', 'error');
-    if (newPass !== confirm) return showAlert('Las contraseñas no coinciden.', 'error');
-
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div> Guardando...';
-
-    try {
-      const res = await fetch(`https://ing-web-ii.onrender.com/api/users/me/password`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-        body: JSON.stringify({ currentPassword: current, newPassword: newPass }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        showAlert('✓ Contraseña cambiada correctamente.');
-        document.getElementById('pass-current').value = '';
-        document.getElementById('pass-new').value     = '';
-        document.getElementById('pass-confirm').value = '';
-      } else {
-        showAlert(data.message || 'Error al cambiar la contraseña.', 'error');
-      }
-    } catch(err) {
-      showAlert('Error: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = orig;
-    }
-  };
-
   // Sobreescribir saveSettings para llamar al backend real
   window.saveSettings = async function(btn) {
     const orig = btn.innerHTML;
+    const websiteOk  = validateUrl(document.getElementById('website'),  'website-error');
+    const linkedinOk = validateUrl(document.getElementById('linkedin'), 'linkedin-error');
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div> Guardando...';
+    if (!websiteOk || !linkedinOk) {
+      showAlert('✗ Corregí las URLs inválidas antes de guardar.', 'error');
+      return;
+    }
     try {
       const data = readCompanyForm();
       const updated = await saveProfile(data);
