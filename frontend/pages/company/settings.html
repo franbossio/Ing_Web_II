@@ -631,8 +631,8 @@
       } else {
         showAlert(data.message || 'Error al cambiar la contraseña.', 'error');
       }
-    } catch {
-      showAlert('Sin conexión con el servidor.', 'error');
+    } catch(err) {
+      showAlert('Error: ' + err.message, 'error');
     } finally {
       btn.disabled = false;
       btn.innerHTML = orig;
