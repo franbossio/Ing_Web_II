@@ -166,14 +166,20 @@
                   </div>
                   <div class="form-group">
                     <label>Industria</label>
-                    <select id="industry">
-                      <option selected>Tecnología e IT</option>
+                    <select id="industry" onchange="toggleCustomIndustry(this.value)">
+                      <option>Tecnología e IT</option>
                       <option>Fintech</option>
                       <option>E-commerce</option>
                       <option>Salud</option>
                       <option>Educación</option>
                       <option>Otro</option>
                     </select>
+                    <input
+                      type="text"
+                      id="customIndustry"
+                      placeholder="Especificá el rubro..."
+                      style="display:none; margin-top:8px;"
+                    />
                   </div>
                   <div class="form-group">
                     <label>Tamaño de la empresa</label>
@@ -484,6 +490,16 @@
   </main>
 </div>
 <script>
+  function toggleCustomIndustry(val) {
+    const input = document.getElementById('customIndustry');
+    if (val === 'Otro') {
+      input.style.display = 'block';
+    } else {
+      input.style.display = 'none';
+      input.value = '';
+    }
+  }
+
   function showPanel(id, btn) {
     document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));

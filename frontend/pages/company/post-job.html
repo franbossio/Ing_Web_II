@@ -61,8 +61,7 @@
               </div>
               <div class="form-group">
                 <label for="job-area">Área profesional *</label>
-                <select id="job-area" name="area" required>
-                  <option value="" disabled selected>Seleccioná un área</option>
+                <select id="job-area" name="area" required onchange="toggleCustomArea(this.value)">                  <option value="" disabled selected>Seleccioná un área</option>
                   <option>Tecnología e IT</option>
                   <option>Diseño y UX</option>
                   <option>Marketing Digital</option>
@@ -73,6 +72,12 @@
                   <option>Legal</option>
                   <option>Otro</option>
                 </select>
+                <input
+                  type="text"
+                  id="customArea"
+                  placeholder="Especificá el área profesional..."
+                  style="display:none; margin-top:8px;"
+                />
               </div>
             </div>
 
@@ -108,9 +113,6 @@
               <div class="form-group">
                 <label>Habilidades técnicas *</label>
                 <div class="tags-input-wrapper" id="tech-skills-wrapper">
-                  <span class="skill-tag highlight">React <button type="button" class="tag-remove" onclick="removeTag(this)">×</button></span>
-                  <span class="skill-tag highlight">Node.js <button type="button" class="tag-remove" onclick="removeTag(this)">×</button></span>
-                  <span class="skill-tag highlight">TypeScript <button type="button" class="tag-remove" onclick="removeTag(this)">×</button></span>
                   <input type="text" class="tags-input" id="tech-input"
                     placeholder="Escribí y presioná Enter..." />
                 </div>
@@ -121,8 +123,6 @@
               <div class="form-group">
                 <label>Habilidades blandas</label>
                 <div class="tags-input-wrapper" id="soft-skills-wrapper">
-                  <span class="skill-tag">Trabajo en equipo <button type="button" class="tag-remove" onclick="removeTag(this)">×</button></span>
-                  <span class="skill-tag">Comunicación <button type="button" class="tag-remove" onclick="removeTag(this)">×</button></span>
                   <input type="text" class="tags-input" id="soft-input"
                     placeholder="Escribí y presioná Enter..." />
                 </div>
@@ -259,6 +259,19 @@
 </div><!-- /app-layout -->
 <script src="../../js/profile.js"></script>
 <script>
+
+function toggleCustomArea(val) {
+  const input = document.getElementById('customArea');
+  if (!input) return;
+  if (val === 'Otro') {
+    input.style.display = 'block';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+    input.value = '';
+  }
+}
+
 // ── Alert helper ──────────────────────────────────────────────────────────
 function showAlert(msg, type = 'success') {
   let el = document.getElementById('global-alert');
@@ -281,6 +294,12 @@ function setupTagsInput(inputId, wrapperId) {
 
   if (!input || !wrapper) return tags;
 
+  function removeTag(v, chip) {
+    const idx = tags.indexOf(v);
+    if (idx !== -1) tags.splice(idx, 1);
+    chip.remove();
+  }
+
   function addTag(val) {
     const v = val.trim();
     if (!v || tags.includes(v)) return;
@@ -288,7 +307,15 @@ function setupTagsInput(inputId, wrapperId) {
     const chip = document.createElement('span');
     chip.className = 'tag-chip';
     chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);color:var(--clr-accent);padding:2px 8px;border-radius:100px;font-size:0.75rem;margin:2px;';
-    chip.innerHTML = `${v} <button type="button" style="background:none;border:none;cursor:pointer;color:var(--clr-accent);font-size:0.8rem;padding:0;" onclick="this.parentElement.remove();tags.splice(tags.indexOf('${v}'),1)">&times;</button>`;
+    const label = document.createTextNode(v + ' ');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'background:none;border:none;cursor:pointer;color:var(--clr-accent);font-size:0.8rem;padding:0;';
+    btn.textContent = '×';
+    // El listener tiene acceso directo al closure, sin onclick inline
+    btn.addEventListener('click', () => removeTag(v, chip));
+    chip.appendChild(label);
+    chip.appendChild(btn);
     wrapper.insertBefore(chip, input);
     input.value = '';
   }
@@ -298,13 +325,61 @@ function setupTagsInput(inputId, wrapperId) {
   });
   input.addEventListener('blur', () => addTag(input.value));
 
-  return tags; // referencia al array reactivo
+  return tags;
+}
+
+// ── Pre-rellenar datos desde la BD ────────────────────────────────────────
+async function preloadUserData() {
+  const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+  if (!token) return;
+
+  // Primero intentar desde caché para respuesta instantánea
+  let userData = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+
+  // Luego refrescar desde la BD
+  try {
+    const res = await fetch('https://ing-web-ii.onrender.com/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      userData = await res.json();
+      localStorage.setItem('talentai_user', JSON.stringify(userData));
+    }
+  } catch {}
+
+  if (!userData) return;
+
+  // Pre-rellenar ubicación con la de la empresa si el campo está vacío
+  const locationInput = document.getElementById('job-location');
+  if (locationInput && !locationInput.value && userData.location) {
+    locationInput.value = userData.location;
+  }
+
+  // Pre-rellenar industria en el área si coincide con alguna opción
+  const areaSelect = document.getElementById('job-area');
+  if (areaSelect && userData.industry) {
+    const options = Array.from(areaSelect.options);
+    const match = options.find(o => o.text.toLowerCase() === userData.industry.toLowerCase());
+    if (match) areaSelect.value = match.value;
+  }
 }
 
 // ── Publicar oferta ───────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const techTags = setupTagsInput('tech-input', 'tech-skills-wrapper');
   const softTags = setupTagsInput('soft-input', 'soft-skills-wrapper');
+
+  // Pre-rellenar con datos reales de la empresa
+  preloadUserData();
+
+  // Contador de caracteres en descripción
+  const descTA = document.getElementById('job-desc');
+  const descCount = document.getElementById('desc-count');
+  if (descTA && descCount) {
+    descTA.addEventListener('input', () => {
+      descCount.textContent = `${descTA.value.length} / 1500 caracteres`;
+    });
+  }
 
   const form = document.getElementById('post-job-form');
   if (!form) return;
@@ -320,13 +395,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('job-title-error').style.display='none';
     document.getElementById('job-desc-error').style.display='none';
 
+    // Leer skills desde los chips del DOM (fuente de verdad)
+    const techSkills = Array.from(
+      document.querySelectorAll('#tech-skills-wrapper .tag-chip')
+    ).map(c => c.childNodes[0].textContent.trim()).filter(Boolean);
+
+    const softSkills = Array.from(
+      document.querySelectorAll('#soft-skills-wrapper .tag-chip')
+    ).map(c => c.childNodes[0].textContent.trim()).filter(Boolean);
+
+    // También incluir tags que todavía están en el array reactivo
+    techTags.forEach(t => { if (!techSkills.includes(t)) techSkills.push(t); });
+    softTags.forEach(t => { if (!softSkills.includes(t)) softSkills.push(t); });
+
+    // Si el área es "Otro", usar el valor del input personalizado
+    const areaVal = document.getElementById('job-area')?.value || null;
+    const customAreaVal = document.getElementById('customArea')?.value.trim() || null;
+    const areaFinal = areaVal === 'Otro' && customAreaVal ? customAreaVal : areaVal;
+
+
     const payload = {
       title,
-      area:         document.getElementById('job-area')?.value || null,
+      area: areaFinal,
       description:  desc,
       requirements: document.getElementById('job-requirements')?.value.trim() || null,
-      skills:       [...techTags],
-      softSkills:   [...softTags],
+      skills:       techSkills,
+      softSkills:   softSkills,
       experience:   document.querySelector('input[name="experience"]:checked')?.value || null,
       modality:     document.querySelector('input[name="modality"]:checked')?.value || null,
       contract:     document.querySelector('input[name="contract"]:checked')?.value || null,
@@ -358,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       showAlert('✗ ' + err.message, 'error');
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Publicar oferta'; }
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '🚀 Publicar oferta'; }
     }
   });
 });

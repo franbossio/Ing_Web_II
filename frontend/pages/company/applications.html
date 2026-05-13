@@ -441,9 +441,6 @@
             onclick="window.openProfileModal('${app.id}')">
             👤 Ver perfil
           </button>
-          <button class="icon-btn" id="fav-btn-app-${app.id}" style="font-size:0.88rem;"
-            onclick="window.toggleFavApp('${app.id}')"
-            title="Guardar en favoritos">☆</button>
           ${interviewBtn}
         </div>
       </div>
@@ -485,7 +482,6 @@
     }
 
     countEl.textContent = `${filtered.length} postulación${filtered.length !== 1 ? 'es' : ''}`;
-    setTimeout(updateAllFavBtns, 50);
   }
 
   // ── Actualizar contadores ────────────────────────────────────────────────
@@ -718,70 +714,6 @@
     activeJob = this.value;
     applyFilters();
   });
-
-  // ── Favoritos ─────────────────────────────────────────────────────────────
-  function getFavKey() {
-    const u = JSON.parse(localStorage.getItem('talentai_user') || '{}');
-    return `favorites_${u.id || 'unknown'}`;
-  }
-  function getFavs() {
-    try { return JSON.parse(localStorage.getItem(getFavKey()) || '[]'); } catch { return []; }
-  }
-  function saveFavs(arr) { localStorage.setItem(getFavKey(), JSON.stringify(arr)); }
-
-  function updateFavBtn(appId) {
-    const btn  = document.getElementById(`fav-btn-app-${appId}`);
-    if (!btn) return;
-    const app  = ALL_APPS.find(a => a.id === appId);
-    const cand = app?.candidate || {};
-    const id   = cand.id || cand.userId;
-    const saved = id && getFavs().some(f => f.id === id);
-    btn.textContent = saved ? '⭐' : '☆';
-    btn.title = saved ? 'Quitar de favoritos' : 'Guardar en favoritos';
-    btn.style.color = saved ? 'var(--clr-accent)' : '';
-  }
-
-  function updateAllFavBtns() {
-    ALL_APPS.forEach(a => updateFavBtn(a.id));
-  }
-
-  window.toggleFavApp = function(appId) {
-    const app  = ALL_APPS.find(a => a.id === appId);
-    if (!app) return;
-    const cand = app.candidate || {};
-    const id   = cand.id || cand.userId;
-    if (!id) { showAlert('No se pudo identificar al candidato', 'error'); return; }
-
-    const favs = getFavs();
-    const idx  = favs.findIndex(f => f.id === id);
-    if (idx === -1) {
-      favs.push({
-        id,
-        firstName:  cand.firstName  || '',
-        lastName:   cand.lastName   || '',
-        jobTitle:   cand.jobTitle   || cand.titulo || '',
-        location:   cand.location   || cand.ubicacion || '',
-        skills:     (cand.skills    || []).slice(0, 8),
-        bio:        cand.bio        || '',
-        cvUrl:      cand.cvUrl      || null,
-        cvFileName: cand.cvFileName || null,
-        cvAnalysis: cand.cvAnalysis || null,
-        linkedin:   cand.linkedin   || null,
-        github:     cand.github     || null,
-        portfolio:  cand.portfolio  || null,
-        experience: cand.experience || [],
-        education:  cand.education  || [],
-        savedAt:    new Date().toISOString(),
-      });
-      saveFavs(favs);
-      showAlert('⭐ Candidato guardado en favoritos');
-    } else {
-      favs.splice(idx, 1);
-      saveFavs(favs);
-      showAlert('Candidato quitado de favoritos');
-    }
-    updateFavBtn(appId);
-  };
 
   // ── Cargar datos ──────────────────────────────────────────────────────────
   async function load() {
