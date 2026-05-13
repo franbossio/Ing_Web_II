@@ -350,13 +350,13 @@
               <div class="settings-block-header"><div class="settings-block-title">🔑 Cambiar contraseña</div></div>
               <div class="settings-block-body">
                 <div style="display:grid;grid-template-columns:1fr;gap:16px;max-width:420px;">
-                  <div class="form-group"><label>Contraseña actual</label><input type="password" placeholder="••••••••" /></div>
-                  <div class="form-group"><label>Nueva contraseña</label><input type="password" placeholder="Mínimo 8 caracteres" /></div>
-                  <div class="form-group"><label>Confirmar contraseña</label><input type="password" placeholder="••••••••" /></div>
+                  <div class="form-group"><label>Contraseña actual</label><input type="password" id="pass-current" placeholder="••••••••" /></div>
+                  <div class="form-group"><label>Nueva contraseña</label><input type="password" id="pass-new" placeholder="Mínimo 8 caracteres" /></div>
+                  <div class="form-group"><label>Confirmar contraseña</label><input type="password" id="pass-confirm" placeholder="••••••••" /></div>
                 </div>
               </div>
               <div class="settings-block-footer">
-                <button class="btn btn-primary" onclick="saveSettings(this)">🔑 Cambiar contraseña</button>
+                <button class="btn btn-primary" onclick="changePassword(this)">🔑 Cambiar contraseña</button>
               </div>
             </div>
             <div class="settings-block">
@@ -601,6 +601,43 @@
       showAlert('✗ ' + err.message, 'error');
     }
   });
+
+  // ── Cambiar contraseña ───────────────────────────────────────────────
+  window.changePassword = async function(btn) {
+    const current = document.getElementById('pass-current').value.trim();
+    const newPass  = document.getElementById('pass-new').value;
+    const confirm  = document.getElementById('pass-confirm').value;
+
+    if (!current)           return showAlert('Ingresá tu contraseña actual.', 'error');
+    if (newPass.length < 8) return showAlert('La nueva contraseña debe tener al menos 8 caracteres.', 'error');
+    if (newPass !== confirm) return showAlert('Las contraseñas no coinciden.', 'error');
+
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div> Guardando...';
+
+    try {
+      const res = await fetch(`https://ing-web-ii.onrender.com/api/users/me/password`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ currentPassword: current, newPassword: newPass }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        showAlert('✓ Contraseña cambiada correctamente.');
+        document.getElementById('pass-current').value = '';
+        document.getElementById('pass-new').value     = '';
+        document.getElementById('pass-confirm').value = '';
+      } else {
+        showAlert(data.message || 'Error al cambiar la contraseña.', 'error');
+      }
+    } catch {
+      showAlert('Sin conexión con el servidor.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  };
 
   // Sobreescribir saveSettings para llamar al backend real
   window.saveSettings = async function(btn) {
