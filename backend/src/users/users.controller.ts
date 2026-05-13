@@ -34,6 +34,13 @@ export class UsersController {
     return this.usersService.update(req.user.id, body);
   }
 
+  /** PATCH /api/users/me/password */
+  @Patch('me/password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(@Request() req, @Body() body: { currentPassword: string; newPassword: string }) {
+    return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
+
   /** DELETE /api/users/me */
   @Delete('me')
   @UseGuards(JwtAuthGuard)
