@@ -12,7 +12,7 @@
 - [Arquitectura](#-arquitectura)
 - [Funcionalidades](#-funcionalidades)
 - [Instalación local](#-instalación-local)
-- [Variables de entorno](#-variables-de-entorno)
+- [Hosting](#-Hostin-en-render)
 - [Estructura del proyecto](#-estructura-del-proyecto)
 - [Flujos de IA](#-flujos-de-ia)
 - [Despliegue](#-despliegue)
@@ -153,44 +153,11 @@ Abrí `frontend/pages/index.html` con **Live Server** en VS Code
 
 ---
 
-## 🔑 Variables de entorno
 
-Creá un archivo `.env` dentro de la carpeta `backend/`:
 
-```env
-# ── Servidor ──────────────────────────────────────────────
-PORT=3001
+## Hostin en render
 
-# ── JWT ───────────────────────────────────────────────────
-JWT_SECRET=cambia-esto-por-una-clave-secreta
-
-# ── PostgreSQL local ──────────────────────────────────────
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=tu_password
-DB_NAME=conectaia
-
-# ── O usar URL completa (Render / producción) ─────────────
-# DATABASE_URL=postgresql://user:password@host/db
-
-# ── Groq IA ───────────────────────────────────────────────
-# Obtener gratis en: console.groq.com → API Keys → Create API Key
-GROQ_API_KEY=gsk_...
-
-# ── Make.com webhooks ─────────────────────────────────────
-# Escenario 1: Análisis de CV con Groq
-MAKE_WEBHOOK_URL=https://hook.us2.make.com/...
-
-# Escenario 2: Recomendaciones de ofertas para candidato
-MAKE_RECOMMENDATIONS_URL=https://hook.us2.make.com/...
-
-# Escenario 3: Sugerencia de candidatos para empresa
-MAKE_CANDIDATES_URL=https://hook.us2.make.com/...
-```
-
-> ⚠️ **Nunca subas el `.env` real a GitHub.** Ya está en el `.gitignore`.
-
+https://ing-web-ii-1.onrender.com/
 ---
 
 ## 📁 Estructura del proyecto
