@@ -542,7 +542,7 @@
   setInterval(updateClock, 1000);
 </script>
 <script type="module">
-  import { logout } from '../../js/auth.js';
+  import { logout, getToken } from '../../js/auth.js';
     import { initProfile, readCompanyForm, saveProfile, calcCompanyPercent, updateDashboardHero, applyPhoto } from '../../js/profile.js';
 
   window.cerrarSesion = function(event) {
