@@ -243,7 +243,11 @@
         <div class="jobs-toolbar">
           <span class="results-count"><strong id="results-num">6</strong> ofertas encontradas</span>
           <div class="toolbar-right">
-            <select class="sort-select"><option>🤖 Mayor match</option><option>📅 Más recientes</option><option>💰 Mayor salario</option></select>
+            <select class="sort-select" id="sort-select" onchange="applyFiltersReal()">
+              <option value="reciente">📅 Más recientes</option>
+              <option value="salario">💰 Mayor salario</option>
+              <option value="alpha">🔤 A–Z</option>
+            </select>
             <button class="view-btn active" id="view-list">☰</button>
             <button class="view-btn" id="view-grid">⊞</button>
           </div>
@@ -288,43 +292,27 @@
 
       <div class="fm-section">
         <div class="fm-section-title">Modalidad</div>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Remoto" onchange="syncFilters()"> 🏠 Remoto</span><span class="fm-check-count">8</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="modalidad" data-val="Híbrido" onchange="syncFilters()"> 🔀 Híbrido</span><span class="fm-check-count">3</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="modalidad" data-val="Presencial" onchange="syncFilters()"> 🏢 Presencial</span><span class="fm-check-count">2</span></label>
+        <div id="fm-modalidad"></div>
       </div>
 
       <div class="fm-section">
         <div class="fm-section-title">Tipo de contrato</div>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="contrato" data-val="Full-time" onchange="syncFilters()"> Full-time</span><span class="fm-check-count">9</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Part-time" onchange="syncFilters()"> Part-time</span><span class="fm-check-count">2</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="contrato" data-val="Freelance" onchange="syncFilters()"> Freelance</span><span class="fm-check-count">2</span></label>
+        <div id="fm-contrato"></div>
       </div>
 
       <div class="fm-section">
         <div class="fm-section-title">Experiencia mínima</div>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="Sin experiencia" onchange="syncFilters()"> Sin experiencia</span><span class="fm-check-count">1</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+1 año" onchange="syncFilters()"> +1 año</span><span class="fm-check-count">3</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="exp" data-val="+2 años" onchange="syncFilters()"> +2 años</span><span class="fm-check-count">4</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" data-filter="exp" data-val="+5 años" onchange="syncFilters()"> +5 años</span><span class="fm-check-count">2</span></label>
-      </div>
-
-      <div class="fm-section">
-        <div class="fm-section-title">Match IA mínimo</div>
-        <input type="range" class="fm-slider" id="match-slider" min="0" max="100" value="0" step="5" oninput="updateMatchLabel(this)">
-        <div class="fm-slider-labels"><span class="fm-slider-val" id="match-min-label">0%</span><span>100%</span></div>
+        <div id="fm-exp"></div>
       </div>
 
       <div class="fm-section">
         <div class="fm-section-title">Ubicación</div>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Buenos Aires" onchange="syncFilters()"> Buenos Aires</span><span class="fm-check-count">5</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Córdoba" onchange="syncFilters()"> Córdoba</span><span class="fm-check-count">2</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="ubicacion" data-val="Remoto global" onchange="syncFilters()"> Remoto (cualquier lugar)</span><span class="fm-check-count">6</span></label>
+        <div id="fm-ubicacion"></div>
       </div>
 
       <div class="fm-section">
-        <div class="fm-section-title">Moneda preferida</div>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="USD" onchange="syncFilters()"> 🇺🇸 USD</span><span class="fm-check-count">7</span></label>
-        <label class="fm-check"><span class="fm-check-left"><input type="checkbox" checked data-filter="moneda" data-val="ARS" onchange="syncFilters()"> 🇦🇷 ARS</span><span class="fm-check-count">5</span></label>
+        <div class="fm-section-title">Moneda</div>
+        <div id="fm-moneda"></div>
       </div>
 
     </div>
@@ -365,13 +353,6 @@
         chip.innerHTML = `<span>Sin: ${val}</span><button onclick="removeCbFilter(this,'${val}')">✕</button>`;
         container.appendChild(chip);
       });
-      const matchVal = document.getElementById('match-slider').value;
-      if (matchVal > 0) {
-        const chip = document.createElement('span');
-        chip.className = 'active-filter-chip';
-        chip.innerHTML = `<span>Match ≥ ${matchVal}%</span><button onclick="resetMatch(this)">✕</button>`;
-        container.appendChild(chip);
-      }
     }
 
     function removeCbFilter(btn, val) {
@@ -381,24 +362,14 @@
       syncFilters();
       if (window.applyFiltersReal) window.applyFiltersReal();
     }
-    function resetMatch(btn) {
-      document.getElementById('match-slider').value = 0;
-      document.getElementById('match-min-label').textContent = '0%';
-      btn.parentElement.remove();
-      if (window.applyFiltersReal) window.applyFiltersReal();
-    }
 
     // cat-pills y search los maneja el script module para tener acceso a ALL_JOBS
-
-    function updateMatchLabel(input) { document.getElementById('match-min-label').textContent = input.value + '%'; }
 
     function clearAllFilters() {
       document.getElementById('search-input').value = '';
       document.querySelectorAll('#filter-modal input[type=checkbox]').forEach(cb => cb.checked = true);
-      document.getElementById('match-slider').value = 0;
-      document.getElementById('match-min-label').textContent = '0%';
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+      document.querySelector('.cat-pill[data-cat="all\"]')?.classList.add('active');
       document.getElementById('active-filters').innerHTML  = '';
       document.getElementById('filter-badge').style.display = 'none';
       document.getElementById('filter-trigger-btn').classList.remove('has-filters');
@@ -576,6 +547,12 @@ async function loadJobs() {
     ALL_JOBS = jobs;
     APPLIED_IDS = appliedIds;
 
+    // Construir filtros dinámicos con datos reales
+    buildFilterPanels(jobs);
+
+    // Ordenar por defecto: más recientes
+    jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     if (countEl) countEl.textContent = jobs.length;
 
     if (!jobs.length) {
@@ -583,49 +560,8 @@ async function loadJobs() {
       return;
     }
 
-    list.innerHTML = jobs.map(job => {
-      const applied = appliedIds.has(job.id);
-      const salary  = job.salaryMin
-        ? `💰 ${job.currency || ''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax ? ' – ' + Number(job.salaryMax).toLocaleString() : ''} / mes`
-        : '';
-      const skills = (job.skills || []).map(s =>
-        `<span class="skill-tag match">${s}</span>`
-      ).join('');
-      const applyBtn = applied
-        ? `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);" disabled>✓ Postulado</button>`
-        : `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJobReal(this,'${job.id}')">Postularme</button>`;
-
-      return `<div class="job-card" data-cat="${(job.area||'all').toLowerCase()}" data-job-id="${job.id}" style="cursor:pointer;" onclick="if(!event.target.closest('button'))openJobModal('${job.id}')">
-        <div class="job-card-header">
-          <div class="job-card-left">
-            <div class="job-company-logo">🏢</div>
-            <div>
-              <div class="job-card-title">${job.title}</div>
-              <div class="job-card-company">${job.company?.companyName || 'Empresa'} · ${job.location || ''}</div>
-            </div>
-          </div>
-          <div class="job-card-right">
-            <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
-          </div>
-        </div>
-        <div class="job-card-meta">
-          ${job.modality  ? `<span>📍 ${job.modality}</span>`  : ''}
-          ${job.contract  ? `<span>⏱ ${job.contract}</span>`  : ''}
-          ${job.experience? `<span>🏆 ${job.experience}</span>`:''}
-          <span>📅 ${new Date(job.createdAt).toLocaleDateString('es-AR')}</span>
-        </div>
-        ${skills ? `<div class="job-card-tags">${skills}</div>` : ''}
-        <div class="job-card-footer">
-          <div class="job-card-footer-left">
-            <span class="salary-text">${salary}</span>
-          </div>
-          <div class="job-card-footer-right">
-            <button class="save-btn" id="save-${job.id}" onclick="event.stopPropagation();toggleSaveJob('${job.id}',this)">${SAVED_IDS.has('${job.id}')?'★ Guardado':'⭐ Guardar'}</button>
-            ${applyBtn}
-          </div>
-        </div>
-      </div>`;
-    }).join('');
+    // Delegar el render a applyFiltersReal (maneja sort y filtros)
+    applyFiltersReal();
 
   } catch(err) {
     console.error('Error cargando ofertas:', err);
@@ -654,57 +590,148 @@ window.applyJobReal = async function(btn, jobId) {
 };
 
 // ── Filtros sobre datos reales ────────────────────────────────────────────
-window.applyFiltersReal = function applyFiltersReal() {
-  const q        = (document.getElementById('search-input')?.value || '').toLowerCase();
-  const matchMin = parseInt(document.getElementById('match-slider')?.value || '0');
-  const activeCat = document.querySelector('.cat-pill.active')?.dataset.cat || 'all';
 
-  // Checkboxes activos
-  const getChecked = (filter) => [...document.querySelectorAll(`#filter-modal input[data-filter="${filter}"]:checked`)].map(c => c.dataset.val.toLowerCase());
-  const modalities = getChecked('modalidad');
-  const contracts  = getChecked('contrato');
+// Genera los checkboxes dinámicamente a partir de los datos reales
+function buildFilterPanels(jobs) {
+  function countBy(field) {
+    const map = {};
+    jobs.forEach(j => {
+      const val = j[field];
+      if (val) map[val] = (map[val] || 0) + 1;
+    });
+    return map;
+  }
 
-  let visible = 0;
-  document.querySelectorAll('.job-card').forEach(card => {
-    const jobId = card.dataset.jobId;
-    const job   = ALL_JOBS.find(j => j.id === jobId);
-    if (!job) { card.style.display='none'; return; }
+  function renderCheckboxes(containerId, filterKey, countMap) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!Object.keys(countMap).length) {
+      container.innerHTML = '<span style="color:var(--clr-muted);font-size:.8rem;">Sin datos</span>';
+      return;
+    }
+    container.innerHTML = Object.entries(countMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([val, count]) =>
+        `<label class="fm-check">
+          <span class="fm-check-left">
+            <input type="checkbox" checked data-filter="${filterKey}" data-val="${val}" onchange="applyFiltersReal()"> ${val}
+          </span>
+          <span class="fm-check-count">${count}</span>
+        </label>`
+      ).join('');
+  }
 
-    const userSkills = JSON.parse(localStorage.getItem('talentai_user') || '{}').skills || [];
-    const jSkills    = (job.skills||[]).map(s=>s.toLowerCase());
-    const matches    = jSkills.filter(s => userSkills.map(u=>u.toLowerCase()).includes(s)).length;
-    const matchPct   = jSkills.length ? Math.round((matches/jSkills.length)*100) : 50;
-
-    const matchText  = !q || card.textContent.toLowerCase().includes(q);
-    const matchMod   = !modalities.length || modalities.some(m => (job.modality||'').toLowerCase().includes(m));
-    const matchCont  = !contracts.length  || contracts.some(c  => (job.contract||'').toLowerCase().includes(c));
-    const matchMatch = matchPct >= matchMin;
-    const matchCat   = activeCat === 'all' || (job.area||'').toLowerCase().includes(activeCat);
-
-    const show = matchText && matchMod && matchCont && matchMatch && matchCat;
-    card.style.display = show ? '' : 'none';
-    if (show) visible++;
-  });
-
-  const countEl = document.getElementById('results-num');
-  const emptyEl = document.getElementById('empty-state');
-  if (countEl) countEl.textContent = visible;
-  if (emptyEl) emptyEl.style.display = visible === 0 ? 'block' : 'none';
+  renderCheckboxes('fm-modalidad', 'modalidad', countBy('modality'));
+  renderCheckboxes('fm-contrato',  'contrato',  countBy('contract'));
+  renderCheckboxes('fm-exp',       'exp',        countBy('experience'));
+  renderCheckboxes('fm-ubicacion', 'ubicacion',  countBy('location'));
+  renderCheckboxes('fm-moneda',    'moneda',     countBy('currency'));
 }
 
-// Conectar todos los listeners de filtro a applyFiltersReal
+window.applyFiltersReal = function applyFiltersReal() {
+  const q         = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const activeCat = document.querySelector('.cat-pill.active')?.dataset.cat || 'all';
+  const sortVal   = document.getElementById('sort-select')?.value || 'reciente';
+
+  const getChecked = (filter) =>
+    [...document.querySelectorAll(`#filter-modal input[data-filter="${filter}"]:checked`)]
+      .map(c => c.dataset.val.toLowerCase());
+
+  const modalities = getChecked('modalidad');
+  const contracts  = getChecked('contrato');
+  const exps       = getChecked('exp');
+  const ubicaciones= getChecked('ubicacion');
+  const monedas    = getChecked('moneda');
+
+  // Filtrar
+  let filtered = ALL_JOBS.filter(job => {
+    const matchText  = !q ||
+      (job.title||'').toLowerCase().includes(q) ||
+      (job.company?.companyName||'').toLowerCase().includes(q) ||
+      (job.description||'').toLowerCase().includes(q);
+    const matchMod   = !modalities.length || modalities.some(m => (job.modality||'').toLowerCase() === m);
+    const matchCont  = !contracts.length  || contracts.some(c  => (job.contract||'').toLowerCase() === c);
+    const matchExp   = !exps.length       || exps.some(e       => (job.experience||'').toLowerCase() === e);
+    const matchUbic  = !ubicaciones.length|| ubicaciones.some(u => (job.location||'').toLowerCase().includes(u));
+    const matchMon   = !monedas.length    || monedas.some(m    => (job.currency||'').toLowerCase() === m);
+    const matchCat   = activeCat === 'all'|| (job.area||'').toLowerCase().includes(activeCat);
+    return matchText && matchMod && matchCont && matchExp && matchUbic && matchMon && matchCat;
+  });
+
+  // Ordenar
+  if (sortVal === 'salario') {
+    filtered.sort((a, b) => (Number(b.salaryMax || b.salaryMin || 0)) - (Number(a.salaryMax || a.salaryMin || 0)));
+  } else if (sortVal === 'alpha') {
+    filtered.sort((a, b) => (a.title||'').localeCompare(b.title||''));
+  } else { // reciente (default)
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  // Renderizar
+  const list    = document.getElementById('jobs-list');
+  const countEl = document.getElementById('results-num');
+  const emptyEl = document.getElementById('empty-state');
+
+  if (countEl) countEl.textContent = filtered.length;
+  if (emptyEl) emptyEl.style.display = filtered.length === 0 ? 'block' : 'none';
+
+  if (!list) return;
+  list.innerHTML = filtered.map(job => {
+    const applied = APPLIED_IDS.has(job.id);
+    const salary  = job.salaryMin
+      ? `💰 ${job.currency || ''} ${Number(job.salaryMin).toLocaleString()}${job.salaryMax ? ' – ' + Number(job.salaryMax).toLocaleString() : ''} / mes`
+      : '';
+    const skills = (job.skills || []).map(s => `<span class="skill-tag match">${s}</span>`).join('');
+    const applyBtn = applied
+      ? `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;background:rgba(76,175,132,.15);color:var(--clr-success);border:1px solid rgba(76,175,132,.3);" disabled>✓ Postulado</button>`
+      : `<button class="btn btn-primary" style="padding:9px 20px;font-size:.82rem;" onclick="applyJobReal(this,'${job.id}')">Postularme</button>`;
+    const isSaved = SAVED_IDS.has(job.id);
+    return `<div class="job-card" data-cat="${(job.area||'all').toLowerCase()}" data-job-id="${job.id}" style="cursor:pointer;" onclick="if(!event.target.closest('button'))openJobModal('${job.id}')">
+      <div class="job-card-header">
+        <div class="job-card-left">
+          <div class="job-company-logo">🏢</div>
+          <div>
+            <div class="job-card-title">${job.title}</div>
+            <div class="job-card-company">${job.company?.companyName || 'Empresa'} · ${job.location || ''}</div>
+          </div>
+        </div>
+        <div class="job-card-right">
+          <span class="badge badge-green"><span class="badge-dot"></span> Activa</span>
+        </div>
+      </div>
+      <div class="job-card-meta">
+        ${job.modality  ? `<span>📍 ${job.modality}</span>`  : ''}
+        ${job.contract  ? `<span>⏱ ${job.contract}</span>`  : ''}
+        ${job.experience? `<span>🏆 ${job.experience}</span>`:  ''}
+        <span>📅 ${new Date(job.createdAt).toLocaleDateString('es-AR')}</span>
+      </div>
+      ${skills ? `<div class="job-card-tags">${skills}</div>` : ''}
+      <div class="job-card-footer">
+        <div class="job-card-footer-left">
+          <span class="salary-text">${salary}</span>
+        </div>
+        <div class="job-card-footer-right">
+          <button class="save-btn ${isSaved ? 'saved' : ''}" id="save-${job.id}" onclick="event.stopPropagation();toggleSaveJob('${job.id}',this)">${isSaved ? '★ Guardado' : '⭐ Guardar'}</button>
+          ${applyBtn}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Actualizar badge del filtro
+  const activeFilters = [...document.querySelectorAll('#filter-modal input[type="checkbox"]:not(:checked)')].length;
+  const badge = document.getElementById('filter-badge');
+  if (badge) {
+    badge.style.display = activeFilters > 0 ? '' : 'none';
+    badge.textContent   = activeFilters;
+  }
+  renderActiveChips();
+}
+
+// Conectar listeners
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('search-input')?.addEventListener('input', applyFiltersReal);
   document.getElementById('search-btn')?.addEventListener('click', applyFiltersReal);
-  document.getElementById('match-slider')?.addEventListener('input', () => {
-    document.getElementById('match-min-label').textContent = document.getElementById('match-slider').value + '%';
-    applyFiltersReal();
-  });
-  document.querySelectorAll('#filter-modal input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', () => { syncFilters(); applyFiltersReal(); });
-  });
-
-  // Filtro de categorías (cat-pills)
   document.querySelectorAll('.cat-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
