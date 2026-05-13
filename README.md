@@ -332,8 +332,8 @@ Proyecto académico — **Ingeniería Web II, UNDEF 2026**
 
 | Integrante | Rol |
 |---|---|
-| Francisco | Fullstack + Integración IA |
-| [Compañera] | Fullstack + Integracón IA + Diseño |
+| Francisco Bossio | Fullstack + Integración IA |
+| Sofia Correa | Fullstack + Integracón IA + Diseño |
 
 ---
 
