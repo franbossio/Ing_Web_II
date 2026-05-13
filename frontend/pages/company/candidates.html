@@ -292,11 +292,16 @@
     const reason   = c.reason   || '';
     const id       = c.id || c.candidateId || '';
 
+    const avatarStyle = c.photo
+      ? `style="background-image:url(${c.photo});background-size:cover;background-position:center;"`
+      : '';
+    const avatarContent = c.photo ? '' : iniciales;
+
     return `
       <div class="candidate-card ${matchPct ? 'ia-match' : ''}">
         <div class="cand-card-header">
           <div class="cand-card-left">
-            <div class="cand-card-avatar">${iniciales}</div>
+            <div class="cand-card-avatar" ${avatarStyle}>${avatarContent}</div>
             <div>
               <div class="cand-card-name">${nombre}</div>
               <div class="cand-card-title">${c.jobTitle || c.titulo || 'Candidato'}</div>
@@ -425,6 +430,10 @@
 
     const nombre   = [cand.firstName, cand.lastName, cand.nombre].filter(Boolean).join(' ') || '—';
     const iniciales= nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
+    const pmAvatarStyle = cand.photo
+      ? `style="background-image:url(${cand.photo});background-size:cover;background-position:center;"`
+      : '';
+    const pmAvatarContent = cand.photo ? '' : iniciales;
 
     const skillsHtml = (cand.skills || []).map(s => `<span class="skill-tag highlight" style="margin:2px;">${s}</span>`).join('')
       || '<span style="color:var(--clr-muted);font-size:0.82rem;">Sin skills registradas</span>';
@@ -449,7 +458,7 @@
     ].filter(Boolean).join('');
 
     document.getElementById('modal-profile-content').innerHTML = `
-      <div class="pm-avatar">${iniciales}</div>
+      <div class="pm-avatar" ${pmAvatarStyle}>${pmAvatarContent}</div>
       <div class="pm-name">${nombre}</div>
       <div class="pm-title">${cand.jobTitle || cand.titulo || 'Candidato'}</div>
       <div class="pm-loc">${cand.location ? '📍 ' + cand.location : ''}${cand.phone ? ' · 📞 ' + cand.phone : ''}</div>
