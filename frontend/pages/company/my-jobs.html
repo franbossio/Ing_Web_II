@@ -63,7 +63,6 @@
       color: var(--clr-muted);
     }
     .status-toggle.active { background: rgba(76,175,132,0.1); border-color: rgba(76,175,132,0.3); color: var(--clr-success); }
-    .status-toggle.paused { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--clr-accent); }
     .status-toggle.closed { background: var(--clr-surface-2); border-color: var(--clr-border); color: var(--clr-muted); }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
@@ -131,13 +130,12 @@
         <select class="filter-select" id="filter-status">
           <option value="all">Todas las ofertas</option>
           <option value="active">Solo activas</option>
-          <option value="paused">Solo pausadas</option>
           <option value="closed">Solo cerradas</option>
         </select>
-        <select class="filter-select">
-          <option>Más recientes</option>
-          <option>Más postulaciones</option>
-          <option>Mayor match IA</option>
+        <select class="filter-select" id="sort-select">
+          <option value="reciente">Más recientes</option>
+          <option value="postulaciones">Más postulaciones</option>
+          <option value="az">A → Z</option>
         </select>
       </div>
 
@@ -267,23 +265,51 @@
     </div>`;
   }
 
+  // Estado global para poder re-renderizar al ordenar
+  let ALL_JOBS   = [];
+  let APPS_BY_JOB = {};
+
   function setupFilters() {
     const searchInput  = document.getElementById('search-input');
     const filterStatus = document.getElementById('filter-status');
+    const sortSelect   = document.getElementById('sort-select');
+    const grid         = document.getElementById('jobs-grid');
+
     function applyFilter() {
-      const q  = searchInput?.value.toLowerCase() || '';
-      const st = filterStatus?.value || 'all';
-      let visible = 0;
-      document.querySelectorAll('.job-card').forEach(card => {
-        const matchText   = !q || card.textContent.toLowerCase().includes(q);
-        const matchStatus = st === 'all' || card.dataset.status === st;
-        card.style.display = matchText && matchStatus ? '' : 'none';
-        if (matchText && matchStatus) visible++;
+      const q   = searchInput?.value.toLowerCase() || '';
+      const st  = filterStatus?.value || 'all';
+      const srt = sortSelect?.value || 'reciente';
+
+      // Filtrar
+      let filtered = ALL_JOBS.filter(job => {
+        const matchText   = !q || (job.title || '').toLowerCase().includes(q);
+        const isActive    = job.active !== false;
+        const statusKey   = isActive ? 'active' : 'closed';
+        const matchStatus = st === 'all' || statusKey === st;
+        return matchText && matchStatus;
       });
-      document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+
+      // Ordenar
+      if (srt === 'postulaciones') {
+        filtered.sort((a, b) => (APPS_BY_JOB[b.id] || 0) - (APPS_BY_JOB[a.id] || 0));
+      } else if (srt === 'az') {
+        filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      } else {
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      if (!filtered.length) {
+        grid.innerHTML = '';
+        document.getElementById('empty-state').style.display = 'block';
+      } else {
+        document.getElementById('empty-state').style.display = 'none';
+        grid.innerHTML = filtered.map(job => renderJob(job, APPS_BY_JOB[job.id] || 0)).join('');
+      }
     }
+
     searchInput?.addEventListener('input', applyFilter);
     filterStatus?.addEventListener('change', applyFilter);
+    sortSelect?.addEventListener('change', applyFilter);
   }
 
   async function deleteJob(jobId, btn) {
@@ -380,6 +406,10 @@
         const jid = a.job?.id || a.jobId;
         if (jid) appsByJob[jid] = (appsByJob[jid] || 0) + 1;
       });
+
+      // Guardar globalmente para que setupFilters pueda re-renderizar
+      ALL_JOBS    = jobs;
+      APPS_BY_JOB = appsByJob;
 
       renderStats(jobs, apps.length);
 
