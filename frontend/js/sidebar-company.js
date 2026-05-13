@@ -120,17 +120,7 @@ window.cerrarSesion = function () {
       : '?';
     const av = document.getElementById('sidebar-avatar');
     const sn = document.getElementById('sidebar-name');
-    if (av) {
-      if (u.photo) {
-        av.style.backgroundImage = `url(${u.photo})`;
-        av.style.backgroundSize = 'cover';
-        av.style.backgroundPosition = 'center';
-        av.textContent = '';
-      } else {
-        av.style.backgroundImage = '';
-        av.textContent = iniciales;
-      }
-    }
+    if (av) av.textContent = iniciales;
     if (sn) sn.textContent = nombre;
   }
 

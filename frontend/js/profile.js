@@ -146,9 +146,11 @@ export function readCompanyForm() {
     if (!el) return null;
     return el.options[el.selectedIndex]?.value || el.options[el.selectedIndex]?.text || null;
   };
+  const industryVal = getSel('industry');
+  const customIndustry = get('customIndustry');
   return {
     companyName: get('companyName'),
-    industry:    getSel('industry'),
+    industry:    industryVal === 'Otro' && customIndustry ? customIndustry : industryVal,
     companySize: getSel('companySize'),
     location:    get('location'),
     website:     get('website'),
@@ -311,7 +313,20 @@ export function fillProfileForm(u) {
       if (el) el.value = '';
     });
     setVal('companyName', u.companyName);
-    setVal('industry',    u.industry);
+    // Restaurar industria: si el valor no está en las opciones fijas, es un "Otro" personalizado
+    const industriasFijas = ['Tecnología e IT','Fintech','E-commerce','Salud','Educación','Otro'];
+    const industriaGuardada = u.industry || '';
+    const esCustom = industriaGuardada && !industriasFijas.includes(industriaGuardada);
+    const selectIndustry = document.getElementById('industry');
+    const inputCustom = document.getElementById('customIndustry');
+    if (esCustom && selectIndustry && inputCustom) {
+      selectIndustry.value = 'Otro';
+      inputCustom.value = industriaGuardada;
+      inputCustom.style.display = 'block';
+    } else {
+      setVal('industry', u.industry);
+      if (inputCustom) { inputCustom.style.display = 'none'; inputCustom.value = ''; }
+    }
     setVal('companySize', u.companySize);
     setVal('location',    u.location);
     setVal('website',     u.website);
