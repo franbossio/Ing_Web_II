@@ -123,6 +123,7 @@
 }
 .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
 .nav-badge { margin-left: auto; background: var(--clr-accent); color: #0d0f14; font-size: 0.67rem; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+.nav-badge-count { margin-left: auto; background: var(--clr-accent); color: #0d0f14; font-size: 0.67rem; font-weight: 700; padding: 2px 7px; border-radius: 100px; min-width: 20px; text-align: center; line-height: 1.4; }
 .sidebar-footer { padding: 12px 10px; border-top: 1px solid var(--clr-border); }
 .sidebar-footer .nav-item:hover { color: var(--clr-error); background: rgba(224,92,92,0.07); }
 

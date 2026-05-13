@@ -111,6 +111,49 @@ window.cerrarSesion = function () {
         fillSidebar(u);
       }
     } catch {}
+
+    loadBadges(token);
+  }
+
+  async function loadBadges(token) {
+    const API = 'https://ing-web-ii.onrender.com/api';
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      const [jobsRes, appsRes] = await Promise.all([
+        fetch(`${API}/jobs/my`, { headers }),
+        fetch(`${API}/applications/company`, { headers }),
+      ]);
+
+      if (jobsRes.ok) {
+        const jobs = await jobsRes.json();
+        setBadge('my-jobs.html', jobs.length);
+      }
+      if (appsRes.ok) {
+        const apps = await appsRes.json();
+        setBadge('applications.html', apps.length);
+      }
+    } catch {}
+
+    // Favoritos: vienen del localStorage
+    try {
+      const u = JSON.parse(localStorage.getItem('talentai_user') || '{}');
+      const favs = JSON.parse(localStorage.getItem(`favorites_${u.id || 'unknown'}`) || '[]');
+      setBadge('favorites.html', favs.length);
+    } catch {}
+  }
+
+  function setBadge(href, count) {
+    if (!count || count === 0) return;
+    const link = document.querySelector(`.nav-item[href="${href}"]`);
+    if (!link) return;
+    let badge = link.querySelector('.nav-badge-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'nav-badge-count';
+      link.appendChild(badge);
+    }
+    badge.textContent = count;
   }
 
   function fillSidebar(u) {

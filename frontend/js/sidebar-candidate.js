@@ -114,6 +114,51 @@ window.cerrarSesion = function () {
         fillSidebar(u);
       }
     } catch {}
+
+    loadBadges(token);
+  }
+
+  async function loadBadges(token) {
+    const API = 'https://ing-web-ii.onrender.com/api';
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // Postulaciones: datos reales de la BD
+    try {
+      const res = await fetch(`${API}/applications/my`, { headers });
+      if (res.ok) {
+        const apps = await res.json();
+        setBadge('applications.html', apps.length);
+      }
+    } catch {}
+
+    // Guardados: cruza los IDs del localStorage contra los jobs reales
+    try {
+      const savedIds = JSON.parse(localStorage.getItem('conectaia_saved_jobs') || '[]');
+      if (savedIds.length > 0) {
+        const res = await fetch(`${API}/jobs`, { headers });
+        if (res.ok) {
+          const jobs = await res.json();
+          const jobIds = new Set(jobs.map(j => j.id));
+          const validCount = savedIds.filter(id => jobIds.has(id)).length;
+          setBadge('saved.html', validCount);
+        } else {
+          setBadge('saved.html', savedIds.length);
+        }
+      }
+    } catch {}
+  }
+
+  function setBadge(href, count) {
+    if (!count || count === 0) return;
+    const link = document.querySelector(`.nav-item[href="${href}"]`);
+    if (!link) return;
+    let badge = link.querySelector('.nav-badge-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'nav-badge-count';
+      link.appendChild(badge);
+    }
+    badge.textContent = count;
   }
 
   function fillSidebar(u) {
