@@ -10,6 +10,7 @@
   <script src="../../js/sidebar-candidate.js" type="module"></script>
   <link rel="stylesheet" href="../../css/candidate.css" />
   <link rel="stylesheet" href="../../css/profile.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 </head>
 <body>
@@ -276,6 +277,16 @@
                 <div class="tags-input-wrapper" id="soft-wrapper">
                   <input class="tags-input" id="soft-input" placeholder="Agregá una habilidad y presioná Enter..." />
                 </div>
+              </div>
+
+              <!-- ── Gráfico de habilidades ─────────────────────────── -->
+              <div class="form-section" id="skills-chart-section" style="display:none;">
+                <div class="form-section-title">📊 Demanda de tus habilidades en el mercado</div>
+                <div style="font-size:0.75rem;color:var(--clr-muted);margin:4px 0 14px;">Cuántas ofertas activas piden cada una de tus habilidades &nbsp;·&nbsp; <span style="opacity:.7;">Más oscuro = más demandada</span></div>
+                <div style="position:relative;width:100%;overflow-x:auto;">
+                  <canvas id="chart-skills-demand" style="min-width:320px;"></canvas>
+                </div>
+                <div id="chart-skills-loading" style="text-align:center;padding:28px 0;font-size:0.8rem;color:var(--clr-muted);">⏳ Cargando datos del mercado...</div>
               </div>
 
               <div class="form-section">
@@ -703,7 +714,7 @@
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
 
         // Guardar perfil + CV directamente en /api/users/me (sin volver a analizar)
-        const res = await fetch('https://ing-web-ii.onrender.com/api/users/me', {
+        const res = await fetch('http://localhost:3001/api/users/me', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -749,7 +760,7 @@
       // Solo guardar el CV sin los datos de la IA
       if (pendingBase64 && pendingFileName) {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        fetch('https://ing-web-ii.onrender.com/api/users/me', {
+        fetch('http://localhost:3001/api/users/me', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ cvFileName: pendingFileName, cvUrl: pendingBase64 }),
@@ -766,7 +777,7 @@
       if (!confirm('¿Seguro que querés eliminar tu CV?')) return;
       try {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('https://ing-web-ii.onrender.com/api/users/me', {
+        const res = await fetch('http://localhost:3001/api/users/me', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -813,6 +824,154 @@
     const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
     if (_u) updateDashboardHero(_u);
     await initProfile();
+
+    // ── Gráfico de demanda de habilidades (chart.js, solo frontend) ────────
+    let chartDemandInstance = null;
+
+    async function renderSkillsCharts(user) {
+      const allSkills = [...(user?.skills || []), ...(user?.softSkills || [])];
+      const section   = document.getElementById('skills-chart-section');
+      const loadingEl = document.getElementById('chart-skills-loading');
+      const canvasEl  = document.getElementById('chart-skills-demand');
+
+      if (!section) return;
+
+      if (allSkills.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      if (loadingEl) loadingEl.style.display = 'block';
+      if (canvasEl)  canvasEl.style.display  = 'none';
+
+      // ── Traer todas las ofertas activas ──────────────────────────────────
+      let jobs = [];
+      try {
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const res = await fetch('http://localhost:3001/api/jobs', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (res.ok) jobs = await res.json();
+      } catch (_) { /* sin conexión: dejamos jobs = [] */ }
+
+      // ── Cruzar: contar en cuántas ofertas aparece cada skill del candidato ─
+      const skillNormalized = s => s.trim().toLowerCase();
+      const counts = allSkills.map(skill => {
+        const norm = skillNormalized(skill);
+        const count = jobs.filter(job =>
+          (job.skills || []).some(js => skillNormalized(js) === norm) ||
+          (job.softSkills || []).some(js => skillNormalized(js) === norm)
+        ).length;
+        return { skill, count };
+      });
+
+      // Ordenar de mayor a menor demanda
+      counts.sort((a, b) => b.count - a.count);
+
+      const labels = counts.map(c => c.skill.length > 14 ? c.skill.slice(0, 13) + '…' : c.skill);
+      const values = counts.map(c => c.count);
+      const maxVal = Math.max(...values, 1);
+
+      // Intensidad de color: más demandada = más claro (opacidad 1), menos = más oscuro (opacidad 0.25)
+      const bgColors = values.map(v => {
+        const alpha = 0.22 + (v / maxVal) * 0.78; // rango 0.22 → 1.0
+        return `rgba(201,168,76,${alpha.toFixed(2)})`;
+      });
+      const borderColors = values.map(v => {
+        const alpha = 0.35 + (v / maxVal) * 0.65;
+        return `rgba(201,168,76,${alpha.toFixed(2)})`;
+      });
+
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (canvasEl)  canvasEl.style.display  = 'block';
+
+      // Altura dinámica según cantidad de skills
+      const barW    = Math.max(48, Math.min(72, Math.floor(600 / allSkills.length)));
+      const canvasH = 240;
+      if (canvasEl) canvasEl.height = canvasH;
+
+      if (chartDemandInstance) chartDemandInstance.destroy();
+
+      chartDemandInstance = new Chart(canvasEl, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            backgroundColor: bgColors,
+            borderColor: borderColors,
+            borderWidth: 1.5,
+            borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 },
+            borderSkipped: 'bottom',
+            barPercentage: 0.72,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: items => items[0]?.label || '',
+                label: items => `${items.raw} oferta${items.raw !== 1 ? 's' : ''}`,
+              },
+              backgroundColor: '#1a1c22',
+              titleColor: '#f0e6c8',
+              bodyColor: '#c9a84c',
+              borderColor: 'rgba(201,168,76,0.3)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#a0a0a0',
+                font: { size: 11, family: 'var(--font-body)' },
+                maxRotation: 30,
+              },
+              grid: { display: false },
+              border: { display: false },
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Nº de ofertas',
+                color: '#606060',
+                font: { size: 10, family: 'var(--font-body)' },
+              },
+              ticks: {
+                color: '#606060',
+                font: { size: 10 },
+                stepSize: 1,
+                precision: 0,
+              },
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              border: { display: false },
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
+
+    // Renderizar al cargar (con caché)
+    if (_u) renderSkillsCharts(_u);
+    const freshForChart = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+    if (freshForChart && freshForChart !== _u) renderSkillsCharts(freshForChart);
+
+    // Re-renderizar cuando el usuario guarda habilidades
+    const _origSave = window.saveSection;
+    window.saveSection = async function(section) {
+      await _origSave.apply(this, arguments);
+      if (section === 'skills') {
+        const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+        if (u) renderSkillsCharts(u);
+      }
+    };
 
     // ── Photo upload ─────────────────────────────────────────────
     function compressImage(file, maxSize = 400, quality = 0.75) {
