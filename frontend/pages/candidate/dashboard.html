@@ -278,6 +278,21 @@
 
         </div>
 
+        <!-- ── Trending Skills ── -->
+        <div class="panel" style="margin-top:24px;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">🔥 Habilidades más demandadas</div>
+              <div class="panel-subtitle">Skills más pedidas en las ofertas activas de la plataforma</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:20px 24px;">
+            <div id="trending-list" style="display:flex;flex-wrap:wrap;gap:10px;">
+              <div class="skel-card" style="height:32px;width:100%;border-radius:8px;"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -453,6 +468,44 @@
     // Exponerla globalmente para que el botón "Reintentar" del HTML pueda llamarla
     window.loadRecommendations = loadRecommendations;
 
+    async function loadTrendingSkills() {
+      const el = document.getElementById('trending-list');
+      if (!el) return;
+      try {
+        const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+        const res = await fetch('https://ing-web-ii.onrender.com/api/jobs/trending-skills', {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error();
+        const skills = await res.json();
+        const max = skills[0] ? skills[0].count : 1;
+        const userSkills = (window._userData && window._userData.skills ? window._userData.skills : []).map(function(x){ return x.toLowerCase(); });
+
+        el.innerHTML = skills.map(function(s, i) {
+          const medals   = ['🥇','🥈','🥉'];
+          const medal    = i < 3 ? medals[i] : (i + 1) + '.';
+          const hasSkill = userSkills.indexOf(s.skill.toLowerCase()) !== -1;
+          const pct      = Math.round((s.count / max) * 100);
+          const color    = hasSkill ? 'var(--clr-accent)' : 'var(--clr-text)';
+          const barColor = hasSkill ? 'var(--clr-accent)' : 'rgba(201,168,76,.35)';
+          const check    = hasSkill ? ' ✓' : '';
+          const label    = s.count + ' oferta' + (s.count !== 1 ? 's' : '');
+          return '<div style="width:100%;margin-bottom:10px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+              '<span style="font-size:.82rem;font-weight:600;color:' + color + ';">' + medal + ' ' + s.skill + check + '</span>' +
+              '<span style="font-size:.75rem;color:var(--clr-muted);">' + label + '</span>' +
+            '</div>' +
+            '<div style="height:6px;border-radius:100px;background:var(--clr-border);overflow:hidden;">' +
+              '<div style="height:100%;width:' + pct + '%;border-radius:100px;background:' + barColor + ';transition:width .6s ease;"></div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      } catch(e) {
+        el.innerHTML = '<span style="color:var(--clr-muted);font-size:.82rem;">No se pudieron cargar las habilidades.</span>';
+      }
+    }
+
+
     // ── Dashboard principal ─────────────────────────────────────────────────
     async function loadDashboard() {
       await initDashboard();
@@ -466,8 +519,12 @@
       // CV bar
       renderCvBar(u);
 
+      window._userData = u; // disponible para loadTrendingSkills
       // Recomendaciones IA — ahora sí está definida arriba
       loadRecommendations();
+
+      // Trending skills
+      loadTrendingSkills();
 
       // Postulaciones
       const apps  = u.recentApplications || [];
