@@ -55,59 +55,91 @@ export class UsersController {
     return this.usersService.findCandidates();
   }
 
-  /** POST /api/users/candidates/suggest — IA ordena candidatos por oferta */
+  /** POST /api/users/candidates/suggest — IA ordena candidatos por oferta usando Groq directo */
   @Post('candidates/suggest')
   @UseGuards(JwtAuthGuard)
   async suggestCandidates(
     @Body() body: { jobId: string; jobTitle: string; jobSkills: string[]; jobDescription: string },
   ) {
-    const webhookUrl = this.config.get<string>('MAKE_CANDIDATES_URL', '');
-    if (!webhookUrl) throw new Error('MAKE_CANDIDATES_URL no configurada');
+    const groqApiKey = this.config.get<string>('GROQ_API_KEY', '');
+    if (!groqApiKey) throw new Error('GROQ_API_KEY no configurada');
 
     const candidates = await this.usersService.findCandidates();
     if (!candidates.length) return [];
 
-    // Cada candidato en UNA sola línea, sin \n internos
-    const candList = candidates.map(c =>
-      `ID:${c.id} NOMBRE:${clean([c.firstName, c.lastName].filter(Boolean).join(' ') || c.email, 60)} TITULO:${clean(c.jobTitle || '', 80)} SKILLS:${(c.skills || []).map(s => clean(s, 40)).join(',')}`
-    );
+    // Armar texto de candidatos para el prompt
+    const candText = candidates.map(c =>
+      c.id + ' - ' +
+      clean([c.firstName, c.lastName].filter(Boolean).join(' ') || c.email, 60) +
+      ' | titulo: ' + clean(c.jobTitle || '', 80) +
+      ' | skills: ' + (c.skills || []).map(s => clean(s, 40)).join(', ') +
+      (c.bio ? ' | bio: ' + clean(c.bio, 150) : '')
+    ).join('\n');
 
-    // Payload limpio: el prompt es un string sin \n
-    const payload = {
-      jobTitle:       clean(body.jobTitle, 150),
-      jobSkills:      (body.jobSkills || []).map(s => clean(s, 60)),
-      jobDescription: clean(body.jobDescription || '', 300),
-      candidates:     candList,   // array de strings limpios, sin \n
-    };
+    const prompt =
+      'Oferta de trabajo:' +
+      '\ntitulo: ' + clean(body.jobTitle, 150) +
+      '\nskills requeridas: ' + (body.jobSkills || []).map(s => clean(s, 60)).join(', ') +
+      (body.jobDescription ? '\ndescripcion: ' + clean(body.jobDescription, 300) : '') +
+      '\n\nCandidatos disponibles (formato: uuid - nombre | titulo | skills | bio):' +
+      '\n' + candText +
+      '\n\nDevuelve SOLO este JSON sin texto extra ni markdown:' +
+      '\n{"suggestions":[{"candidateId":"uuid-exacto","matchPct":85,"reason":"razon en espanol max 100 chars"}]}' +
+      '\n\nReglas:' +
+      '\n- Usa SOLO los candidateId exactos que aparecen al inicio de cada linea (antes del primer guion)' +
+      '\n- Devuelve maximo 10 candidatos ordenados de mayor a menor matchPct' +
+      '\n- Solo incluye candidatos con matchPct >= 40' +
+      '\n- Si ninguno supera 40, devuelve los 3 mejores igual' +
+      '\n- El campo reason debe explicar especificamente que skills o experiencia del candidato coinciden con la oferta';
 
-    console.log('=== CALLING MAKE CANDIDATES:', webhookUrl.slice(0, 50));
+    console.log('=== CALLING GROQ CANDIDATES DIRECT ===');
     console.log('=== CANDIDATES COUNT:', candidates.length);
 
-    const response = await fetch(webhookUrl, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + groqApiKey,
+      },
+      body: JSON.stringify({
+        model:       'llama-3.3-70b-versatile',
+        temperature: 0.2,
+        max_tokens:  1500,
+        messages: [
+          {
+            role:    'system',
+            content: 'Eres un motor de matching de candidatos para ofertas de trabajo. Responde SOLO con JSON valido, sin markdown ni texto extra.',
+          },
+          {
+            role:    'user',
+            content: prompt,
+          },
+        ],
+      }),
     });
 
     const rawText = await response.text();
-    console.log('=== MAKE STATUS:', response.status);
-    console.log('=== MAKE RESPONSE:', rawText.slice(0, 300));
+    console.log('=== GROQ STATUS:', response.status);
+    console.log('=== GROQ RESPONSE:', rawText.slice(0, 500));
 
-    if (!response.ok) throw new Error(`Make error ${response.status}: ${rawText.slice(0, 100)}`);
+    if (!response.ok) throw new Error('Groq error ' + response.status + ': ' + rawText.slice(0, 100));
 
-    // Si Make devuelve "Accepted" significa que el Webhook Response
-    // no está configurado para esperar — ver README de Make
-    if (rawText.trim() === 'Accepted') {
-      throw new Error('Make respondió "Accepted" en lugar de JSON. Configurá el Webhook Response para devolver la respuesta del HTTP module.');
+    let content: string;
+    try {
+      const groqData = JSON.parse(rawText);
+      content = groqData.choices[0].message.content;
+    } catch (e: any) {
+      throw new Error('Error al parsear respuesta de Groq: ' + e.message);
     }
 
-    const clean2 = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    console.log('=== GROQ CONTENT:', content);
+
+    const cleaned = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
     let parsed: any;
-    try { parsed = JSON.parse(clean2); }
+    try { parsed = JSON.parse(cleaned); }
     catch {
-      const match = clean2.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
-      if (match) parsed = JSON.parse(match[0]);
-      else throw new Error('Respuesta inválida de Make: ' + rawText.slice(0, 100));
+      const m = cleaned.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+      parsed = m ? JSON.parse(m[0]) : [];
     }
 
     const suggestions = Array.isArray(parsed)
