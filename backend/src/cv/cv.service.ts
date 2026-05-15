@@ -27,13 +27,36 @@ export interface CvExtracted {
   cvComment: string;
 }
 
+const PROMPT = `Sos un extractor de datos de CVs. Analizá el texto del CV y devolvé SOLO un JSON válido con exactamente esta estructura, sin texto extra ni markdown:
+
+{
+  "firstName":  "string o null",
+  "lastName":   "string o null",
+  "phone":      "string o null",
+  "jobTitle":   "string o null (título profesional principal)",
+  "location":   "string o null (ciudad, país)",
+  "bio":        "string o null (resumen profesional de 2-3 oraciones)",
+  "linkedin":   "string o null (URL o usuario)",
+  "github":     "string o null (URL o usuario)",
+  "portfolio":  "string o null (URL)",
+  "salary":     null,
+  "skills":     ["array de skills técnicas como strings"],
+  "softSkills": ["array de habilidades blandas como strings"],
+  "languages":  [{"name":"string","level":"string"}],
+  "experience": [{"title":"string","company":"string","startDate":"string","endDate":"string o null","current":false,"description":"string"}],
+  "education":  [{"career":"string","institution":"string","startYear":"string","endYear":"string o null","status":"string"}],
+  "cvComment":  "string: comentario profesional de 3-4 oraciones sobre el perfil del candidato, sus fortalezas y áreas de mejora, pensado para ser leído por empresas"
+}
+
+Reglas:
+- Devolvé SOLO el JSON, sin \`\`\`json ni texto antes o después
+- Si un campo no aparece en el CV, usá null o [] según corresponda
+- skills debe contener tecnologías, herramientas y conocimientos técnicos concretos
+- cvComment debe ser objetivo, profesional y útil para una empresa que evalúa al candidato`;
+
 @Injectable()
 export class CvService {
-  private readonly makeWebhookUrl: string;
-
-  constructor(private config: ConfigService) {
-    this.makeWebhookUrl = this.config.get<string>('MAKE_WEBHOOK_URL', '');
-  }
+  constructor(private config: ConfigService) {}
 
   private async extractText(base64Pdf: string): Promise<string> {
     const buffer = Buffer.from(base64Pdf, 'base64');
@@ -56,9 +79,7 @@ export class CvService {
 
   private parseJson(text: string): CvExtracted | null {
     const clean = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-    // Intento directo
     try { return JSON.parse(clean) as CvExtracted; } catch {}
-    // Extraer objeto JSON del texto
     const match = clean.match(/\{[\s\S]*\}/);
     if (match) {
       try { return JSON.parse(match[0]) as CvExtracted; } catch {}
@@ -67,8 +88,9 @@ export class CvService {
   }
 
   async analyzeCV(base64Pdf: string, fileName: string): Promise<CvExtracted> {
-    if (!this.makeWebhookUrl) {
-      throw new InternalServerErrorException('MAKE_WEBHOOK_URL no configurada en el .env.');
+    const groqApiKey = this.config.get<string>('GROQ_API_KEY', '');
+    if (!groqApiKey) {
+      throw new InternalServerErrorException('GROQ_API_KEY no configurada en el .env.');
     }
 
     const pdfText = await this.extractText(base64Pdf);
@@ -76,43 +98,53 @@ export class CvService {
       throw new BadRequestException('El PDF no tiene texto legible.');
     }
 
-    let makeResponse: Response;
+    console.log('[CvService] Texto extraído del PDF:', pdfText.slice(0, 200));
+    console.log('[CvService] Llamando a Groq directo...');
+
+    let groqResponse: Response;
     try {
-      makeResponse = await fetch(this.makeWebhookUrl, {
+      groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pdfText, fileName }),
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + groqApiKey,
+        },
+        body: JSON.stringify({
+          model:       'llama-3.3-70b-versatile',
+          temperature: 0.1,
+          max_tokens:  2000,
+          messages: [
+            { role: 'system', content: PROMPT },
+            { role: 'user',   content: 'Texto del CV:\n\n' + pdfText },
+          ],
+        }),
       });
     } catch (e: any) {
-      throw new InternalServerErrorException('No se pudo conectar con Make.com: ' + e?.message);
+      throw new InternalServerErrorException('No se pudo conectar con Groq: ' + e?.message);
     }
 
-    const rawText = await makeResponse.text();
-    console.log('[CvService] Make status:', makeResponse.status);
-    console.log('[CvService] Make RAW (100):', rawText.slice(0, 100));
+    const rawText = await groqResponse.text();
+    console.log('[CvService] Groq status:', groqResponse.status);
+    console.log('[CvService] Groq RAW (300):', rawText.slice(0, 300));
 
-    if (!makeResponse.ok) {
-      throw new InternalServerErrorException(`Make.com error ${makeResponse.status}`);
+    if (!groqResponse.ok) {
+      throw new InternalServerErrorException('Groq error ' + groqResponse.status + ': ' + rawText.slice(0, 100));
     }
 
-    // Caso 1: Make devuelve el JSON de Groq completo (con choices)
+    let content: string;
     try {
-      const obj = JSON.parse(rawText);
-      // Respuesta directa de Groq: { choices: [{ message: { content: "..." } }] }
-      if (obj?.choices?.[0]?.message?.content) {
-        const content = obj.choices[0].message.content;
-        const parsed  = this.parseJson(content);
-        if (parsed) return parsed;
-      }
-      // Ya es el JSON del perfil directamente
-      if (obj?.firstName !== undefined) return obj as CvExtracted;
-    } catch {}
+      const groqData = JSON.parse(rawText);
+      content = groqData.choices[0].message.content;
+    } catch (e: any) {
+      throw new InternalServerErrorException('Error al parsear respuesta de Groq: ' + e.message);
+    }
 
-    // Caso 2: Make devuelve solo el content como texto plano
-    const parsed = this.parseJson(rawText);
+    console.log('[CvService] Groq content:', content.slice(0, 300));
+
+    const parsed = this.parseJson(content);
     if (parsed) return parsed;
 
-    console.error('[CvService] No parseable:', rawText.slice(0, 200));
-    throw new BadRequestException('Respuesta inesperada de Make: ' + rawText.slice(0, 100));
+    console.error('[CvService] No parseable:', content.slice(0, 200));
+    throw new BadRequestException('El modelo no devolvió un JSON válido. Intentá de nuevo.');
   }
 }
