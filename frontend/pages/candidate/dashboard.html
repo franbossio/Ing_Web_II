@@ -335,7 +335,7 @@
         const base64Only = e.target.result.split(',')[1];
         try {
           const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-          const res = await fetch('https://ing-web-ii.onrender.com/api/cv/analyze', {
+          const res = await fetch(API_BASE + '/cv/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ base64Pdf: base64Only, fileName: file.name }),
@@ -379,6 +379,7 @@
   <!-- ── Script principal (module) — TODO junto para evitar problemas de scope ── -->
   <script type="module">
     import { logout } from '../../js/auth.js';
+  import { API_BASE } from '../../js/config.js';
     import { initDashboard } from '../../js/profile.js';
 
     window.cerrarSesion = function() {
@@ -400,7 +401,7 @@
       if (empEl)  empEl.style.display  = 'none';
 
       try {
-        const res = await fetch('https://ing-web-ii.onrender.com/api/recommendations', {
+        const res = await fetch(API_BASE + '/recommendations', {
           method: 'POST',
           headers: {
             'Content-Type':  'application/json',
@@ -473,7 +474,7 @@
       if (!el) return;
       try {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('https://ing-web-ii.onrender.com/api/jobs/trending-skills', {
+        const res = await fetch(API_BASE + '/jobs/trending-skills', {
           headers: { Authorization: 'Bearer ' + token }
         });
         if (!res.ok) throw new Error();
