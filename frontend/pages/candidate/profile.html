@@ -714,7 +714,7 @@
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
 
         // Guardar perfil + CV directamente en /api/users/me (sin volver a analizar)
-        const res = await fetch('http://localhost:3001/api/users/me', {
+        const res = await fetch('https://ing-web-ii.onrender.com/api/users/me', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -760,7 +760,7 @@
       // Solo guardar el CV sin los datos de la IA
       if (pendingBase64 && pendingFileName) {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        fetch('http://localhost:3001/api/users/me', {
+        fetch('https://ing-web-ii.onrender.com/api/users/me', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ cvFileName: pendingFileName, cvUrl: pendingBase64 }),
@@ -777,7 +777,7 @@
       if (!confirm('¿Seguro que querés eliminar tu CV?')) return;
       try {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('http://localhost:3001/api/users/me', {
+        const res = await fetch('https://ing-web-ii.onrender.com/api/users/me', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -849,7 +849,7 @@
       let jobs = [];
       try {
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-        const res = await fetch('http://localhost:3001/api/jobs', {
+        const res = await fetch('https://ing-web-ii.onrender.com/api/jobs', {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         if (res.ok) jobs = await res.json();
