@@ -612,7 +612,7 @@
 
           // ── Llamar al BACKEND (Gemini, API key segura en el servidor) ──
           const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-          const response = await fetch('https://ing-web-ii.onrender.com/api/cv/analyze-preview', {
+          const response = await fetch('http://localhost:3001/api/cv/analyze-preview', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
