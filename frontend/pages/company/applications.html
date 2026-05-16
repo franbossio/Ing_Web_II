@@ -721,7 +721,15 @@
       const res = await fetch('https://ing-web-ii.onrender.com/api/applications/company', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
-      ALL_APPS = res.ok ? await res.json() : [];
+      const apps = res.ok ? await res.json() : [];
+
+      // Filtrar postulaciones de ofertas eliminadas localmente
+      const deletedIds = JSON.parse(localStorage.getItem('deleted_jobs') || '[]');
+      ALL_APPS = apps.filter(a => {
+        const jid = a.job?.id || a.jobId;
+        return !deletedIds.includes(jid);
+      });
+
       updateCounts();
       applyFilters();
     } catch(err) {

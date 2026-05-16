@@ -469,28 +469,61 @@
       // Recomendaciones IA — ahora sí está definida arriba
       loadRecommendations();
 
-      // Postulaciones
-      const apps  = u.recentApplications || [];
+      // Postulaciones — cargar directo de la API para tener datos frescos
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
       const list  = document.getElementById('app-list');
       const empty = document.getElementById('apps-empty');
-      if (apps.length) {
-        empty.style.display = 'none';
+      try {
+        const appsRes = await fetch('https://ing-web-ii.onrender.com/api/applications/my', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const allApps = appsRes.ok ? await appsRes.json() : (u.recentApplications || []);
+        // Filtrar postulaciones de ofertas eliminadas o inactivas
+        const apps = allApps.filter(a => a.job && a.job.active !== false);
         const sc = { revision:'badge-gold', entrevista:'badge-green', pendiente:'badge-gray', rechazado:'badge-red' };
         const sl = { revision:'En revisión', entrevista:'Entrevista', pendiente:'Pendiente', rechazado:'No seleccionado' };
-        list.innerHTML = apps.slice(0, 5).map(a => `
-          <div class="app-row">
-            <div class="app-row-left">
-              <div class="app-company-icon">${a.icon || '🏢'}</div>
-              <div>
-                <div class="app-job-title">${a.jobTitle || '—'}</div>
-                <div class="app-company-name">${a.company || ''}</div>
+        if (apps.length) {
+          empty.style.display = 'none';
+          list.innerHTML = apps.slice(0, 5).map(a => `
+            <div class="app-row">
+              <div class="app-row-left">
+                <div class="app-company-icon">${a.icon || '🏢'}</div>
+                <div>
+                  <div class="app-job-title">${a.job?.title || a.jobTitle || '—'}</div>
+                  <div class="app-company-name">${a.job?.company?.companyName || a.company || ''}</div>
+                </div>
               </div>
-            </div>
-            <div class="app-row-right">
-              <span class="app-date">${a.date || ''}</span>
-              <span class="badge ${sc[a.status] || 'badge-gray'}"><span class="badge-dot"></span>${sl[a.status] || 'Pendiente'}</span>
-            </div>
-          </div>`).join('');
+              <div class="app-row-right">
+                <span class="app-date">${a.date || new Date(a.createdAt).toLocaleDateString('es-AR')}</span>
+                <span class="badge ${sc[a.status] || 'badge-gray'}"><span class="badge-dot"></span>${sl[a.status] || 'Pendiente'}</span>
+              </div>
+            </div>`).join('');
+        } else {
+          empty.style.display = 'block';
+          list.innerHTML = '';
+        }
+      } catch {
+        // Si falla la API, usar localStorage como fallback
+        const apps = (u.recentApplications || []).filter(a => a.jobActive !== false);
+        const sc = { revision:'badge-gold', entrevista:'badge-green', pendiente:'badge-gray', rechazado:'badge-red' };
+        const sl = { revision:'En revisión', entrevista:'Entrevista', pendiente:'Pendiente', rechazado:'No seleccionado' };
+        if (apps.length) {
+          empty.style.display = 'none';
+          list.innerHTML = apps.slice(0, 5).map(a => `
+            <div class="app-row">
+              <div class="app-row-left">
+                <div class="app-company-icon">${a.icon || '🏢'}</div>
+                <div>
+                  <div class="app-job-title">${a.jobTitle || '—'}</div>
+                  <div class="app-company-name">${a.company || ''}</div>
+                </div>
+              </div>
+              <div class="app-row-right">
+                <span class="app-date">${a.date || ''}</span>
+                <span class="badge ${sc[a.status] || 'badge-gray'}"><span class="badge-dot"></span>${sl[a.status] || 'Pendiente'}</span>
+              </div>
+            </div>`).join('');
+        }
       }
     }
 
