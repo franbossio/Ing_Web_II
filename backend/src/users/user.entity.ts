@@ -47,6 +47,9 @@ export class User {
   @Column({ name: 'cv_url',       nullable: true, type: 'text'  }) cvUrl?: string;
   @Column({ name: 'cv_analysis',  nullable: true, type: 'text' }) cvAnalysis?: string;
   @Column({ name: 'is_active', default: true })                  isActive: boolean;
+  @Column({ name: 'email_verified', default: false })            emailVerified: boolean;
+  @Column({ name: 'verification_token', nullable: true, length: 128, select: false }) verificationToken?: string;
+  @Column({ name: 'verification_token_expiry', nullable: true, type: 'timestamptz', select: false }) verificationTokenExpiry?: Date;
 
   @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
