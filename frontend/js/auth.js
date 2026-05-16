@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = 'https://ing-web-ii.onrender.com/api';
 
 export function getToken() {
   return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
