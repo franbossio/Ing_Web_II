@@ -302,18 +302,22 @@
         const res  = await fetch('https://ing-web-ii.onrender.com/api/applications/my', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        ALL_APPS = res.ok ? await res.json() : [];
+        const apps = res.ok ? await res.json() : [];
+
+        // Filtrar postulaciones cuya oferta fue eliminada o desactivada
+        ALL_APPS = apps.filter(a => a.job && a.job.active !== false);
 
         updateCounts();
         applyFilters();
 
-        // Guardar resumen en localStorage para el dashboard
+        // Guardar resumen en localStorage para el dashboard (ya filtrado)
         const recent = ALL_APPS.slice(0, 5).map(a => ({
-          jobTitle: a.job?.title || '—',
-          company:  a.job?.company?.companyName || 'Empresa',
-          icon:     '🏢',
-          status:   a.status,
-          date:     new Date(a.createdAt).toLocaleDateString('es-AR'),
+          jobTitle:  a.job?.title || '—',
+          company:   a.job?.company?.companyName || 'Empresa',
+          icon:      '🏢',
+          status:    a.status,
+          date:      new Date(a.createdAt).toLocaleDateString('es-AR'),
+          jobActive: a.job?.active !== false,
         }));
         const user = JSON.parse(localStorage.getItem('talentai_user') || '{}');
         user.recentApplications = recent;
