@@ -126,9 +126,12 @@ form.addEventListener('submit', async (e) => {
   submitBtn.textContent = 'Creando cuenta...';
 
   try {
-    const data = await registerUser(payload);
-    showSuccess('¡Cuenta creada! Redirigiendo...');
-    setTimeout(() => redirectToDashboard(data.user.role), 1200);
+    await registerUser(payload);
+    // Mostrar pantalla de "revisá tu mail" — no redirigir al dashboard
+    form.style.display = 'none';
+    document.querySelectorAll('.role-toggle, .form-footer').forEach(el => el.style.display = 'none');
+    showSuccess(`✉️ ¡Cuenta creada! Te enviamos un email a ${email}. Hacé clic en el enlace para verificar tu cuenta antes de ingresar.`);
+    alertSuccess.style.cssText = 'display:block;padding:24px;font-size:1rem;text-align:center;line-height:1.6;';
   } catch (err) {
     showError(err.message);
     submitBtn.disabled = false;

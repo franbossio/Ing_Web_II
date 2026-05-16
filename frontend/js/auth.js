@@ -1,4 +1,4 @@
-const API_BASE = 'https://ing-web-ii.onrender.com/api';
+const API_BASE = 'http://localhost:3001/api';
 
 export function getToken() {
   return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
@@ -98,7 +98,6 @@ export async function registerUser(payload) {
     const msg = Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Error al registrarse';
     throw new Error(msg);
   }
-  saveToken(data.access_token, false);
-  saveUser(data.user);
+  // No guardamos token — el usuario debe verificar su email primero
   return data;
 }
