@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificar email — TalentAI</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <script src="../js/theme.js"></script>
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--clr-bg);
+    }
+    .verify-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+    .verify-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .verify-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      margin: 0 0 10px;
+    }
+    .verify-msg {
+      font-size: 0.9rem;
+      color: var(--clr-muted);
+      line-height: 1.6;
+      margin: 0 0 28px;
+    }
+    .verify-msg.success { color: #4caf84; }
+    .verify-msg.error   { color: #ef4444; }
+    .btn-login {
+      display: inline-block;
+      background: #c9a84c;
+      color: #0f1117;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 12px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .btn-login:hover { opacity: 0.88; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--clr-border);
+      border-top-color: #c9a84c;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="verify-card">
+    <div id="state-loading">
+      <div class="spinner"></div>
+      <p class="verify-msg">Verificando tu cuenta...</p>
+    </div>
+
+    <div id="state-success" style="display:none;">
+      <span class="verify-icon">✅</span>
+      <h1 class="verify-title">¡Email verificado!</h1>
+      <p class="verify-msg success">Tu cuenta está activa. Ya podés iniciar sesión.</p>
+      <a href="./login.html" class="btn-login">Ir al login</a>
+    </div>
+
+    <div id="state-error" style="display:none;">
+      <span class="verify-icon">❌</span>
+      <h1 class="verify-title">Enlace inválido</h1>
+      <p class="verify-msg error" id="error-msg">El enlace no es válido o ya expiró.</p>
+      <a href="./register.html" class="btn-login" style="background:var(--clr-surface);color:var(--clr-text);border:1px solid var(--clr-border);">Volver al registro</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3001/api';
+
+    async function verify() {
+      const params = new URLSearchParams(window.location.search);
+      const token  = params.get('token');
+
+      if (!token) {
+        showError('No se encontró el token de verificación.');
+        return;
+      }
+
+      try {
+        const res  = await fetch(`${API_BASE}/auth/verify-email?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          showSuccess();
+        } else {
+          showError(data.message || 'El enlace no es válido o ya expiró.');
+        }
+      } catch {
+        showError('No se pudo conectar con el servidor. Intentá de nuevo más tarde.');
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('state-loading').style.display = 'none';
+      document.getElementById('state-success').style.display = 'block';
+    }
+    function showError(msg) {
+      document.getElementById('state-loading').style.display = 'none';
+      document.getElementById('state-error').style.display   = 'block';
+      document.getElementById('error-msg').textContent = msg;
+    }
+
+    verify();
+  </script>
+</body>
+</html>

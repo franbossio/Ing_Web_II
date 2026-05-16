@@ -130,6 +130,13 @@
       color: var(--clr-muted); padding: 2px 8px; border-radius: 100px;
       font-size: 0.68rem; font-weight: 500;
     }
+    .rec-missing-skills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; align-items: center; }
+    .rec-missing-label  { font-size: 0.65rem; color: var(--clr-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; white-space: nowrap; }
+    .missing-tag {
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      color: #ef4444; padding: 2px 8px; border-radius: 100px;
+      font-size: 0.68rem; font-weight: 500;
+    }
     .rec-card-footer { display: flex; align-items: center; justify-content: flex-end; }
 
     @media (max-width: 900px) {
@@ -320,7 +327,7 @@
         const base64Only = e.target.result.split(',')[1];
         try {
           const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-          const res = await fetch('https://ing-web-ii.onrender.com/api/cv/analyze', {
+          const res = await fetch('http://localhost:3001/api/cv/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ base64Pdf: base64Only, fileName: file.name }),
@@ -385,7 +392,7 @@
       if (empEl)  empEl.style.display  = 'none';
 
       try {
-        const res = await fetch('https://ing-web-ii.onrender.com/api/recommendations', {
+        const res = await fetch('http://localhost:3001/api/recommendations', {
           method: 'POST',
           headers: {
             'Content-Type':  'application/json',
@@ -434,6 +441,7 @@
               </div>` : ''}
               ${r.reason ? `<div class="rec-card-reason">"${r.reason}"</div>` : ''}
               ${tags ? `<div class="rec-card-tags">${tags}</div>` : ''}
+              ${r.missingSkills && r.missingSkills.length ? `<div class="rec-missing-skills"><span class="rec-missing-label">⚠ Te falta:</span>${r.missingSkills.map(s => `<span class="missing-tag">${s}</span>`).join('')}</div>` : ''}
               <div class="rec-card-footer">
                 <span class="badge ${matchColor(r.matchPct)}" style="font-size:0.7rem;">${matchLabel(r.matchPct)}</span>
               </div>

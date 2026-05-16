@@ -2,9 +2,31 @@ import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'express';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { DataSource } from 'typeorm';
+
+async function runMigrations(dataSource: DataSource) {
+  await dataSource.query(`
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT false,
+      ADD COLUMN IF NOT EXISTS verification_token VARCHAR(128),
+      ADD COLUMN IF NOT EXISTS verification_token_expiry TIMESTAMPTZ;
+  `);
+  await dataSource.query(`
+    UPDATE users SET email_verified = true WHERE email_verified = false;
+  `);
+  console.log('✅ Columnas de verificación de email OK');
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Correr migraciones manuales al arrancar
+  try {
+    const dataSource = app.get(DataSource);
+    await runMigrations(dataSource);
+  } catch (e) {
+    console.warn('⚠️  Migration warning:');
+  }
 
   // PDFs en base64 pueden ser grandes — aumentar límite
   app.use(json({ limit: '25mb' }));

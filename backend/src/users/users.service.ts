@@ -21,6 +21,15 @@ export class UsersService implements OnModuleInit {
       console.log('🌱 Creando usuarios de prueba...');
       await this.seedUsers();
       console.log('✅ Usuarios de prueba creados');
+    } else {
+      // Marcar usuarios existentes sin verificación como verificados (retrocompatibilidad)
+      await this.repo
+        .createQueryBuilder()
+        .update()
+        .set({ emailVerified: true })
+        .where('email_verified = false')
+        .execute();
+      console.log('✅ Usuarios existentes marcados como verificados');
     }
   }
 
@@ -31,15 +40,17 @@ export class UsersService implements OnModuleInit {
         email: 'candidate@test.com', passwordHash: password,
         role: 'candidate' as UserRole, firstName: 'Juan', lastName: 'Pérez',
         skills: [], softSkills: [], languages: [], experience: [], education: [],
-        isActive: true,
+        isActive: true, emailVerified: true,
       },
       {
         email: 'company@test.com', passwordHash: password,
-        role: 'company' as UserRole, companyName: 'Acme S.A.', isActive: true,
+        role: 'company' as UserRole, companyName: 'Acme S.A.',
+        isActive: true, emailVerified: true,
       },
       {
         email: 'admin@test.com', passwordHash: password,
-        role: 'admin' as UserRole, firstName: 'Admin', lastName: 'TalentAI', isActive: true,
+        role: 'admin' as UserRole, firstName: 'Admin', lastName: 'TalentAI',
+        isActive: true, emailVerified: true,
       },
     ]);
   }

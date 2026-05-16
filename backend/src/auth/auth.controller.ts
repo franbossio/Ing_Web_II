@@ -1,6 +1,6 @@
 import {
   Controller, Post, Get,
-  Body, UseGuards, Request,
+  Body, Query, UseGuards, Request,
   HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -28,6 +28,13 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
+  }
+
+  /** GET /api/auth/verify-email?token=xxx */
+  @Get('verify-email')
+  @HttpCode(HttpStatus.OK)
+  verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
   }
 
   /**
