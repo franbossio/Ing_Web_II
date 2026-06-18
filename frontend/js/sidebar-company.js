@@ -24,6 +24,7 @@ window.cerrarSesion = function () {
     { href: 'post-job.html',     icon: icon('icon-post-job'),              label: 'Publicar oferta',    section: 'Ofertas' },
     { href: 'my-jobs.html',      icon: icon('icon-my-jobs'),               label: 'Mis ofertas' },
     { href: 'applications.html', icon: icon('icon-company-applications'),  label: 'Postulaciones',      badge: '', section: 'Gestión' },
+    { href: 'messages.html',     icon: icon('icon-company-applications'),  label: 'Mensajes',           badge: '' },
     { href: 'favorites.html',    icon: icon('icon-saved'),                 label: 'Favoritos' },
     { href: 'settings.html',     icon: icon('icon-settings'),              label: 'Configuración' },
   ];

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensajes — CONECTA IA Empresa</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-company.js" type="module"></script>
+  <link rel="stylesheet" href="../../css/company.css" />
+  <link rel="stylesheet" href="../../css/messages.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <div id="sidebar-root"></div>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
+          <div class="topbar-title">Mensajes</div>
+          <div class="topbar-subtitle">Comunicate directamente con los candidatos</div>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <div class="msg-layout">
+          <div class="msg-conv-list" id="msg-conv-list"></div>
+
+          <div class="msg-chat-panel" id="msg-chat-panel" style="display:none;">
+            <div class="msg-chat-header">
+              <div class="msg-conv-avatar" id="msg-chat-header-avatar"></div>
+              <div>
+                <div class="msg-chat-header-name" id="msg-chat-header-name"></div>
+                <div class="msg-chat-header-sub" id="msg-chat-header-sub"></div>
+              </div>
+            </div>
+            <div class="msg-thread" id="msg-thread"></div>
+            <div class="msg-input-bar">
+              <textarea id="msg-input" placeholder="Escribí un mensaje…"></textarea>
+              <button class="btn btn-primary" id="msg-send-btn">Enviar</button>
+            </div>
+          </div>
+
+          <div class="msg-empty-state" id="msg-empty-state">
+            <div class="empty-icon">💬</div>
+            <div>Seleccioná una conversación para empezar a chatear</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { logout } from '../../js/auth.js';
+    import { initMessages } from '../../js/messages.js';
+
+    window.cerrarSesion = function (e) {
+      if (e) e.preventDefault();
+      if (confirm('¿Cerrar sesión?')) logout();
+    };
+
+    initMessages();
+  </script>
+
+  <script src="../../js/sidebar-toggle.js"></script>
+</body>
+</html>

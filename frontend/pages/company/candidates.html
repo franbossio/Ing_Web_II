@@ -325,6 +325,7 @@
         </div>` : ''}
         <div class="cand-card-actions">
           <button class="btn btn-ghost" onclick="window.viewProfile('${id}')">👤 Ver perfil</button>
+          <a href="messages.html?userId=${id}" class="btn btn-ghost" style="text-decoration:none;">✉️ Mensaje</a>
           ${c.cvUrl ? `<a href="${c.cvUrl}" download class="btn btn-ghost" style="text-decoration:none;">📄 CV</a>` : ''}
           <button class="btn btn-ghost" id="fav-btn-${id}" onclick="window.toggleFav('${id}')" title="Guardar en favoritos" style="flex:0;padding:8px 12px;"></button>
         </div>

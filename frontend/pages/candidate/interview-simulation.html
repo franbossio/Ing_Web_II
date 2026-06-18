@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulación de entrevistas — CONECTA IA</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-candidate.js" type="module"></script>
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <style>
+    .iv-select {
+      width: 100%; padding: 11px 14px; font-size: 0.88rem;
+      border: 1px solid var(--clr-border); border-radius: var(--radius-sm);
+      background: var(--clr-surface); color: var(--clr-text);
+      margin-bottom: 14px;
+    }
+    .iv-intro { font-size: 0.85rem; color: var(--clr-muted); line-height: 1.6; margin-bottom: 16px; }
+
+    .iv-progress { display: flex; gap: 6px; margin-bottom: 18px; }
+    .iv-progress-dot { flex: 1; height: 5px; border-radius: 4px; background: var(--clr-border); }
+    .iv-progress-dot.done { background: var(--clr-accent); }
+    .iv-progress-dot.active { background: rgba(201,168,76,0.5); }
+
+    .iv-q-type {
+      display: inline-block; font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 3px 9px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .iv-q-type.tecnica       { background: rgba(59,130,246,0.1); color: #3b82f6; }
+    .iv-q-type.comportamental { background: rgba(201,168,76,0.12); color: var(--clr-accent); }
+    .iv-q-text { font-size: 1rem; font-weight: 600; color: var(--clr-text); margin-bottom: 14px; line-height: 1.5; }
+    .iv-textarea {
+      width: 100%; min-height: 130px; padding: 12px 14px; font-size: 0.88rem;
+      border: 1px solid var(--clr-border); border-radius: var(--radius-sm);
+      background: var(--clr-surface); color: var(--clr-text); resize: vertical;
+      font-family: var(--font-base); margin-bottom: 14px;
+    }
+    .iv-nav { display: flex; justify-content: space-between; gap: 10px; }
+
+    .iv-loading { text-align: center; padding: 40px 20px; color: var(--clr-muted); font-size: 0.85rem; }
+
+    /* Resultado */
+    .iv-score-box { text-align: center; padding: 18px 0 24px; }
+    .iv-score-num { font-family: var(--font-display); font-size: 2.6rem; font-weight: 700; color: var(--clr-accent); line-height: 1; }
+    .iv-score-label { font-size: 0.78rem; color: var(--clr-muted); margin-top: 4px; }
+    .iv-summary { font-size: 0.85rem; color: var(--clr-muted); line-height: 1.6; text-align: center; padding: 0 10px 18px; }
+
+    .iv-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+    .iv-list-title { font-size: 0.78rem; font-weight: 600; color: var(--clr-text); margin-bottom: 8px; }
+    .iv-list { list-style: none; padding: 0; margin: 0; font-size: 0.8rem; color: var(--clr-muted); line-height: 1.7; }
+    .iv-list li { padding-left: 16px; position: relative; }
+    .iv-list.strengths li::before    { content: '✓'; position: absolute; left: 0; color: var(--clr-success); }
+    .iv-list.improvements li::before { content: '!'; position: absolute; left: 0; color: #ef4444; font-weight: 700; }
+
+    .iv-qa-card {
+      background: var(--clr-surface-2); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 10px;
+    }
+    .iv-qa-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .iv-qa-question { font-size: 0.82rem; font-weight: 600; color: var(--clr-text); }
+    .iv-qa-score { font-size: 0.85rem; font-weight: 700; color: var(--clr-accent); flex-shrink: 0; }
+    .iv-qa-answer  { font-size: 0.78rem; color: var(--clr-muted); font-style: italic; margin-bottom: 8px; }
+    .iv-qa-feedback {
+      font-size: 0.76rem; color: var(--clr-muted); line-height: 1.5;
+      padding: 8px 10px; background: rgba(201,168,76,0.05);
+      border-left: 2px solid rgba(201,168,76,0.3); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    @media (max-width: 900px) {
+      .iv-cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <div id="sidebar-root"></div>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
+          <div class="topbar-title">Simulación de entrevistas</div>
+          <div class="topbar-subtitle">Practicá con preguntas generadas por IA</div>
+        </div>
+      </div>
+
+      <div class="page-content" style="max-width: 720px; margin: 0 auto;">
+
+        <!-- Paso 1: setup -->
+        <div class="panel" id="iv-setup-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">🎤 Comenzar simulación</div>
+              <div class="panel-subtitle">Elegí una oferta o practicá con preguntas generales según tu perfil</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding: 16px 20px;">
+            <div class="iv-intro">
+              La IA generará 5 preguntas (técnicas y de comportamiento) y luego evaluará tus respuestas
+              con feedback y un puntaje general.
+            </div>
+            <select class="iv-select" id="iv-job-select">
+              <option value="">Entrevista general (según mi perfil)</option>
+            </select>
+            <button class="btn btn-primary" id="iv-start-btn" style="width:100%;">Comenzar simulación</button>
+          </div>
+        </div>
+
+        <!-- Paso 2: preguntas -->
+        <div class="panel" id="iv-questions-panel" style="display:none;">
+          <div class="panel-body" style="padding: 20px;">
+            <div class="iv-progress" id="iv-progress"></div>
+            <div id="iv-q-content"></div>
+            <div class="iv-nav">
+              <button class="btn btn-ghost" id="iv-prev-btn">← Anterior</button>
+              <button class="btn btn-primary" id="iv-next-btn">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading evaluación -->
+        <div class="panel" id="iv-loading-panel" style="display:none;">
+          <div class="iv-loading">
+            <div class="spinner" style="margin: 0 auto 12px;"></div>
+            Evaluando tus respuestas con IA…
+          </div>
+        </div>
+
+        <!-- Paso 3: resultado -->
+        <div class="panel" id="iv-result-panel" style="display:none;">
+          <div class="panel-body" style="padding: 20px;">
+            <div class="iv-score-box">
+              <div class="iv-score-num" id="iv-score-num">0%</div>
+              <div class="iv-score-label">Puntaje general</div>
+            </div>
+            <div class="iv-summary" id="iv-summary"></div>
+            <div class="iv-cols">
+              <div>
+                <div class="iv-list-title">Fortalezas</div>
+                <ul class="iv-list strengths" id="iv-strengths"></ul>
+              </div>
+              <div>
+                <div class="iv-list-title">A mejorar</div>
+                <ul class="iv-list improvements" id="iv-improvements"></ul>
+              </div>
+            </div>
+            <div class="iv-list-title">Detalle por pregunta</div>
+            <div id="iv-per-question"></div>
+            <button class="btn btn-primary" id="iv-restart-btn" style="width:100%; margin-top: 14px;">Hacer otra simulación</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:999;min-width:260px;max-width:380px;"></div>
+
+  <script>
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('global-alert');
+      el.className = `alert alert-${type} visible`;
+      el.textContent = msg;
+      setTimeout(() => el.classList.remove('visible'), 4000);
+    }
+  </script>
+
+  <script type="module">
+    import { logout, getToken } from '../../js/auth.js';
+
+    window.cerrarSesion = function () {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
+    };
+
+    const API = 'http://localhost:3001/api';
+    const token = getToken();
+
+    let questions = [];
+    let answers   = [];
+    let current   = 0;
+    let selectedJobId = '';
+
+    const setupPanel     = document.getElementById('iv-setup-panel');
+    const questionsPanel = document.getElementById('iv-questions-panel');
+    const loadingPanel   = document.getElementById('iv-loading-panel');
+    const resultPanel    = document.getElementById('iv-result-panel');
+
+    async function loadJobs() {
+      try {
+        const res = await fetch(`${API}/jobs`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) return;
+        const jobs = await res.json();
+        const select = document.getElementById('iv-job-select');
+        jobs.forEach(j => {
+          const opt = document.createElement('option');
+          opt.value = j.id;
+          opt.textContent = `${j.title} — ${j.company?.companyName || 'Empresa'}`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Error cargando ofertas', e);
+      }
+    }
+
+    async function startInterview() {
+      selectedJobId = document.getElementById('iv-job-select').value || '';
+      const btn = document.getElementById('iv-start-btn');
+      btn.disabled = true;
+      btn.textContent = 'Generando preguntas…';
+
+      try {
+        const res = await fetch(`${API}/interviews/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ jobId: selectedJobId || undefined }),
+        });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Error'); }
+        const data = await res.json();
+        questions = data.questions || [];
+        answers   = questions.map(() => '');
+        current   = 0;
+
+        if (!questions.length) throw new Error('No se generaron preguntas');
+
+        setupPanel.style.display     = 'none';
+        questionsPanel.style.display = 'block';
+        renderQuestion();
+      } catch (err) {
+        showAlert('✗ ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Comenzar simulación';
+      }
+    }
+
+    function renderProgress() {
+      const el = document.getElementById('iv-progress');
+      el.innerHTML = questions.map((_, i) => {
+        const cls = i < current ? 'done' : i === current ? 'active' : '';
+        return `<div class="iv-progress-dot ${cls}"></div>`;
+      }).join('');
+    }
+
+    function renderQuestion() {
+      renderProgress();
+      const q = questions[current];
+      const content = document.getElementById('iv-q-content');
+      content.innerHTML = `
+        <span class="iv-q-type ${q.type}">${q.type === 'tecnica' ? 'Técnica' : 'Comportamental'}</span>
+        <div class="iv-q-text">${current + 1}. ${q.question}</div>
+        <textarea class="iv-textarea" id="iv-answer-input" placeholder="Escribí tu respuesta…">${answers[current] || ''}</textarea>
+      `;
+
+      const prevBtn = document.getElementById('iv-prev-btn');
+      const nextBtn = document.getElementById('iv-next-btn');
+      prevBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+      nextBtn.textContent = current === questions.length - 1 ? 'Finalizar' : 'Siguiente →';
+    }
+
+    function saveCurrentAnswer() {
+      const input = document.getElementById('iv-answer-input');
+      if (input) answers[current] = input.value.trim();
+    }
+
+    async function evaluateInterview() {
+      questionsPanel.style.display = 'none';
+      loadingPanel.style.display   = 'block';
+
+      const qa = questions.map((q, i) => ({ question: q.question, answer: answers[i] }));
+
+      try {
+        const res = await fetch(`${API}/interviews/evaluate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ jobId: selectedJobId || undefined, qa }),
+        });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Error'); }
+        const evalResult = await res.json();
+        renderResult(evalResult);
+      } catch (err) {
+        showAlert('✗ ' + err.message, 'error');
+        loadingPanel.style.display   = 'none';
+        questionsPanel.style.display = 'block';
+      }
+    }
+
+    function renderResult(result) {
+      loadingPanel.style.display = 'none';
+      resultPanel.style.display  = 'block';
+
+      document.getElementById('iv-score-num').textContent = `${result.overallScore}%`;
+      document.getElementById('iv-summary').textContent = result.summary || '';
+      document.getElementById('iv-strengths').innerHTML =
+        (result.strengths || []).map(s => `<li>${s}</li>`).join('') || '<li>—</li>';
+      document.getElementById('iv-improvements').innerHTML =
+        (result.improvements || []).map(s => `<li>${s}</li>`).join('') || '<li>—</li>';
+
+      document.getElementById('iv-per-question').innerHTML = (result.perQuestion || []).map(pq => `
+        <div class="iv-qa-card">
+          <div class="iv-qa-top">
+            <div class="iv-qa-question">${pq.question}</div>
+            <div class="iv-qa-score">${pq.score}%</div>
+          </div>
+          <div class="iv-qa-answer">"${pq.answer || '(sin respuesta)'}"</div>
+          <div class="iv-qa-feedback">${pq.feedback}</div>
+        </div>
+      `).join('');
+    }
+
+    function restart() {
+      questions = []; answers = []; current = 0;
+      resultPanel.style.display = 'none';
+      setupPanel.style.display  = 'block';
+    }
+
+    document.getElementById('iv-start-btn').addEventListener('click', startInterview);
+    document.getElementById('iv-restart-btn').addEventListener('click', restart);
+
+    document.getElementById('iv-next-btn').addEventListener('click', () => {
+      saveCurrentAnswer();
+      if (current === questions.length - 1) {
+        evaluateInterview();
+      } else {
+        current++;
+        renderQuestion();
+      }
+    });
+
+    document.getElementById('iv-prev-btn').addEventListener('click', () => {
+      saveCurrentAnswer();
+      if (current > 0) { current--; renderQuestion(); }
+    });
+
+    loadJobs();
+  </script>
+
+  <script src="../../js/sidebar-toggle.js"></script>
+</body>
+</html>

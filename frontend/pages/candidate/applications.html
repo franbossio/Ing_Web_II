@@ -191,6 +191,7 @@
               ${salary        ? `<span>${salary}</span>`           : ''}
               <span>📅 Postulado el ${date}</span>
             </div>
+            ${co.id ? `<a href="messages.html?userId=${co.id}&jobId=${job.id}" class="btn btn-ghost" style="margin-top:10px;display:inline-flex;text-decoration:none;font-size:0.78rem;padding:7px 14px;">✉️ Enviar mensaje a la empresa</a>` : ''}
           </div>
         </div>
         <div class="app-timeline">
