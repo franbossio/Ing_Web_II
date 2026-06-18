@@ -121,6 +121,32 @@ export class UsersService implements OnModuleInit {
     return users.map(u => this.sanitize(u));
   }
 
+  /** Perfil público de un candidato: solo datos no sensibles, pensado para compartir. */
+  async findPublicProfile(id: string) {
+    const user = await this.repo.findOne({
+      where: { id, role: 'candidate' as UserRole, isActive: true },
+    });
+    if (!user) throw new NotFoundException('Perfil no encontrado');
+
+    return {
+      id:         user.id,
+      firstName:  user.firstName,
+      lastName:   user.lastName,
+      jobTitle:   user.jobTitle,
+      location:   user.location,
+      bio:        user.bio,
+      photo:      user.photo,
+      linkedin:   user.linkedin,
+      github:     user.github,
+      portfolio:  user.portfolio,
+      skills:     user.skills,
+      softSkills: user.softSkills,
+      languages:  user.languages,
+      experience: user.experience,
+      education:  user.education,
+    };
+  }
+
   async findAll(): Promise<SafeUser[]> {
     const users = await this.repo.find({ order: { createdAt: 'DESC' } });
     return users.map(u => this.sanitize(u));

@@ -86,7 +86,10 @@
                 <div class="panel-title">Información personal</div>
                 <div class="panel-subtitle">Datos básicos de tu perfil público</div>
               </div>
-              <span class="badge badge-green" id="badge-personal">✓ Completado</span>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn btn-ghost" id="btn-share-profile" style="padding:7px 14px;font-size:0.8rem;">🔗 Compartir perfil</button>
+                <span class="badge badge-green" id="badge-personal">✓ Completado</span>
+              </div>
             </div>
             <div class="panel-body">
 
@@ -824,6 +827,23 @@
     const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
     if (_u) updateDashboardHero(_u);
     await initProfile();
+
+    // ── Compartir perfil público ─────────────────────────────────────────
+    const shareBtn = document.getElementById('btn-share-profile');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async () => {
+        const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+        if (!u) return;
+        const base = window.location.pathname.split('/pages/')[0];
+        const url  = `${window.location.origin}${base}/pages/public-profile.html?id=${u.id}`;
+        try {
+          await navigator.clipboard.writeText(url);
+          showAlert('🔗 Link copiado: ' + url);
+        } catch {
+          prompt('Copiá el link de tu perfil público:', url);
+        }
+      });
+    }
 
     // ── Gráfico de demanda de habilidades (chart.js, solo frontend) ────────
     let chartDemandInstance = null;

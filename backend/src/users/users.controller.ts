@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Patch, Delete,
-  Body, Request, UseGuards,
+  Body, Param, Request, UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard }  from '../common/guards/jwt-auth.guard';
@@ -46,6 +46,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   deleteMe(@Request() req) {
     return this.usersService.deleteById(req.user.id);
+  }
+
+  /** GET /api/users/public/:id — perfil público del candidato, sin autenticación */
+  @Get('public/:id')
+  getPublicProfile(@Param('id') id: string) {
+    return this.usersService.findPublicProfile(id);
   }
 
   /** GET /api/users/candidates */
