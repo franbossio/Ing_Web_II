@@ -113,6 +113,12 @@ window.cerrarSesion = function () {
       });
       if (res.ok) {
         const u = await res.json();
+        // Preservar campos calculados localmente que Render puede no devolver aún
+        const prev = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+        if (prev) {
+          if (u.cvScore == null && prev.cvScore != null) u.cvScore = prev.cvScore;
+          if (u.cvScoreBreakdown == null && prev.cvScoreBreakdown != null) u.cvScoreBreakdown = prev.cvScoreBreakdown;
+        }
         localStorage.setItem('talentai_user', JSON.stringify(u));
         fillSidebar(u);
       }

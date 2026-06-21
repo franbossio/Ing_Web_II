@@ -568,10 +568,7 @@
 
     // Mostrar/ocultar sección de CV según si hay archivo guardado
     function renderCvState(user) {
-      // Solo mostramos/actualizamos el score si el usuario tiene uno guardado.
-      // Si no tiene (ej: viene de Render antes de que se guarde localmente), no ocultamos
-      // para evitar que pise un score que ya estaba visible.
-      if (user?.cvScore != null) renderCvScore(user);
+      renderCvScore(user);
       const current   = document.getElementById('cv-current');
       const nameEl    = document.getElementById('cv-file-name');
       const metaEl    = document.getElementById('cv-file-meta');
@@ -670,6 +667,7 @@
           setProgress(90, 'Completando perfil...', 'Aplicando los datos extraídos');
 
           pendingAiData = extracted;
+          if (extracted.cvScore != null) saveCvScoreLocally(extracted.cvScore, extracted.cvScoreBreakdown);
 
           // Mostrar preview y comentario de Gemini
           showAiPreview(extracted);
@@ -763,6 +761,7 @@
 
         const updated = await res.json();
         localStorage.setItem('talentai_user', JSON.stringify(updated));
+        if (updated.cvScore != null) saveCvScoreLocally(updated.cvScore, updated.cvScoreBreakdown);
 
         const { fillProfileForm, refreshUI } = await import('../../js/profile.js');
         fillProfileForm(updated);
@@ -809,12 +808,27 @@
       return v >= 70 ? '#4caf84' : v >= 50 ? '#c9a84c' : '#e05c5c';
     }
 
+    const CV_SCORE_KEY = 'talentai_cv_score';
+
+    function saveCvScoreLocally(score, breakdown) {
+      if (score != null) localStorage.setItem(CV_SCORE_KEY, JSON.stringify({ score, breakdown }));
+    }
+    function loadCvScoreLocally() {
+      try { return JSON.parse(localStorage.getItem(CV_SCORE_KEY) || 'null'); } catch { return null; }
+    }
+    function clearCvScoreLocally() { localStorage.removeItem(CV_SCORE_KEY); }
+
     function renderCvScore(user) {
       const block = document.getElementById('cv-score-block');
       if (!block) return;
 
-      const score     = user?.cvScore;
-      const breakdown = user?.cvScoreBreakdown;
+      // Prioridad: user.cvScore → clave local talentai_cv_score
+      let score     = user?.cvScore;
+      let breakdown = user?.cvScoreBreakdown;
+      if (score == null) {
+        const stored = loadCvScoreLocally();
+        if (stored?.score != null) { score = stored.score; breakdown = stored.breakdown; }
+      }
 
       if (score == null) { block.style.display = 'none'; return; }
 
@@ -875,9 +889,10 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
-          body: JSON.stringify({ cvFileName: null, cvUrl: null }),
+          body: JSON.stringify({ cvFileName: null, cvUrl: null, cvScore: null, cvScoreBreakdown: null }),
         });
         if (!res.ok) throw new Error('Error al eliminar el CV');
+        clearCvScoreLocally();
         const updated = await res.json();
         localStorage.setItem('talentai_user', JSON.stringify(updated));
         renderCvState(updated);
