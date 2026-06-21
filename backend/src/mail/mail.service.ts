@@ -13,7 +13,7 @@ export class MailService {
     const fromAddr = this.config.get<string>('MAIL_FROM', 'noreply@talentai.com');
     const fromName = this.config.get<string>('MAIL_FROM_NAME', 'TalentAI');
 
-    const verifyUrl = `${frontUrl}/verify-email.html?token=${token}`;
+    const verifyUrl = `${frontUrl}/pages/verify-email.html?token=${token}`;
 
     const payload = {
       sender:      { name: fromName, email: fromAddr },

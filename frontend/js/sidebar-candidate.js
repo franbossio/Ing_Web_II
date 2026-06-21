@@ -23,8 +23,11 @@ window.cerrarSesion = function () {
     { href: 'jobs.html',         icon: icon('icon-jobs'),         label: 'Explorar ofertas',   badge: '' },
     { href: 'profile.html',      icon: icon('icon-profile'),      label: 'Editar perfil',      section: 'Mi perfil' },
     { href: 'profile.html#cv',   icon: icon('icon-cv'),           label: 'Mi CV' },
+    { href: 'cv-generator.html', icon: icon('icon-cv'),           label: 'Generar CV' },
     { href: 'applications.html', icon: icon('icon-applications'), label: 'Mis postulaciones',  badge: '', section: 'Postulaciones' },
+    { href: 'messages.html',     icon: icon('icon-applications'), label: 'Mensajes',           badge: '' },
     { href: 'saved.html',        icon: icon('icon-saved'),        label: 'Guardados' },
+    { href: 'interview-simulation.html', icon: icon('icon-cv'),   label: 'Simulación de entrevistas', section: 'Desarrollo' },
     { href: 'settings.html',     icon: icon('icon-settings'),     label: 'Configuración' },
   ];
 

@@ -86,7 +86,10 @@
                 <div class="panel-title">Información personal</div>
                 <div class="panel-subtitle">Datos básicos de tu perfil público</div>
               </div>
-              <span class="badge badge-green" id="badge-personal">✓ Completado</span>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn btn-ghost" id="btn-share-profile" style="padding:7px 14px;font-size:0.8rem;">🔗 Compartir perfil</button>
+                <span class="badge badge-green" id="badge-personal">✓ Completado</span>
+              </div>
             </div>
             <div class="panel-body">
 
@@ -109,11 +112,11 @@
                 <div class="form-grid" style="margin-bottom:18px;">
                   <div class="form-group">
                     <label for="firstName">Nombre *</label>
-                    <input type="text" id="firstName" value="Juan" onkeypress="return !/[0-9]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[0-9]/g,'')},0)" />
+                    <input type="text" id="firstName" value="" onkeypress="return !/[0-9]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[0-9]/g,'')},0)" />
                   </div>
                   <div class="form-group">
                     <label for="lastName">Apellido *</label>
-                    <input type="text" id="lastName" value="Pérez" onkeypress="return !/[0-9]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[0-9]/g,'')},0)" />
+                    <input type="text" id="lastName" value="" onkeypress="return !/[0-9]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[0-9]/g,'')},0)" />
                   </div>
                   <div class="form-group">
                     <label for="email">Email *</label>
@@ -121,18 +124,18 @@
                   </div>
                   <div class="form-group">
                     <label for="phone">Teléfono</label>
-                    <input type="tel" id="phone" placeholder="+54 11 0000-0000" value="+54 11 4567-8901" onkeypress="return /[0-9\s\+\-\(\)]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/g,'')},0)" />
+                    <input type="tel" id="phone" placeholder="+54 11 0000-0000" value="" onkeypress="return /[0-9\s\+\-\(\)]/.test(event.key)" onpaste="setTimeout(()=>{this.value=this.value.replace(/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/g,'')},0)" />
                   </div>
                 </div>
 
                 <div class="form-grid">
                   <div class="form-group">
                     <label for="jobTitle">Título profesional *</label>
-                    <input type="text" id="jobTitle" value="Desarrollador Full Stack" placeholder="Ej: Frontend Developer" />
+                    <input type="text" id="jobTitle" value="" placeholder="Ej: Frontend Developer" />
                   </div>
                   <div class="form-group">
                     <label for="location">Ubicación *</label>
-                    <input type="text" id="location" value="Buenos Aires, Argentina" />
+                    <input type="text" id="location" value="" />
                   </div>
                   <div class="form-group">
                     <label for="availability">Disponibilidad</label>
@@ -160,7 +163,7 @@
                 <div class="form-section-title">📝 Sobre mí</div>
                 <div class="form-group">
                   <label for="bio">Resumen profesional</label>
-                  <textarea id="bio" rows="4" placeholder="Describite en pocas palabras...">Desarrollador Full Stack con 4 años de experiencia en React, Node.js y TypeScript. Apasionado por construir productos digitales de calidad y aprender continuamente.</textarea>
+                  <textarea id="bio" rows="4" placeholder="Describite en pocas palabras..."></textarea>
                 </div>
                 <div style="text-align:right;font-size:0.74rem;color:var(--clr-muted);margin-top:4px;" id="bio-count">186 / 500 caracteres</div>
               </div>
@@ -170,11 +173,11 @@
                 <div class="form-grid">
                   <div class="form-group">
                     <label for="linkedin">LinkedIn</label>
-                    <input type="url" id="linkedin" placeholder="linkedin.com/in/tu-perfil" value="linkedin.com/in/juanperez" />
+                    <input type="url" id="linkedin" placeholder="linkedin.com/in/tu-perfil" value="" />
                   </div>
                   <div class="form-group">
                     <label for="github">GitHub</label>
-                    <input type="url" id="github" placeholder="github.com/tu-usuario" value="github.com/juanperez" />
+                    <input type="url" id="github" placeholder="github.com/tu-usuario" value="" />
                   </div>
                   <div class="form-group">
                     <label for="portfolio">Portfolio / Web</label>
@@ -182,7 +185,7 @@
                   </div>
                   <div class="form-group">
                     <label for="salary">Expectativa salarial (USD/mes)</label>
-                    <input type="number" id="salary" placeholder="Ej: 2500" value="2500" />
+                    <input type="number" id="salary" placeholder="Ej: 2500" value="" />
                   </div>
                 </div>
               </div>
@@ -824,6 +827,23 @@
     const _u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
     if (_u) updateDashboardHero(_u);
     await initProfile();
+
+    // ── Compartir perfil público ─────────────────────────────────────────
+    const shareBtn = document.getElementById('btn-share-profile');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async () => {
+        const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+        if (!u) return;
+        const base = window.location.pathname.split('/pages/')[0];
+        const url  = `${window.location.origin}${base}/pages/public-profile.html?id=${u.id}`;
+        try {
+          await navigator.clipboard.writeText(url);
+          showAlert('🔗 Link copiado: ' + url);
+        } catch {
+          prompt('Copiá el link de tu perfil público:', url);
+        }
+      });
+    }
 
     // ── Gráfico de demanda de habilidades (chart.js, solo frontend) ────────
     let chartDemandInstance = null;

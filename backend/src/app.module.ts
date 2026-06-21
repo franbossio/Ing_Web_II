@@ -7,10 +7,14 @@ import { UsersModule } from './users/users.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
+import { InterviewsModule } from './interviews/interviews.module';
+import { MessagesModule } from './messages/messages.module';
 import { MailModule } from './mail/mail.module';
 import { User } from './users/user.entity';
 import { Job } from './jobs/job.entity';
 import { Application } from './applications/application.entity';
+import { Conversation } from './messages/conversation.entity';
+import { Message } from './messages/message.entity';
 
 @Module({
   imports: [
@@ -33,7 +37,7 @@ import { Application } from './applications/application.entity';
           database: config.get<string>('DB_NAME', 'conectaia'),
           // SSL solo en producción (Render lo requiere, local no)
           ssl: isProduction ? { rejectUnauthorized: false } : false,
-          entities: [User, Job, Application],
+          entities: [User, Job, Application, Conversation, Message],
           synchronize: true,
           logging: false,
         };
@@ -46,6 +50,8 @@ import { Application } from './applications/application.entity';
     JobsModule,
     ApplicationsModule,
     RecommendationsModule,
+    InterviewsModule,
+    MessagesModule,
     MailModule,
   ],
 })
