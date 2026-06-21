@@ -2,3 +2,8 @@ node_modules/
 dist/
 
 *.js.map
+
+# Variables de entorno (nunca subir al repo)
+.env
+.env.local
+.env.production
