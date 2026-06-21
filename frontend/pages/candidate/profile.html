@@ -322,6 +322,21 @@
             </div>
             <div class="panel-body">
 
+              <!-- Score del CV -->
+              <div id="cv-score-block" style="display:none; margin-bottom:16px; padding:20px 22px; background:var(--clr-surface-2); border-radius:var(--radius-md); border:1px solid var(--clr-border);">
+                <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--clr-muted);margin-bottom:14px;">📊 Puntuación del CV</div>
+                <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+                  <div style="position:relative;width:88px;height:88px;flex-shrink:0;">
+                    <canvas id="chart-cv-score" width="88" height="88"></canvas>
+                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;">
+                      <div id="cv-score-number" style="font-size:1.35rem;font-weight:700;font-family:var(--font-display);color:var(--clr-accent);line-height:1;">—</div>
+                      <div style="font-size:0.6rem;color:var(--clr-muted);margin-top:1px;">/100</div>
+                    </div>
+                  </div>
+                  <div id="cv-score-breakdown" style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:10px;"></div>
+                </div>
+              </div>
+
               <!-- CV guardado -->
               <div class="cv-current" id="cv-current" style="display:none;">
                 <span class="cv-file-icon">📄</span>
@@ -553,6 +568,10 @@
 
     // Mostrar/ocultar sección de CV según si hay archivo guardado
     function renderCvState(user) {
+      // Solo mostramos/actualizamos el score si el usuario tiene uno guardado.
+      // Si no tiene (ej: viene de Render antes de que se guarde localmente), no ocultamos
+      // para evitar que pise un score que ya estaba visible.
+      if (user?.cvScore != null) renderCvScore(user);
       const current   = document.getElementById('cv-current');
       const nameEl    = document.getElementById('cv-file-name');
       const metaEl    = document.getElementById('cv-file-meta');
@@ -703,6 +722,13 @@
       });
 
       if (summary) summary.textContent = `${fields.length} secciones extraídas correctamente`;
+
+      if (data.cvScore != null) {
+        const scoreChip = document.createElement('span');
+        scoreChip.style.cssText = 'background:rgba(201,168,76,0.12);color:var(--clr-accent);border:1px solid rgba(201,168,76,0.3);padding:4px 10px;border-radius:100px;font-size:0.78rem;font-weight:600;';
+        scoreChip.textContent = `⭐ Score del CV: ${data.cvScore}/100`;
+        container.appendChild(scoreChip);
+      }
     }
 
     async function confirmAiData() {
@@ -773,6 +799,69 @@
           import('../../js/profile.js').then(({ refreshUI }) => refreshUI(updated));
           showAlert('✓ CV guardado. Completá los datos manualmente.');
         });
+      }
+    }
+
+    // ── Score del CV ──────────────────────────────────────
+    let cvScoreChart = null;
+
+    function scoreColor(v) {
+      return v >= 70 ? '#4caf84' : v >= 50 ? '#c9a84c' : '#e05c5c';
+    }
+
+    function renderCvScore(user) {
+      const block = document.getElementById('cv-score-block');
+      if (!block) return;
+
+      const score     = user?.cvScore;
+      const breakdown = user?.cvScoreBreakdown;
+
+      if (score == null) { block.style.display = 'none'; return; }
+
+      block.style.display = 'block';
+      document.getElementById('cv-score-number').textContent = score;
+
+      const canvas = document.getElementById('chart-cv-score');
+      if (canvas && window.Chart) {
+        if (cvScoreChart) cvScoreChart.destroy();
+        const color = scoreColor(score);
+        cvScoreChart = new Chart(canvas, {
+          type: 'doughnut',
+          data: {
+            datasets: [{
+              data: [score, 100 - score],
+              backgroundColor: [color, 'rgba(255,255,255,0.05)'],
+              borderWidth: 0,
+              hoverOffset: 0,
+            }]
+          },
+          options: {
+            cutout: '72%',
+            responsive: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            animation: { duration: 600 },
+          }
+        });
+      }
+
+      const bdEl = document.getElementById('cv-score-breakdown');
+      if (bdEl && breakdown) {
+        const items = [
+          { label: 'Presentación', value: breakdown.clarity },
+          { label: 'Habilidades',  value: breakdown.skills },
+          { label: 'Experiencia',  value: breakdown.experience },
+        ];
+        bdEl.innerHTML = items.map(it => {
+          const c = scoreColor(it.value);
+          return `<div>
+            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--clr-muted);margin-bottom:3px;">
+              <span>${it.label}</span><span style="color:${c};font-weight:600;">${it.value}</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:100px;height:5px;overflow:hidden;">
+              <div style="width:${it.value}%;height:100%;background:${c};border-radius:100px;transition:width 0.5s ease;"></div>
+            </div>
+          </div>`;
+        }).join('');
       }
     }
 
@@ -1055,7 +1144,8 @@
       }
     });
 
-    // Mostrar estado del CV con datos frescos
+    // Mostrar estado del CV con datos frescos (solo renderCvState, NO renderCvScore
+    // para evitar que Render pise el score local que acaba de calcularse)
     const _fresh = JSON.parse(localStorage.getItem('talentai_user') || 'null');
     if (_fresh) renderCvState(_fresh);
 

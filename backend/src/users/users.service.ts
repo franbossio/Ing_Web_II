@@ -78,7 +78,7 @@ export class UsersService implements OnModuleInit {
       'linkedin','github','portfolio','salary','availability','modality',
       'skills','softSkills','experience','education','languages',
       'companyName','industry','companySize','website',
-      'photo','cvFileName','cvUrl','cvAnalysis','isActive',
+      'photo','cvFileName','cvUrl','cvAnalysis','cvScore','cvScoreBreakdown','isActive',
     ];
 
     for (const key of allowed) {

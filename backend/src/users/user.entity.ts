@@ -46,6 +46,8 @@ export class User {
   @Column({ name: 'cv_file_name', nullable: true, length: 255 }) cvFileName?: string;
   @Column({ name: 'cv_url',       nullable: true, type: 'text'  }) cvUrl?: string;
   @Column({ name: 'cv_analysis',  nullable: true, type: 'text' }) cvAnalysis?: string;
+  @Column({ name: 'cv_score',     nullable: true, type: 'int'  }) cvScore?: number;
+  @Column({ name: 'cv_score_breakdown', nullable: true, type: 'jsonb' }) cvScoreBreakdown?: { clarity: number; skills: number; experience: number };
   @Column({ name: 'is_active', default: true })                  isActive: boolean;
   @Column({ name: 'email_verified', default: false })            emailVerified: boolean;
   @Column({ name: 'verification_token', nullable: true, length: 128, select: false }) verificationToken?: string;

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Perfil profesional — CONECTA IA</title>
   <link rel="stylesheet" href="../css/global.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     body {
       background: var(--clr-bg);
@@ -93,6 +94,10 @@
       return name ? name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
     }
 
+    function scoreColor(v) {
+      return v >= 70 ? '#4caf84' : v >= 50 ? '#c9a84c' : '#e05c5c';
+    }
+
     function renderProfile(u) {
       const fullName = [u.firstName, u.lastName].filter(Boolean).join(' ') || 'Candidato';
 
@@ -105,6 +110,10 @@
         u.github    && `<a href="${u.github}"    target="_blank" class="pp-link">🐙 GitHub</a>`,
         u.portfolio && `<a href="${u.portfolio}" target="_blank" class="pp-link">🌐 Portfolio</a>`,
       ].filter(Boolean).join('');
+
+      const scoreBadge = u.cvScore != null
+        ? `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(201,168,76,0.12);color:${scoreColor(u.cvScore)};border:1px solid rgba(201,168,76,0.3);padding:3px 10px;border-radius:100px;font-size:0.75rem;font-weight:700;margin-top:6px;">⭐ CV Score: ${u.cvScore}/100</span>`
+        : '';
 
       const bioHtml = u.bio
         ? `<div class="pp-section"><div class="pp-section-title">Sobre mí</div><div class="pp-bio">${escapeHtml(u.bio)}</div></div>`
@@ -142,12 +151,48 @@
           </div>`
         : '';
 
-      const skillsHtml = (u.skills || []).length
+      const techCount = (u.skills || []).length;
+      const softCount = (u.softSkills || []).length;
+      const hasSkills = techCount + softCount > 0;
+
+      const skillsChartHtml = hasSkills ? `
+        <div class="pp-section">
+          <div class="pp-section-title">Distribución de habilidades</div>
+          <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-top:8px;">
+            <div style="position:relative;width:110px;height:110px;flex-shrink:0;">
+              <canvas id="pp-skills-chart" width="110" height="110"></canvas>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;">
+                <div style="font-size:1.3rem;font-weight:700;color:var(--clr-text);">${techCount + softCount}</div>
+                <div style="font-size:0.6rem;color:var(--clr-muted);">habilidades</div>
+              </div>
+            </div>
+            <div style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--clr-muted);margin-bottom:4px;">
+                  <span>💻 Técnicas</span><span style="color:#c9a84c;font-weight:600;">${techCount}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:100px;height:6px;overflow:hidden;">
+                  <div style="width:${Math.round(techCount / (techCount + softCount) * 100)}%;height:100%;background:#c9a84c;border-radius:100px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--clr-muted);margin-bottom:4px;">
+                  <span>🤝 Blandas</span><span style="color:#7ec8e3;font-weight:600;">${softCount}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:100px;height:6px;overflow:hidden;">
+                  <div style="width:${Math.round(softCount / (techCount + softCount) * 100)}%;height:100%;background:#7ec8e3;border-radius:100px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>` : '';
+
+      const skillsHtml = techCount
         ? `<div class="pp-section"><div class="pp-section-title">Habilidades técnicas</div>
              <div class="pp-tags">${u.skills.map(s => `<span class="pp-tag">${escapeHtml(s)}</span>`).join('')}</div></div>`
         : '';
 
-      const softSkillsHtml = (u.softSkills || []).length
+      const softSkillsHtml = softCount
         ? `<div class="pp-section"><div class="pp-section-title">Habilidades blandas</div>
              <div class="pp-tags">${u.softSkills.map(s => `<span class="pp-tag">${escapeHtml(s)}</span>`).join('')}</div></div>`
         : '';
@@ -165,16 +210,57 @@
             <div class="pp-name">${escapeHtml(fullName)}</div>
             ${u.jobTitle ? `<div class="pp-title">${escapeHtml(u.jobTitle)}</div>` : ''}
             ${u.location ? `<div class="pp-loc">📍 ${escapeHtml(u.location)}</div>` : ''}
+            ${scoreBadge ? `<div>${scoreBadge}</div>` : ''}
             ${links ? `<div class="pp-links">${links}</div>` : ''}
           </div>
         </div>
         ${bioHtml}
         ${expHtml}
         ${eduHtml}
+        ${skillsChartHtml}
         ${skillsHtml}
         ${softSkillsHtml}
         ${langHtml}
       `;
+
+      // Renderizar donut de habilidades después de insertar el HTML
+      if (hasSkills) {
+        requestAnimationFrame(() => {
+          const canvas = document.getElementById('pp-skills-chart');
+          if (canvas && window.Chart) {
+            new Chart(canvas, {
+              type: 'doughnut',
+              data: {
+                labels: ['Técnicas', 'Blandas'],
+                datasets: [{
+                  data: [techCount || 0, softCount || 0],
+                  backgroundColor: ['#c9a84c', '#7ec8e3'],
+                  borderWidth: 0,
+                  hoverOffset: 4,
+                }]
+              },
+              options: {
+                cutout: '68%',
+                responsive: false,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` },
+                    backgroundColor: '#1a1c22',
+                    titleColor: '#f0e6c8',
+                    bodyColor: '#a0a0a0',
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    borderWidth: 1,
+                    padding: 8,
+                    displayColors: false,
+                  }
+                },
+                animation: { duration: 500 },
+              }
+            });
+          }
+        });
+      }
     }
 
     function renderError(message) {

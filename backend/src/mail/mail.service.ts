@@ -11,14 +11,14 @@ export class MailService {
     const apiKey   = this.config.get<string>('BREVO_API_KEY');
     const frontUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:5500');
     const fromAddr = this.config.get<string>('MAIL_FROM', 'noreply@talentai.com');
-    const fromName = this.config.get<string>('MAIL_FROM_NAME', 'TalentAI');
+    const fromName = this.config.get<string>('MAIL_FROM_NAME', 'Conectaia');
 
     const verifyUrl = `${frontUrl}/pages/verify-email.html?token=${token}`;
 
     const payload = {
       sender:      { name: fromName, email: fromAddr },
       to:          [{ email: to }],
-      subject:     'Verificá tu cuenta en TalentAI',
+      subject:     'Verificá tu cuenta en Conectaia',
       htmlContent: `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"/></head>
@@ -28,12 +28,12 @@ export class MailService {
       <table width="520" cellpadding="0" cellspacing="0" style="background:#16181f;border-radius:12px;border:1px solid #2a2d38;overflow:hidden;">
         <tr>
           <td style="background:linear-gradient(135deg,#1a1c24,#23263a);padding:32px 40px;text-align:center;border-bottom:1px solid #2a2d38;">
-            <h1 style="color:#c9a84c;font-size:1.5rem;margin:8px 0 0;letter-spacing:0.05em;">TalentAI</h1>
+            <h1 style="color:#c9a84c;font-size:1.5rem;margin:8px 0 0;letter-spacing:0.05em;">Conectaia</h1>
           </td>
         </tr>
         <tr>
           <td style="padding:40px;">
-            <h2 style="color:#f0e6c8;font-size:1.2rem;margin:0 0 12px;">Bienvenido/a a TalentAI</h2>
+            <h2 style="color:#f0e6c8;font-size:1.2rem;margin:0 0 12px;">Bienvenido/a a Conectaia</h2>
             <p style="color:#a0a4b0;font-size:0.95rem;line-height:1.6;margin:0 0 28px;">
               Gracias por registrarte. Para activar tu cuenta, verifica tu email haciendo clic en el boton de abajo.
             </p>
@@ -51,7 +51,7 @@ export class MailService {
         </tr>
         <tr>
           <td style="padding:20px 40px;border-top:1px solid #2a2d38;text-align:center;">
-            <p style="color:#404456;font-size:0.72rem;margin:0;">2025 TalentAI</p>
+            <p style="color:#404456;font-size:0.72rem;margin:0;">2025 Conectaia</p>
           </td>
         </tr>
       </table>

@@ -467,6 +467,12 @@ async function fetchFreshUser() {
     });
     if (!res.ok) return null;
     const fresh = await res.json();
+    // Preservar campos calculados localmente que Render puede no devolver aún
+    const cached = getUser();
+    if (cached) {
+      if (fresh.cvScore == null && cached.cvScore != null) fresh.cvScore = cached.cvScore;
+      if (fresh.cvScoreBreakdown == null && cached.cvScoreBreakdown != null) fresh.cvScoreBreakdown = cached.cvScoreBreakdown;
+    }
     saveUser(fresh);
     return fresh;
   } catch { return null; }

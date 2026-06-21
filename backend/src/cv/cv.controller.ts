@@ -49,14 +49,15 @@ export class CvController {
     const extracted = await this.cvService.analyzeCV(body.base64Pdf, body.fileName);
 
     // 2. Construir el payload para actualizar el perfil
-    //    cvComment se guarda en cvAnalysis (campo de texto libre)
-    const { cvComment, ...profileData } = extracted;
+    const { cvComment, cvScore, cvScoreBreakdown, ...profileData } = extracted;
 
     const updatePayload = {
       ...profileData,
-      cvFileName: body.fileName,
-      cvUrl:      `data:application/pdf;base64,${body.base64Pdf}`,
-      cvAnalysis: cvComment || null,
+      cvFileName:       body.fileName,
+      cvUrl:            `data:application/pdf;base64,${body.base64Pdf}`,
+      cvAnalysis:       cvComment       || null,
+      cvScore:          typeof cvScore === 'number' ? cvScore : null,
+      cvScoreBreakdown: cvScoreBreakdown || null,
     };
 
     // 3. Guardar en la DB

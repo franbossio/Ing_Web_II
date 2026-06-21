@@ -25,6 +25,8 @@ export interface CvExtracted {
     startYear: string; endYear: string | null; status: string;
   }[];
   cvComment: string;
+  cvScore: number;
+  cvScoreBreakdown: { clarity: number; skills: number; experience: number };
 }
 
 const PROMPT = `Sos un extractor de datos de CVs. Analizá el texto del CV y devolvé SOLO un JSON válido con exactamente esta estructura, sin texto extra ni markdown:
@@ -45,14 +47,20 @@ const PROMPT = `Sos un extractor de datos de CVs. Analizá el texto del CV y dev
   "languages":  [{"name":"string","level":"string"}],
   "experience": [{"title":"string","company":"string","startDate":"string","endDate":"string o null","current":false,"description":"string"}],
   "education":  [{"career":"string","institution":"string","startYear":"string","endYear":"string o null","status":"string"}],
-  "cvComment":  "string: comentario profesional de 3-4 oraciones sobre el perfil del candidato, sus fortalezas y áreas de mejora, pensado para ser leído por empresas"
+  "cvComment":  "string: comentario profesional de 3-4 oraciones sobre el perfil del candidato, sus fortalezas y áreas de mejora, pensado para ser leído por empresas",
+  "cvScore": 75,
+  "cvScoreBreakdown": {"clarity": 80, "skills": 70, "experience": 75}
 }
 
 Reglas:
 - Devolvé SOLO el JSON, sin \`\`\`json ni texto antes o después
 - Si un campo no aparece en el CV, usá null o [] según corresponda
 - skills debe contener tecnologías, herramientas y conocimientos técnicos concretos
-- cvComment debe ser objetivo, profesional y útil para una empresa que evalúa al candidato`;
+- cvComment debe ser objetivo, profesional y útil para una empresa que evalúa al candidato
+- cvScore es un entero de 0 a 100 que resume la calidad general del CV
+- cvScoreBreakdown.clarity (0-100): claridad, estructura y presentación del documento
+- cvScoreBreakdown.skills (0-100): cantidad, variedad y relevancia de habilidades técnicas
+- cvScoreBreakdown.experience (0-100): profundidad y cantidad de experiencia laboral`;
 
 @Injectable()
 export class CvService {
