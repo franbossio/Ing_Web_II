@@ -277,7 +277,7 @@
       if (!id) { renderError('Falta el identificador del perfil.'); return; }
 
       try {
-        const res = await fetch(`http://localhost:3001/api/users/public/${id}`);
+        const res = await fetch(`https://ing-web-ii.onrender.com/api/users/public/${id}`);
         if (!res.ok) {
           renderError(res.status === 404 ? 'Este perfil no existe o no está disponible.' : 'No se pudo cargar el perfil.');
           return;

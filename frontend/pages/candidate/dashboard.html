@@ -545,7 +545,7 @@
       if (!el) return;
 
       try {
-        const res = await fetch('http://localhost:3001/api/jobs/skills/ranking', {
+        const res = await fetch('https://ing-web-ii.onrender.com/api/jobs/skills/ranking', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

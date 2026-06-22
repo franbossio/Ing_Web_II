@@ -1,4 +1,4 @@
-const API = 'http://localhost:3001/api';
+const API = 'https://ing-web-ii.onrender.com/api';
 
 function getToken() {
   return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
