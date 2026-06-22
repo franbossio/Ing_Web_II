@@ -139,9 +139,62 @@
     }
     .rec-card-footer { display: flex; align-items: center; justify-content: flex-end; }
 
+    /* ── Ranking habilidades ── */
+    .skills-ranking-panel { margin-top: 20px; }
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 32px; }
+    .skill-bar-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+    .skill-bar-name {
+      width: 130px; flex-shrink: 0;
+      font-size: 0.8rem; font-weight: 500; color: var(--clr-text);
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .skill-you-badge {
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--clr-accent); background: rgba(201,168,76,0.12);
+      padding: 1px 5px; border-radius: 100px; flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .skill-bar-track {
+      flex: 1; height: 8px;
+      background: var(--clr-surface-2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%; border-radius: 100px;
+      background: var(--clr-border);
+      transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .skill-bar-fill.skill-bar-have { background: var(--clr-accent); }
+    .skill-bar-count {
+      width: 56px; flex-shrink: 0;
+      font-size: 0.7rem; color: var(--clr-muted);
+      text-align: right; white-space: nowrap;
+    }
+    .skills-legend {
+      display: flex; gap: 18px; margin-top: 14px;
+      padding-top: 12px; border-top: 1px solid var(--clr-border);
+    }
+    .skills-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--clr-muted); }
+    .skills-legend-dot { width: 10px; height: 10px; border-radius: 100px; }
+    .legend-have    { background: var(--clr-accent); }
+    .legend-missing { background: var(--clr-border); }
+    .skills-skel-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 0;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .skills-skel-row:last-child { border-bottom: none; }
+    .skel-text { height: 10px; border-radius: 100px; background: var(--clr-surface-2); position: relative; overflow: hidden; }
+    .skel-text::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      animation: skel-shine 1.4s ease infinite;
+    }
+
     @media (max-width: 900px) {
       .dash-cols { grid-template-columns: 1fr; }
       .cv-upload-bar { flex-direction: column; align-items: flex-start; }
+      .skills-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -283,6 +336,28 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- Ranking de habilidades más demandadas -->
+        <div class="panel skills-ranking-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">📊 Habilidades más demandadas</div>
+              <div class="panel-subtitle">Basado en las ofertas activas — las marcadas en dorado ya las tenés</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:14px 20px;">
+            <div id="skills-ranking-list">
+              <div class="skills-grid" id="skills-skel">
+                <div class="skill-bar-row"><div class="skel-text" style="width:100px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+                <div class="skill-bar-row"><div class="skel-text" style="width:80px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+                <div class="skill-bar-row"><div class="skel-text" style="width:110px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+                <div class="skill-bar-row"><div class="skel-text" style="width:90px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+                <div class="skill-bar-row"><div class="skel-text" style="width:75px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+                <div class="skill-bar-row"><div class="skel-text" style="width:95px;flex-shrink:0;height:10px;"></div><div style="flex:1;height:8px;border-radius:100px;overflow:hidden;" class="skel-text"></div><div class="skel-text" style="width:48px;height:10px;"></div></div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -461,6 +536,62 @@
     // Exponerla globalmente para que el botón "Reintentar" del HTML pueda llamarla
     window.loadRecommendations = loadRecommendations;
 
+    // ── Ranking habilidades más demandadas ─────────────────────────────────
+    async function loadSkillsRanking() {
+      const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
+      const u = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+      const mySkills = new Set((u?.skills || []).map(s => s.toLowerCase().trim()));
+      const el = document.getElementById('skills-ranking-list');
+      if (!el) return;
+
+      try {
+        const res = await fetch('http://localhost:3001/api/jobs/skills/ranking', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const skills = await res.json();
+
+        if (!skills || skills.length === 0) {
+          el.innerHTML = '<div class="empty-msg">No hay datos de habilidades todavía.</div>';
+          return;
+        }
+
+        const maxCount = skills[0].count;
+        const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+        const rows = skills.map(s => {
+          const pct  = Math.round((s.count / maxCount) * 100);
+          const have = mySkills.has(s.skill.toLowerCase());
+          const badge = have ? `<span class="skill-you-badge">✓ Vos la tenés</span>` : '';
+          return `<div class="skill-bar-row">
+            <div class="skill-bar-name">${cap(s.skill)}${badge}</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill${have ? ' skill-bar-have' : ''}" style="width:0%" data-pct="${pct}"></div>
+            </div>
+            <div class="skill-bar-count">${s.count} oferta${s.count !== 1 ? 's' : ''}</div>
+          </div>`;
+        }).join('');
+
+        el.innerHTML = `
+          <div class="skills-grid">${rows}</div>
+          <div class="skills-legend">
+            <span class="skills-legend-item"><span class="skills-legend-dot legend-have"></span> Vos la tenés</span>
+            <span class="skills-legend-item"><span class="skills-legend-dot legend-missing"></span> Te falta o no está en tu perfil</span>
+          </div>`;
+
+        // Animar las barras con un pequeño delay para ver la transición
+        requestAnimationFrame(() => {
+          el.querySelectorAll('.skill-bar-fill').forEach(bar => {
+            bar.style.width = bar.dataset.pct + '%';
+          });
+        });
+
+      } catch (err) {
+        el.innerHTML = '<div class="empty-msg">⚠️ No se pudo cargar el ranking de habilidades.</div>';
+        console.error('Skills ranking error:', err);
+      }
+    }
+
     // ── Dashboard principal ─────────────────────────────────────────────────
     async function loadDashboard() {
       await initDashboard();
@@ -476,6 +607,9 @@
 
       // Recomendaciones IA — ahora sí está definida arriba
       loadRecommendations();
+
+      // Ranking habilidades
+      loadSkillsRanking();
 
       // Postulaciones
       const apps  = u.recentApplications || [];

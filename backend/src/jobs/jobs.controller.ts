@@ -25,6 +25,13 @@ export class JobsController {
     return this.jobsService.findByCompany(req.user.id);
   }
 
+  // GET /api/jobs/skills/ranking — habilidades más demandadas
+  @Get('skills/ranking')
+  @UseGuards(JwtAuthGuard)
+  getSkillsRanking() {
+    return this.jobsService.getSkillsRanking();
+  }
+
   // GET /api/jobs/:id — detalle de una oferta
   @Get(':id')
   @UseGuards(JwtAuthGuard)
