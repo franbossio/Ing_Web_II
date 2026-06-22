@@ -9,6 +9,17 @@
   <script src="../../js/mobile-sidebar.js"></script>
   <script src="../../js/sidebar-company.js" type="module"></script>
   <link rel="stylesheet" href="../../css/company.css" />
+  <style>
+    /* Picker nativo del input date: seguir el tema activo */
+    #job-deadline { color-scheme: dark; }
+
+    [data-theme="light"] #job-deadline,
+    [data-theme="system"] #job-deadline { color-scheme: light; }
+
+    @media (prefers-color-scheme: light) {
+      [data-theme="system"] #job-deadline { color-scheme: light; }
+    }
+  </style>
 </head>
 <body>
 
@@ -121,11 +132,15 @@
                 </span>
               </div>
               <div class="form-group">
-                <label>Habilidades blandas</label>
+                <label>Habilidades blandas *</label>
                 <div class="tags-input-wrapper" id="soft-skills-wrapper">
                   <input type="text" class="tags-input" id="soft-input"
                     placeholder="Escribí y presioná Enter..." />
                 </div>
+                <span style="font-size:0.74rem;color:var(--clr-muted);margin-top:5px;display:block;">
+                  Presioná Enter o coma para agregar una habilidad
+                </span>
+                <span class="field-error" id="soft-skills-error">Agregá al menos una habilidad blanda.</span>
               </div>
             </div>
 
@@ -207,9 +222,10 @@
 
             <div class="form-grid-3" style="margin-bottom:20px;">
               <div class="form-group">
-                <label for="job-location">Ubicación</label>
+                <label for="job-location">Ubicación *</label>
                 <input type="text" id="job-location" name="location"
-                  placeholder="Ej: Buenos Aires, Argentina" />
+                  placeholder="Ej: Buenos Aires, Argentina" required />
+                <span class="field-error" id="job-location-error">La ubicación es requerida.</span>
               </div>
               <div class="form-group">
                 <label for="job-currency">Moneda</label>
@@ -230,8 +246,9 @@
             </div>
 
             <div class="form-group">
-              <label for="job-deadline">Fecha límite de postulación</label>
-              <input type="date" id="job-deadline" name="deadline" />
+              <label for="job-deadline">Fecha límite de postulación *</label>
+              <input type="date" id="job-deadline" name="deadline" required />
+              <span class="field-error" id="job-deadline-error">La fecha límite es requerida.</span>
             </div>
 
           </div>
@@ -338,7 +355,7 @@ async function preloadUserData() {
 
   // Luego refrescar desde la BD
   try {
-    const res = await fetch('https://ing-web-ii.onrender.com/api/auth/me', {
+    const res = await fetch('http://localhost:3001/api/auth/me', {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -381,6 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Establecer fecha mínima = hoy
+  const deadlineInput = document.getElementById('job-deadline');
+  if (deadlineInput) {
+    deadlineInput.min = new Date().toISOString().split('T')[0];
+  }
+
   const form = document.getElementById('post-job-form');
   if (!form) return;
 
@@ -388,12 +411,51 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     // Validar campos requeridos
-    const title = document.getElementById('job-title')?.value.trim();
-    const desc  = document.getElementById('job-desc')?.value.trim();
-    if (!title) { document.getElementById('job-title-error').style.display='block'; return; }
-    if (!desc)  { document.getElementById('job-desc-error').style.display='block'; return; }
-    document.getElementById('job-title-error').style.display='none';
-    document.getElementById('job-desc-error').style.display='none';
+    const title    = document.getElementById('job-title')?.value.trim();
+    const desc     = document.getElementById('job-desc')?.value.trim();
+    const location = document.getElementById('job-location')?.value.trim();
+    const deadline = document.getElementById('job-deadline')?.value;
+
+    const softSkillsCount = document.querySelectorAll('#soft-skills-wrapper .tag-chip').length;
+
+    let hasError = false;
+
+    if (!title) {
+      document.getElementById('job-title-error').style.display = 'block';
+      hasError = true;
+    } else {
+      document.getElementById('job-title-error').style.display = 'none';
+    }
+
+    if (!desc) {
+      document.getElementById('job-desc-error').style.display = 'block';
+      hasError = true;
+    } else {
+      document.getElementById('job-desc-error').style.display = 'none';
+    }
+
+    if (!location) {
+      document.getElementById('job-location-error').style.display = 'block';
+      hasError = true;
+    } else {
+      document.getElementById('job-location-error').style.display = 'none';
+    }
+
+    if (!deadline) {
+      document.getElementById('job-deadline-error').style.display = 'block';
+      hasError = true;
+    } else {
+      document.getElementById('job-deadline-error').style.display = 'none';
+    }
+
+    if (softSkillsCount === 0) {
+      document.getElementById('soft-skills-error').style.display = 'block';
+      hasError = true;
+    } else {
+      document.getElementById('soft-skills-error').style.display = 'none';
+    }
+
+    if (hasError) return;
 
     // Leer skills desde los chips del DOM (fuente de verdad)
     const techSkills = Array.from(
@@ -436,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
-      const res   = await fetch('https://ing-web-ii.onrender.com/api/jobs', {
+      const res   = await fetch('http://localhost:3001/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload),

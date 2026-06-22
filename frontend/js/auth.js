@@ -57,7 +57,7 @@ export function redirectToDashboard(role) {
   const routes = {
     candidate: base + 'candidate/dashboard.html',
     company:   base + 'company/dashboard.html',
-    admin:     base + 'candidate/dashboard.html',
+    admin:     base + 'admin/dashboard.html',
   };
   window.location.href = routes[role] || base + 'login.html';
 }

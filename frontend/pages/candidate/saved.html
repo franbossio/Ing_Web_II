@@ -240,7 +240,7 @@
       btn.disabled = true;
       btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:4px;"></div>';
       try {
-        const res = await fetch('https://ing-web-ii.onrender.com/api/applications', {
+        const res = await fetch('http://localhost:3001/api/applications', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN()}` },
           body: JSON.stringify({ jobId }),
@@ -277,7 +277,7 @@
       }
 
       try {
-        const res  = await fetch('https://ing-web-ii.onrender.com/api/jobs', {
+        const res  = await fetch('http://localhost:3001/api/jobs', {
           headers: { Authorization: `Bearer ${TOKEN()}` }
         });
         const jobs = res.ok ? await res.json() : [];

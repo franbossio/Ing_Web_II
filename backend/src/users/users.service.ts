@@ -7,12 +7,18 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User, SafeUser, UserRole } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Job } from '../jobs/job.entity';
+import { Application } from '../applications/application.entity';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly repo: Repository<User>,
+    @InjectRepository(Job)
+    private readonly jobRepo: Repository<Job>,
+    @InjectRepository(Application)
+    private readonly appRepo: Repository<Application>,
   ) {}
 
   async onModuleInit() {
@@ -78,7 +84,7 @@ export class UsersService implements OnModuleInit {
       'linkedin','github','portfolio','salary','availability','modality',
       'skills','softSkills','experience','education','languages',
       'companyName','industry','companySize','website',
-      'photo','cvFileName','cvUrl','cvAnalysis','isActive',
+      'photo','cvFileName','cvUrl','cvAnalysis','cvScore','cvScoreBreakdown','isActive',
     ];
 
     for (const key of allowed) {
@@ -121,6 +127,32 @@ export class UsersService implements OnModuleInit {
     return users.map(u => this.sanitize(u));
   }
 
+  /** Perfil público de un candidato: solo datos no sensibles, pensado para compartir. */
+  async findPublicProfile(id: string) {
+    const user = await this.repo.findOne({
+      where: { id, role: 'candidate' as UserRole, isActive: true },
+    });
+    if (!user) throw new NotFoundException('Perfil no encontrado');
+
+    return {
+      id:         user.id,
+      firstName:  user.firstName,
+      lastName:   user.lastName,
+      jobTitle:   user.jobTitle,
+      location:   user.location,
+      bio:        user.bio,
+      photo:      user.photo,
+      linkedin:   user.linkedin,
+      github:     user.github,
+      portfolio:  user.portfolio,
+      skills:     user.skills,
+      softSkills: user.softSkills,
+      languages:  user.languages,
+      experience: user.experience,
+      education:  user.education,
+    };
+  }
+
   async findAll(): Promise<SafeUser[]> {
     const users = await this.repo.find({ order: { createdAt: 'DESC' } });
     return users.map(u => this.sanitize(u));
@@ -155,5 +187,32 @@ export class UsersService implements OnModuleInit {
   sanitize(user: User): SafeUser {
     const { passwordHash, ...safe } = user;
     return safe as SafeUser;
+  }
+
+  // ── Admin ───────────────────────────────────────────────
+  async adminGetStats() {
+    const [candidates, companies, admins, totalJobs, totalApps] = await Promise.all([
+      this.repo.count({ where: { role: 'candidate' as UserRole } }),
+      this.repo.count({ where: { role: 'company'   as UserRole } }),
+      this.repo.count({ where: { role: 'admin'     as UserRole } }),
+      this.jobRepo.count(),
+      this.appRepo.count(),
+    ]);
+    return { candidates, companies, admins, totalJobs, totalApps, total: candidates + companies + admins };
+  }
+
+  async adminToggleActive(id: string): Promise<SafeUser> {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    user.isActive = !user.isActive;
+    const saved = await this.repo.save(user);
+    return this.sanitize(saved);
+  }
+
+  async adminDeleteUser(id: string): Promise<{ message: string }> {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    await this.repo.delete(id);
+    return { message: 'Usuario eliminado correctamente' };
   }
 }

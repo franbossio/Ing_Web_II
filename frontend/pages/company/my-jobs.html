@@ -156,7 +156,7 @@
   </main>
 </div>
 <script>
-  const API = 'https://ing-web-ii.onrender.com/api';
+  const API = 'http://localhost:3001/api';
   function getToken() { return localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token'); }
   function authHeaders() { return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }; }
 
@@ -306,6 +306,14 @@
       const deleted = JSON.parse(localStorage.getItem('deleted_jobs') || '[]');
       if (!deleted.includes(jobId)) deleted.push(jobId);
       localStorage.setItem('deleted_jobs', JSON.stringify(deleted));
+
+      // Guardar evento de eliminación para el dashboard (actividad reciente)
+      const card0 = btn.closest('.job-card');
+      const jobTitle = card0?.querySelector('.job-title')?.textContent?.trim() || 'Oferta sin título';
+      const events = JSON.parse(localStorage.getItem('deleted_jobs_events') || '[]');
+      events.unshift({ jobId, title: jobTitle, deletedAt: new Date().toISOString() });
+      // Conservar solo los últimos 20 eventos
+      localStorage.setItem('deleted_jobs_events', JSON.stringify(events.slice(0, 20)));
 
       // Animar y remover la card
       const card = btn.closest('.job-card');

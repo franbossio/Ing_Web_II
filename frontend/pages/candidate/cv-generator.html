@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generar CV — CONECTA IA</title>
+  <link rel="stylesheet" href="../../css/global.css" />
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/mobile-sidebar.js"></script>
+  <script src="../../js/sidebar-candidate.js" type="module"></script>
+  <link rel="stylesheet" href="../../css/candidate.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    .cvg-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .cvg-toolbar-text { font-size: 0.85rem; color: var(--clr-muted); max-width: 480px; line-height: 1.6; }
+
+    .cvg-wrapper { display: flex; justify-content: center; }
+
+    /* ── Hoja de CV (siempre clara, pensada para impresión) ── */
+    #cv-sheet {
+      width: 760px; min-height: 1050px; background: #ffffff; color: #1f2330;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+      border-radius: 4px; padding: 46px 50px; font-family: 'DM Sans', Arial, sans-serif;
+    }
+    .cv-header { display: flex; align-items: center; gap: 22px; margin-bottom: 26px; }
+    .cv-photo {
+      width: 92px; height: 92px; border-radius: 50%; object-fit: cover;
+      flex-shrink: 0; border: 2px solid #c9a84c;
+    }
+    .cv-avatar-fallback {
+      width: 92px; height: 92px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #c9a84c, #8a6e2f);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 700; color: #1f2330;
+    }
+    .cv-name  { font-family: 'Playfair Display', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #1f2330; }
+    .cv-title { font-size: 0.95rem; color: #8a6e2f; font-weight: 600; margin-top: 2px; }
+    .cv-contact {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;
+      font-size: 0.78rem; color: #555c6e;
+    }
+    .cv-contact a { color: #555c6e; text-decoration: none; }
+
+    .cv-section { margin-bottom: 20px; }
+    .cv-section-title {
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #c9a84c; border-bottom: 1.5px solid #c9a84c; padding-bottom: 5px; margin-bottom: 10px;
+    }
+    .cv-bio { font-size: 0.86rem; line-height: 1.65; color: #353a48; }
+
+    .cv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cv-tag {
+      background: #f4ede0; color: #6b5421; border: 1px solid #e3d3a8;
+      padding: 3px 11px; border-radius: 100px; font-size: 0.76rem; font-weight: 500;
+    }
+
+    .cv-item { margin-bottom: 12px; }
+    .cv-item-top { display: flex; justify-content: space-between; gap: 10px; }
+    .cv-item-title { font-size: 0.88rem; font-weight: 700; color: #1f2330; }
+    .cv-item-sub   { font-size: 0.78rem; color: #6b5421; font-weight: 600; }
+    .cv-item-dates { font-size: 0.74rem; color: #8a8f9f; white-space: nowrap; }
+    .cv-item-desc  { font-size: 0.8rem; color: #4a4f5e; line-height: 1.55; margin-top: 3px; }
+
+    .cv-lang-row { display: flex; justify-content: space-between; font-size: 0.84rem; padding: 4px 0; border-bottom: 1px dashed #e6e2d6; }
+    .cv-lang-row:last-child { border-bottom: none; }
+
+    .cv-empty-hint { font-size: 0.8rem; color: #9aa; font-style: italic; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #cv-sheet, #cv-sheet * { visibility: visible; }
+      #cv-sheet { position: absolute; top: 0; left: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <div id="sidebar-root"></div>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menú">
+            <svg viewBox="0 0 18 18"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
+          </button>
+          <div class="topbar-title">Generar CV</div>
+          <div class="topbar-subtitle">Creá un CV automáticamente con los datos de tu perfil</div>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <div class="cvg-toolbar">
+          <div class="cvg-toolbar-text">
+            Este CV se genera con la información que ya completaste en tu perfil (datos personales, experiencia,
+            educación, habilidades e idiomas). Si todavía no subiste un CV propio, esta es una forma rápida de tener uno listo para postularte.
+          </div>
+          <button class="btn btn-primary" id="cvg-download-btn">📥 Descargar PDF</button>
+        </div>
+
+        <div class="cvg-wrapper">
+          <div id="cv-sheet">
+            <div style="text-align:center;padding:60px;color:#999;">Cargando tu perfil…</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:999;min-width:260px;max-width:380px;"></div>
+
+  <script>
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('global-alert');
+      el.className = `alert alert-${type} visible`;
+      el.textContent = msg;
+      setTimeout(() => el.classList.remove('visible'), 4000);
+    }
+  </script>
+
+  <script type="module">
+    import { logout, getUser, authFetch } from '../../js/auth.js';
+
+    window.cerrarSesion = function (e) {
+      if (e) e.preventDefault();
+      if (confirm('¿Cerrar sesión?')) logout();
+    };
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    function initials(name) {
+      return name ? name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
+    }
+
+    function renderCv(u) {
+      const fullName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.email || 'Tu nombre';
+
+      const photoHtml = u.photo
+        ? `<img class="cv-photo" src="${u.photo}" alt="Foto de perfil" />`
+        : `<div class="cv-avatar-fallback">${initials(fullName)}</div>`;
+
+      const contactParts = [
+        u.email    ? `<span>✉️ ${escapeHtml(u.email)}</span>` : '',
+        u.phone    ? `<span>📞 ${escapeHtml(u.phone)}</span>` : '',
+        u.location ? `<span>📍 ${escapeHtml(u.location)}</span>` : '',
+        u.linkedin  ? `<a href="${u.linkedin}"  target="_blank">🔗 LinkedIn</a>`  : '',
+        u.github    ? `<a href="${u.github}"    target="_blank">🐙 GitHub</a>`    : '',
+        u.portfolio ? `<a href="${u.portfolio}" target="_blank">🌐 Portfolio</a>` : '',
+      ].filter(Boolean).join('');
+
+      const bioHtml = u.bio
+        ? `<div class="cv-section"><div class="cv-section-title">Perfil profesional</div><div class="cv-bio">${escapeHtml(u.bio)}</div></div>`
+        : '';
+
+      const skillsHtml = (u.skills || []).length
+        ? `<div class="cv-section"><div class="cv-section-title">Habilidades técnicas</div>
+             <div class="cv-tags">${u.skills.map(s => `<span class="cv-tag">${escapeHtml(s)}</span>`).join('')}</div></div>`
+        : '';
+
+      const softSkillsHtml = (u.softSkills || []).length
+        ? `<div class="cv-section"><div class="cv-section-title">Habilidades blandas</div>
+             <div class="cv-tags">${u.softSkills.map(s => `<span class="cv-tag">${escapeHtml(s)}</span>`).join('')}</div></div>`
+        : '';
+
+      const expHtml = (u.experience || []).length
+        ? `<div class="cv-section"><div class="cv-section-title">Experiencia laboral</div>
+            ${u.experience.map(e => `
+              <div class="cv-item">
+                <div class="cv-item-top">
+                  <div>
+                    <div class="cv-item-title">${escapeHtml(e.title)}</div>
+                    <div class="cv-item-sub">${escapeHtml(e.company)}</div>
+                  </div>
+                  <div class="cv-item-dates">${escapeHtml(e.startDate)} – ${e.current ? 'Presente' : escapeHtml(e.endDate || '')}</div>
+                </div>
+                ${e.description ? `<div class="cv-item-desc">${escapeHtml(e.description)}</div>` : ''}
+              </div>`).join('')}
+          </div>`
+        : '';
+
+      const eduHtml = (u.education || []).length
+        ? `<div class="cv-section"><div class="cv-section-title">Educación</div>
+            ${u.education.map(ed => `
+              <div class="cv-item">
+                <div class="cv-item-top">
+                  <div>
+                    <div class="cv-item-title">${escapeHtml(ed.career)}</div>
+                    <div class="cv-item-sub">${escapeHtml(ed.institution)}</div>
+                  </div>
+                  <div class="cv-item-dates">${escapeHtml(ed.startYear)} – ${escapeHtml(ed.endYear || '')}</div>
+                </div>
+                ${ed.status ? `<div class="cv-item-desc">${escapeHtml(ed.status)}</div>` : ''}
+              </div>`).join('')}
+          </div>`
+        : '';
+
+      const langHtml = (u.languages || []).length
+        ? `<div class="cv-section"><div class="cv-section-title">Idiomas</div>
+            ${u.languages.map(l => `<div class="cv-lang-row"><span>${escapeHtml(l.name)}</span><span>${escapeHtml(l.level)}</span></div>`).join('')}
+          </div>`
+        : '';
+
+      const hasContent = bioHtml || skillsHtml || softSkillsHtml || expHtml || eduHtml || langHtml;
+
+      document.getElementById('cv-sheet').innerHTML = `
+        <div class="cv-header">
+          ${photoHtml}
+          <div>
+            <div class="cv-name">${escapeHtml(fullName)}</div>
+            ${u.jobTitle ? `<div class="cv-title">${escapeHtml(u.jobTitle)}</div>` : ''}
+            <div class="cv-contact">${contactParts}</div>
+          </div>
+        </div>
+        ${bioHtml}
+        ${expHtml}
+        ${eduHtml}
+        ${skillsHtml}
+        ${softSkillsHtml}
+        ${langHtml}
+        ${!hasContent ? `<div class="cv-empty-hint">Todavía no completaste experiencia, educación ni habilidades en tu perfil.
+          <a href="profile.html" style="color:#8a6e2f;">Completá tu perfil →</a> para generar un CV más completo.</div>` : ''}
+      `;
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await authFetch('/users/me');
+        const u = res.ok ? await res.json() : getUser();
+        if (!u) { showAlert('No se pudo cargar tu perfil', 'error'); return; }
+        renderCv(u);
+      } catch (e) {
+        console.error(e);
+        const cached = getUser();
+        if (cached) renderCv(cached);
+        else showAlert('No se pudo cargar tu perfil', 'error');
+      }
+    }
+
+    document.getElementById('cvg-download-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('cvg-download-btn');
+      const sheet = document.getElementById('cv-sheet');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Generando...';
+
+      try {
+        const canvas = await html2canvas(sheet, { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.85);
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pageWidth  = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth   = pageWidth;
+        const imgHeight  = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position   = 0;
+
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+          position -= pageHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        const u = getUser() || {};
+        const fileName = `CV_${[u.firstName, u.lastName].filter(Boolean).join('_') || 'candidato'}.pdf`;
+        pdf.save(fileName);
+        showAlert('✓ CV descargado correctamente');
+      } catch (e) {
+        console.error(e);
+        showAlert('✗ No se pudo generar el PDF', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📥 Descargar PDF';
+      }
+    });
+
+    loadProfile();
+  </script>
+
+  <script src="../../js/sidebar-toggle.js"></script>
+</body>
+</html>

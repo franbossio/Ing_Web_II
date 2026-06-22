@@ -6,6 +6,7 @@
  */
 
 import { logout } from './auth.js';
+import { initNotifications } from './notifications.js';
 
 window.cerrarSesion = function () {
   logout();
@@ -23,8 +24,11 @@ window.cerrarSesion = function () {
     { href: 'jobs.html',         icon: icon('icon-jobs'),         label: 'Explorar ofertas',   badge: '' },
     { href: 'profile.html',      icon: icon('icon-profile'),      label: 'Editar perfil',      section: 'Mi perfil' },
     { href: 'profile.html#cv',   icon: icon('icon-cv'),           label: 'Mi CV' },
+    { href: 'cv-generator.html', icon: icon('icon-cv'),           label: 'Generar CV' },
     { href: 'applications.html', icon: icon('icon-applications'), label: 'Mis postulaciones',  badge: '', section: 'Postulaciones' },
+    { href: 'messages.html',     icon: icon('icon-applications'), label: 'Mensajes',           badge: '' },
     { href: 'saved.html',        icon: icon('icon-saved'),        label: 'Guardados' },
+    { href: 'interview-simulation.html', icon: icon('icon-cv'),   label: 'Simulación de entrevistas', section: 'Desarrollo' },
     { href: 'settings.html',     icon: icon('icon-settings'),     label: 'Configuración' },
   ];
 
@@ -92,10 +96,11 @@ window.cerrarSesion = function () {
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { inject(); loadUser(); });
+    document.addEventListener('DOMContentLoaded', () => { inject(); loadUser(); initNotifications(); });
   } else {
     inject();
     loadUser();
+    initNotifications();
   }
 
   async function loadUser() {
@@ -105,11 +110,17 @@ window.cerrarSesion = function () {
     const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
     if (!token) return;
     try {
-      const res = await fetch('https://ing-web-ii.onrender.com/api/auth/me', {
+      const res = await fetch('http://localhost:3001/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
         const u = await res.json();
+        // Preservar campos calculados localmente que Render puede no devolver aún
+        const prev = JSON.parse(localStorage.getItem('talentai_user') || 'null');
+        if (prev) {
+          if (u.cvScore == null && prev.cvScore != null) u.cvScore = prev.cvScore;
+          if (u.cvScoreBreakdown == null && prev.cvScoreBreakdown != null) u.cvScoreBreakdown = prev.cvScoreBreakdown;
+        }
         localStorage.setItem('talentai_user', JSON.stringify(u));
         fillSidebar(u);
       }
@@ -119,7 +130,7 @@ window.cerrarSesion = function () {
   }
 
   async function loadBadges(token) {
-    const API = 'https://ing-web-ii.onrender.com/api';
+    const API = 'http://localhost:3001/api';
     const headers = { Authorization: `Bearer ${token}` };
 
     // Postulaciones: datos reales de la BD

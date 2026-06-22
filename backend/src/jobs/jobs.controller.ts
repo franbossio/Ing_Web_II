@@ -2,8 +2,10 @@ import {
   Controller, Get, Post, Patch, Delete,
   Body, Param, Request, UseGuards,
 } from '@nestjs/common';
-import { JobsService } from './jobs.service';
+import { JobsService }  from './jobs.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard }   from '../common/guards/roles.guard';
+import { Roles }        from '../common/decorators/roles.decorator';
 
 @Controller('jobs')
 export class JobsController {
@@ -21,6 +23,13 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   findMine(@Request() req) {
     return this.jobsService.findByCompany(req.user.id);
+  }
+
+  // GET /api/jobs/skills/ranking — habilidades más demandadas
+  @Get('skills/ranking')
+  @UseGuards(JwtAuthGuard)
+  getSkillsRanking() {
+    return this.jobsService.getSkillsRanking();
   }
 
   // GET /api/jobs/:id — detalle de una oferta
@@ -56,5 +65,21 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   deactivate(@Param('id') id: string, @Request() req) {
     return this.jobsService.deactivate(id, req.user.id);
+  }
+
+  // GET /api/jobs/admin/all — todas las ofertas (activas e inactivas), solo admin
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminFindAll() {
+    return this.jobsService.adminFindAll();
+  }
+
+  // DELETE /api/jobs/admin/:id — eliminar cualquier oferta, solo admin
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminRemove(@Param('id') id: string) {
+    return this.jobsService.adminRemove(id);
   }
 }

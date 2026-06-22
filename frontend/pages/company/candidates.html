@@ -178,6 +178,75 @@
       .toolbar { flex-direction: column; align-items: stretch; }
       .results-info { margin-left: 0; }
     }
+
+    /* ── Barra de comparación ─────────────────── */
+    .compare-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
+      background: var(--clr-surface); border-top: 1px solid rgba(201,168,76,0.35);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
+      padding: 12px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .compare-bar-label { font-weight: 600; font-size: 0.88rem; color: var(--clr-accent); white-space: nowrap; }
+    .compare-chips { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+    .compare-chip {
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3);
+      color: var(--clr-accent); padding: 3px 10px 3px 12px; border-radius: 100px;
+      font-size: 0.78rem; display: flex; align-items: center; gap: 6px;
+    }
+    .compare-chip button { background: none; border: none; color: var(--clr-accent); cursor: pointer; padding: 0; font-size: 0.85rem; line-height: 1; }
+
+    /* ── Modal de comparación ─────────────────── */
+    .cmp-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+      z-index: 1100; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.2s ease;
+    }
+    .cmp-modal-overlay.open { opacity: 1; visibility: visible; }
+    .cmp-modal-box {
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg); width: 95%; max-width: 960px;
+      max-height: 90vh; overflow-y: auto; position: relative;
+      transform: translateY(20px); transition: transform 0.2s ease; padding: 28px;
+    }
+    .cmp-modal-overlay.open .cmp-modal-box { transform: translateY(0); }
+    .cmp-modal-close {
+      position: absolute; top: 14px; right: 14px; background: none; border: none;
+      color: var(--clr-muted); font-size: 1.1rem; cursor: pointer; padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+    .cmp-modal-close:hover { background: var(--clr-surface-2); }
+    .cmp-table { width: 100%; border-collapse: collapse; }
+    .cmp-table th, .cmp-table td {
+      padding: 10px 12px; border-bottom: 1px solid var(--clr-border); vertical-align: top;
+    }
+    .cmp-table td + td, .cmp-table th + th { border-left: 1px solid var(--clr-border); }
+    .cmp-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--clr-muted); white-space: nowrap; padding-right: 16px;
+    }
+    .cmp-val { font-size: 0.84rem; color: var(--clr-text); text-align: center; }
+    .cmp-skill {
+      display: inline-block; padding: 2px 8px; border-radius: 100px;
+      font-size: 0.68rem; font-weight: 500; margin: 2px;
+      background: var(--clr-surface-2); border: 1px solid var(--clr-border); color: var(--clr-muted);
+    }
+    .cmp-skill.common {
+      background: rgba(76,175,132,0.12); border-color: rgba(76,175,132,0.3); color: #4caf84;
+    }
+    .cmp-avatar {
+      width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 10px;
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dim));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #0d0f14;
+      background-size: cover; background-position: center;
+    }
+    .cmp-cand-name { font-weight: 700; font-size: 0.92rem; color: var(--clr-text); margin-bottom: 2px; }
+    .cmp-cand-title { font-size: 0.74rem; color: var(--clr-muted); }
+    .cmp-match { font-size: 0.82rem; font-weight: 700; color: var(--clr-accent); margin-top: 4px; }
+    .cmp-btn-add {
+      flex: 0; padding: 8px 12px; font-size: 0.8rem;
+    }
+    .cmp-btn-add.selected { color: var(--clr-accent); border-color: var(--clr-accent); background: rgba(201,168,76,0.08); }
   </style>
 </head>
 <body>
@@ -249,7 +318,24 @@
   </div>
 </div>
 
-<div id="global-alert" class="alert" style="position:fixed;bottom:24px;right:24px;z-index:9999;min-width:260px;max-width:380px;"></div>
+<!-- Barra de comparación flotante -->
+<div class="compare-bar" id="compare-bar" style="display:none;">
+  <span class="compare-bar-label">⚖️ Comparando <span id="compare-count">0</span></span>
+  <div class="compare-chips" id="compare-chips"></div>
+  <button class="btn btn-primary" id="compare-open-btn" onclick="window.openCompare()" disabled style="padding:9px 20px;font-size:0.85rem;">Comparar</button>
+  <button class="btn btn-ghost" onclick="window.clearCompare()" style="padding:9px 16px;font-size:0.85rem;">Limpiar</button>
+</div>
+
+<!-- Modal comparación -->
+<div class="cmp-modal-overlay" id="modal-compare">
+  <div class="cmp-modal-box">
+    <button class="cmp-modal-close" onclick="document.getElementById('modal-compare').classList.remove('open');document.body.style.overflow='';">✕</button>
+    <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:20px;">⚖️ Comparación de candidatos</div>
+    <div id="modal-compare-content"></div>
+  </div>
+</div>
+
+<div id="global-alert" class="alert" style="position:fixed;bottom:90px;right:24px;z-index:9999;min-width:260px;max-width:380px;"></div>
 
 <script>
   const TOKEN = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
@@ -325,7 +411,9 @@
         </div>` : ''}
         <div class="cand-card-actions">
           <button class="btn btn-ghost" onclick="window.viewProfile('${id}')">👤 Ver perfil</button>
+          <a href="messages.html?userId=${id}" class="btn btn-ghost" style="text-decoration:none;">✉️ Mensaje</a>
           ${c.cvUrl ? `<a href="${c.cvUrl}" download class="btn btn-ghost" style="text-decoration:none;">📄 CV</a>` : ''}
+          <button class="btn btn-ghost cmp-btn-add" id="cmp-btn-${id}" onclick="window.toggleCompare('${id}')" title="Agregar a comparación" style="flex:0;padding:8px 12px;">⚖️</button>
           <button class="btn btn-ghost" id="fav-btn-${id}" onclick="window.toggleFav('${id}')" title="Guardar en favoritos" style="flex:0;padding:8px 12px;"></button>
         </div>
       </div>`;
@@ -387,7 +475,7 @@
       '<div class="skel-card"></div><div class="skel-card"></div><div class="skel-card"></div>';
 
     try {
-      const res = await fetch('https://ing-web-ii.onrender.com/api/users/candidates/suggest', {
+      const res = await fetch('http://localhost:3001/api/users/candidates/suggest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
         body: JSON.stringify({
@@ -410,7 +498,7 @@
       document.getElementById('search-input').value = '';
       document.getElementById('filter-location').value = '';
       renderList(suggestions);
-      setTimeout(updateAllFavBtns, 50);
+      setTimeout(() => { updateAllFavBtns(); [...compareSet].forEach(updateCmpBtn); }, 50);
       showAlert(`✨ IA encontró ${suggestions.length} candidatos compatibles`);
 
     } catch(e) {
@@ -553,18 +641,18 @@
   }
 
   // ── Cargar datos ──────────────────────────────────────────────────────────
-  const API_BASE_URL = 'https://ing-web-ii.onrender.com/api';
+  const API_BASE_URL = 'http://localhost:3001/api';
 
   async function load() {
     try {
       // Candidatos reales de la BD
-      const resCandidates = await fetch('https://ing-web-ii.onrender.com/api/users/candidates', {
+      const resCandidates = await fetch('http://localhost:3001/api/users/candidates', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       ALL_CANDIDATES = resCandidates.ok ? await resCandidates.json() : [];
 
       // Mis ofertas para el select de IA
-      const resJobs = await fetch('https://ing-web-ii.onrender.com/api/jobs/my', {
+      const resJobs = await fetch('http://localhost:3001/api/jobs/my', {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       MY_JOBS = resJobs.ok ? await resJobs.json() : [];
@@ -587,8 +675,7 @@
       });
 
       renderList(ALL_CANDIDATES);
-      // Marcar favoritos ya guardados
-      setTimeout(updateAllFavBtns, 50);
+      setTimeout(() => { updateAllFavBtns(); [...compareSet].forEach(updateCmpBtn); }, 50);
 
     } catch(err) {
       document.getElementById('candidates-container').innerHTML = `
@@ -600,6 +687,165 @@
       console.error(err);
     }
   }
+
+  // ── Comparación de candidatos ─────────────────────────────────────────────
+  const compareSet = new Set();
+
+  function escHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+  }
+
+  function getCandById(id) {
+    return ALL_CANDIDATES.find(c => c.id === id)
+        || DISPLAY_LIST.find(c => (c.id || c.candidateId) === id);
+  }
+
+  function renderCompareBar() {
+    const bar  = document.getElementById('compare-bar');
+    const size = compareSet.size;
+    if (size === 0) { bar.style.display = 'none'; return; }
+
+    bar.style.display = 'flex';
+    document.getElementById('compare-count').textContent = size;
+    document.getElementById('compare-open-btn').disabled = size < 2;
+
+    const cands = [...compareSet].map(getCandById).filter(Boolean);
+    document.getElementById('compare-chips').innerHTML = cands.map(c => {
+      const nombre = [c.firstName, c.lastName, c.nombre].filter(Boolean).join(' ') || '—';
+      const id     = c.id || c.candidateId;
+      return `<span class="compare-chip">${escHtml(nombre)}
+        <button onclick="window.toggleCompare('${id}')">×</button></span>`;
+    }).join('');
+  }
+
+  function updateCmpBtn(id) {
+    const btn = document.getElementById(`cmp-btn-${id}`);
+    if (!btn) return;
+    const sel = compareSet.has(id);
+    btn.classList.toggle('selected', sel);
+    btn.textContent = sel ? '✓' : '⚖️';
+    btn.title = sel ? 'Quitar de comparación' : 'Agregar a comparación';
+  }
+
+  window.toggleCompare = function(id) {
+    if (compareSet.has(id)) {
+      compareSet.delete(id);
+    } else {
+      if (compareSet.size >= 4) { showAlert('Máximo 4 candidatos para comparar', 'error'); return; }
+      compareSet.add(id);
+    }
+    updateCmpBtn(id);
+    renderCompareBar();
+  };
+
+  window.clearCompare = function() {
+    [...compareSet].forEach(id => { compareSet.delete(id); updateCmpBtn(id); });
+    renderCompareBar();
+  };
+
+  window.openCompare = function() {
+    const cands = [...compareSet].map(getCandById).filter(Boolean);
+    if (cands.length < 2) return;
+
+    // Hallar skills comunes entre TODOS los candidatos seleccionados
+    const skillSets = cands.map(c => new Set((c.skills || []).map(s => s.toLowerCase())));
+    const commonSkills = new Set([...skillSets[0]].filter(s => skillSets.every(set => set.has(s))));
+
+    function scoreColor(v) {
+      return v >= 70 ? '#4caf84' : v >= 50 ? '#c9a84c' : '#e05c5c';
+    }
+
+    function cmpRow(label, cands, fn, isHtml = false) {
+      return `<tr>
+        <td class="cmp-label">${label}</td>
+        ${cands.map(c => `<td class="cmp-val">${isHtml ? fn(c) : escHtml(fn(c))}</td>`).join('')}
+      </tr>`;
+    }
+
+    const headerCols = cands.map(c => {
+      const nombre   = [c.firstName, c.lastName, c.nombre].filter(Boolean).join(' ') || '—';
+      const iniciales= nombre !== '—' ? nombre.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase() : '?';
+      const avStyle  = c.photo ? `background-image:url(${c.photo});background-size:cover;background-position:center;` : '';
+      const id       = c.id || c.candidateId;
+      return `<th style="padding:12px 8px;border-left:1px solid var(--clr-border);text-align:center;">
+        <div class="cmp-avatar" style="${avStyle}">${c.photo ? '' : iniciales}</div>
+        <div class="cmp-cand-name">${escHtml(nombre)}</div>
+        <div class="cmp-cand-title">${escHtml(c.jobTitle || c.titulo || 'Candidato')}</div>
+        ${c.matchPct ? `<div class="cmp-match">${c.matchPct}% match</div>` : ''}
+        <button onclick="window.toggleCompare('${id}');window.openCompare();" style="background:none;border:none;color:var(--clr-muted);cursor:pointer;font-size:0.7rem;margin-top:4px;">✕ Quitar</button>
+      </th>`;
+    }).join('');
+
+    const skillsRow = `<tr style="vertical-align:top;">
+      <td class="cmp-label">Skills técnicas</td>
+      ${cands.map(c => `<td style="padding:10px 12px;border-left:1px solid var(--clr-border);border-bottom:1px solid var(--clr-border);">
+        ${(c.skills||[]).length
+          ? (c.skills||[]).map(s => `<span class="cmp-skill ${commonSkills.has(s.toLowerCase()) ? 'common' : ''}">${escHtml(s)}</span>`).join('')
+          : '<span style="color:var(--clr-muted);font-size:0.78rem;">—</span>'}
+      </td>`).join('')}
+    </tr>`;
+
+    const softRow = `<tr style="vertical-align:top;">
+      <td class="cmp-label">H. blandas</td>
+      ${cands.map(c => `<td style="padding:10px 12px;border-left:1px solid var(--clr-border);border-bottom:1px solid var(--clr-border);">
+        ${(c.softSkills||[]).length
+          ? (c.softSkills||[]).map(s => `<span class="cmp-skill">${escHtml(s)}</span>`).join('')
+          : '<span style="color:var(--clr-muted);font-size:0.78rem;">—</span>'}
+      </td>`).join('')}
+    </tr>`;
+
+    const expRow = `<tr style="vertical-align:top;">
+      <td class="cmp-label">Experiencia</td>
+      ${cands.map(c => {
+        const exps = (c.experience||[]).slice(0,3);
+        return `<td style="padding:10px 12px;border-left:1px solid var(--clr-border);border-bottom:1px solid var(--clr-border);">
+          ${exps.length
+            ? exps.map(e => `<div style="margin-bottom:6px;">
+                <div style="font-size:0.8rem;font-weight:600;color:var(--clr-text);">${escHtml(e.title||'')}</div>
+                <div style="font-size:0.72rem;color:var(--clr-muted);">${escHtml(e.company||'')} · ${escHtml(e.startDate||'')}–${e.current?'Presente':escHtml(e.endDate||'')}</div>
+              </div>`).join('')
+            : '<span style="color:var(--clr-muted);font-size:0.78rem;">—</span>'}
+        </td>`;
+      }).join('')}
+    </tr>`;
+
+    document.getElementById('modal-compare-content').innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="cmp-table" style="min-width:${cands.length * 200 + 130}px;">
+          <thead>
+            <tr>
+              <th style="width:130px;padding:12px;text-align:left;border-bottom:1px solid var(--clr-border);"></th>
+              ${headerCols}
+            </tr>
+          </thead>
+          <tbody>
+            ${cmpRow('Ubicación',   cands, c => c.location || c.ubicacion || '—')}
+            ${cmpRow('CV Score',    cands, c => c.cvScore != null
+              ? `<span style="color:${scoreColor(c.cvScore)};font-weight:700;">${c.cvScore}/100</span>` : '—', true)}
+            ${cmpRow('Educación',   cands, c => (c.education||[]).length ? (c.education[0].career||'—') + ' · ' + (c.education[0].institution||'') : '—')}
+            ${cmpRow('Idiomas',     cands, c => (c.languages||[]).length ? c.languages.map(l=>l.name).join(', ') : '—')}
+            ${skillsRow}
+            ${softRow}
+            ${expRow}
+            ${cmpRow('Sobre el candidato', cands, c => c.bio || '—')}
+          </tbody>
+        </table>
+      </div>
+      ${commonSkills.size > 0 ? `
+        <div style="margin-top:16px;padding:12px 16px;background:rgba(76,175,132,0.06);border:1px solid rgba(76,175,132,0.2);border-radius:var(--radius-sm);font-size:0.82rem;">
+          <span style="color:#4caf84;font-weight:600;">✓ Skills en común:</span>
+          <span style="color:var(--clr-muted);margin-left:8px;">${[...commonSkills].join(', ')}</span>
+        </div>` : ''}`;
+
+    document.getElementById('modal-compare').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  document.getElementById('modal-compare').addEventListener('click', function(e) {
+    if (e.target === this) { this.classList.remove('open'); document.body.style.overflow = ''; }
+  });
 
   // Eventos de filtro
   document.getElementById('search-input').addEventListener('input', applyFilters);

@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Patch, Delete,
-  Body, Request, UseGuards,
+  Body, Param, Request, UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard }  from '../common/guards/jwt-auth.guard';
@@ -46,6 +46,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   deleteMe(@Request() req) {
     return this.usersService.deleteById(req.user.id);
+  }
+
+  /** GET /api/users/public/:id — perfil público del candidato, sin autenticación */
+  @Get('public/:id')
+  getPublicProfile(@Param('id') id: string) {
+    return this.usersService.findPublicProfile(id);
   }
 
   /** GET /api/users/candidates */
@@ -179,5 +185,29 @@ export class UsersController {
   @Roles('admin')
   findAll() {
     return this.usersService.findAll();
+  }
+
+  /** GET /api/users/admin/stats — estadísticas globales */
+  @Get('admin/stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminStats() {
+    return this.usersService.adminGetStats();
+  }
+
+  /** PATCH /api/users/admin/:id/toggle — activar/desactivar usuario */
+  @Patch('admin/:id/toggle')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminToggle(@Param('id') id: string) {
+    return this.usersService.adminToggleActive(id);
+  }
+
+  /** DELETE /api/users/admin/:id — eliminar cualquier usuario */
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminDelete(@Param('id') id: string) {
+    return this.usersService.adminDeleteUser(id);
   }
 }

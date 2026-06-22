@@ -496,7 +496,7 @@ async function applyFromModal(jobId, btn) {
   btn.disabled  = true;
   btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#0d0f14;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Enviando...';
   try {
-    const res = await fetch('https://ing-web-ii.onrender.com/api/applications', {
+    const res = await fetch('http://localhost:3001/api/applications', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${TOKEN}` },
       body: JSON.stringify({ jobId }),
@@ -537,8 +537,8 @@ async function loadJobs() {
 
   try {
     const [jobsRes, appsRes] = await Promise.all([
-      fetch('https://ing-web-ii.onrender.com/api/jobs',            { headers: { Authorization: `Bearer ${token}` } }),
-      fetch('https://ing-web-ii.onrender.com/api/applications/my', { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('http://localhost:3001/api/jobs',            { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('http://localhost:3001/api/applications/my', { headers: { Authorization: `Bearer ${token}` } }),
     ]);
 
     const jobs   = jobsRes.ok ? await jobsRes.json() : [];
@@ -573,7 +573,7 @@ window.applyJobReal = async function(btn, jobId) {
   btn.disabled  = true;
   btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:#0d0f14;display:inline-block;"></div>';
   try {
-    const res = await fetch('https://ing-web-ii.onrender.com/api/applications', {
+    const res = await fetch('http://localhost:3001/api/applications', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body:    JSON.stringify({ jobId }),
