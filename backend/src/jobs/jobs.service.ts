@@ -2,17 +2,38 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from './job.entity';
+import { User } from '../users/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(Job) private repo: Repository<Job>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // Crear oferta (solo empresa)
   async create(companyId: string, body: Partial<Job>): Promise<Job> {
     const job = this.repo.create({ ...body, companyId, active: true });
-    return this.repo.save(job);
+    const saved = await this.repo.save(job);
+
+    // Notificar a todos los candidatos activos
+    const candidates = await this.userRepo.find({ where: { role: 'candidate', isActive: true } });
+    const company = await this.userRepo.findOne({ where: { id: companyId } });
+    const companyName = company?.companyName || 'Una empresa';
+    const jobTitle = saved.title;
+    for (const candidate of candidates) {
+      this.notificationsService.create(
+        candidate.id,
+        'new_job',
+        'Nueva oferta disponible',
+        `${companyName} publicó: ${jobTitle}`,
+        { jobId: saved.id, jobTitle, companyName },
+      ).catch(() => {});
+    }
+
+    return saved;
   }
 
   // Listar todas las ofertas activas (para candidatos)
