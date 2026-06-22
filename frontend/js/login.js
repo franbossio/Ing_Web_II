@@ -4,13 +4,7 @@
  * Agregar al final de login.html:
  *   <script src="../js/login.js" type="module"></script>
  */
-import { loginUser, redirectToDashboard, isAuthenticated, getUser } from './auth.js';
-
-// Si ya está logueado, redirigir directo
-if (isAuthenticated()) {
-  const user = getUser();
-  if (user) redirectToDashboard(user.role);
-}
+import { loginUser, redirectToDashboard } from './auth.js';
 
 const form       = document.getElementById('login-form');
 const submitBtn  = document.getElementById('submit-btn');
