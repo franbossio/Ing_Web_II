@@ -72,6 +72,7 @@ export class UsersService implements OnModuleInit {
   async findById(id: string): Promise<SafeUser> {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
+    console.log(`🔍 findById ${id} — cvScore en DB: ${user.cvScore}, breakdown: ${JSON.stringify(user.cvScoreBreakdown)}`);
     return this.sanitize(user);
   }
 
@@ -97,8 +98,11 @@ export class UsersService implements OnModuleInit {
     console.log(`   experience: ${JSON.stringify(body.experience)?.substring(0,80)}`);
     console.log(`   education: ${JSON.stringify(body.education)?.substring(0,80)}`);
     console.log(`   skills: ${JSON.stringify(body.skills)?.substring(0,80)}`);
+    console.log(`   cvScore recibido: ${body.cvScore} (tipo ${typeof body.cvScore})`);
+    console.log(`   cvScoreBreakdown recibido: ${JSON.stringify(body.cvScoreBreakdown)}`);
 
     const saved = await this.repo.save(user);
+    console.log(`   ✅ Guardado — cvScore en DB: ${saved.cvScore}, breakdown: ${JSON.stringify(saved.cvScoreBreakdown)}`);
     return this.sanitize(saved);
   }
 
