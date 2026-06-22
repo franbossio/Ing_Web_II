@@ -61,4 +61,16 @@ export class JobsService {
     await this.repo.delete(id);
     return { message: 'Oferta eliminada correctamente' };
   }
+
+  // ── Admin ────────────────────────────────────────────────
+  async adminFindAll(): Promise<Job[]> {
+    return this.repo.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async adminRemove(id: string): Promise<{ message: string }> {
+    const job = await this.repo.findOne({ where: { id } });
+    if (!job) throw new NotFoundException('Oferta no encontrada');
+    await this.repo.delete(id);
+    return { message: 'Oferta eliminada correctamente' };
+  }
 }

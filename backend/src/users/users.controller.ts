@@ -186,4 +186,28 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
+
+  /** GET /api/users/admin/stats — estadísticas globales */
+  @Get('admin/stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminStats() {
+    return this.usersService.adminGetStats();
+  }
+
+  /** PATCH /api/users/admin/:id/toggle — activar/desactivar usuario */
+  @Patch('admin/:id/toggle')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminToggle(@Param('id') id: string) {
+    return this.usersService.adminToggleActive(id);
+  }
+
+  /** DELETE /api/users/admin/:id — eliminar cualquier usuario */
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  adminDelete(@Param('id') id: string) {
+    return this.usersService.adminDeleteUser(id);
+  }
 }

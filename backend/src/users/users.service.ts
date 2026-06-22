@@ -7,12 +7,18 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User, SafeUser, UserRole } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Job } from '../jobs/job.entity';
+import { Application } from '../applications/application.entity';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly repo: Repository<User>,
+    @InjectRepository(Job)
+    private readonly jobRepo: Repository<Job>,
+    @InjectRepository(Application)
+    private readonly appRepo: Repository<Application>,
   ) {}
 
   async onModuleInit() {
@@ -181,5 +187,32 @@ export class UsersService implements OnModuleInit {
   sanitize(user: User): SafeUser {
     const { passwordHash, ...safe } = user;
     return safe as SafeUser;
+  }
+
+  // ── Admin ───────────────────────────────────────────────
+  async adminGetStats() {
+    const [candidates, companies, admins, totalJobs, totalApps] = await Promise.all([
+      this.repo.count({ where: { role: 'candidate' as UserRole } }),
+      this.repo.count({ where: { role: 'company'   as UserRole } }),
+      this.repo.count({ where: { role: 'admin'     as UserRole } }),
+      this.jobRepo.count(),
+      this.appRepo.count(),
+    ]);
+    return { candidates, companies, admins, totalJobs, totalApps, total: candidates + companies + admins };
+  }
+
+  async adminToggleActive(id: string): Promise<SafeUser> {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    user.isActive = !user.isActive;
+    const saved = await this.repo.save(user);
+    return this.sanitize(saved);
+  }
+
+  async adminDeleteUser(id: string): Promise<{ message: string }> {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    await this.repo.delete(id);
+    return { message: 'Usuario eliminado correctamente' };
   }
 }
