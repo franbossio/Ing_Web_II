@@ -34,8 +34,10 @@ function updateDot(count) {
   const dot = _bell && _bell.querySelector('.notif-dot');
   if (!dot) return;
   if (count > 0) {
-    dot.style.display = '';
+    dot.textContent = count > 9 ? '9+' : String(count);
+    dot.style.display = 'flex';
   } else {
+    dot.textContent = '';
     dot.style.display = 'none';
   }
 }
@@ -98,17 +100,40 @@ function renderList(list) {
   }
 
   el.innerHTML = list.map(n => `
-    <div style="display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);
+    <div class="_notif_item" data-id="${n.id}" style="display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);position:relative;
          ${n.read ? '' : 'background:rgba(201,168,76,0.04);'}">
       <div style="font-size:1.05rem;margin-top:2px;flex-shrink:0;">${TYPE_ICON[n.type] || '🔔'}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:0.82rem;font-weight:${n.read ? '500' : '700'};
-             color:var(--clr-text,#f0e6c8);margin-bottom:3px;line-height:1.3;">${escHtml(n.title)}</div>
+             color:var(--clr-text,#f0e6c8);margin-bottom:3px;line-height:1.3;padding-right:18px;">${escHtml(n.title)}</div>
         <div style="font-size:0.76rem;color:var(--clr-muted,#606474);line-height:1.4;">${escHtml(n.message)}</div>
         <div style="font-size:0.67rem;color:var(--clr-muted,#606474);margin-top:5px;opacity:0.65;">${timeAgo(n.createdAt)}</div>
       </div>
       ${n.read ? '' : '<div style="width:7px;height:7px;border-radius:50%;background:#c9a84c;margin-top:5px;flex-shrink:0;"></div>'}
+      <button class="_notif_dismiss" data-id="${n.id}" title="Eliminar"
+        style="position:absolute;top:8px;right:8px;background:none;border:none;color:var(--clr-muted,#606474);
+        cursor:pointer;font-size:0.78rem;padding:2px 5px;border-radius:4px;line-height:1;">✕</button>
     </div>`).join('');
+
+  el.querySelectorAll('._notif_dismiss').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const item = el.querySelector(`._notif_item[data-id="${id}"]`);
+      const token = getToken();
+      try {
+        await fetch(`${API}/notifications/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch {}
+      if (item) item.remove();
+      if (!el.querySelector('._notif_item')) {
+        renderList([]);
+      }
+      loadCount();
+    });
+  });
 }
 
 async function loadAndRender() {
