@@ -4,7 +4,12 @@
  * Agregar al final de login.html:
  *   <script src="../js/login.js" type="module"></script>
  */
-import { loginUser, redirectToDashboard } from './auth.js';
+import { loginUser, redirectToDashboard, isAuthenticated, getUser } from './auth.js';
+
+if (isAuthenticated()) {
+  const user = getUser();
+  if (user) redirectToDashboard(user.role);
+}
 
 const form       = document.getElementById('login-form');
 const submitBtn  = document.getElementById('submit-btn');
