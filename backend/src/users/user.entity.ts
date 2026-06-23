@@ -48,6 +48,8 @@ export class User {
   @Column({ name: 'cv_analysis',  nullable: true, type: 'text' }) cvAnalysis?: string;
   @Column({ name: 'cv_score',     nullable: true, type: 'int'  }) cvScore?: number;
   @Column({ name: 'cv_score_breakdown', nullable: true, type: 'jsonb' }) cvScoreBreakdown?: { clarity: number; skills: number; experience: number };
+  @Column({ name: 'recommendations_cache', nullable: true, type: 'jsonb' }) recommendationsCache?: any[];
+  @Column({ name: 'recommendations_cache_at', nullable: true, type: 'timestamptz' }) recommendationsCacheAt?: Date;
   @Column({ name: 'is_active', default: true })                  isActive: boolean;
   @Column({ name: 'email_verified', default: false })            emailVerified: boolean;
   @Column({ name: 'verification_token', nullable: true, length: 128, select: false }) verificationToken?: string;

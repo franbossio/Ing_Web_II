@@ -76,6 +76,10 @@ export class UsersService implements OnModuleInit {
     return this.sanitize(user);
   }
 
+  async updateRecommendationsCache(id: string, cache: any[]): Promise<void> {
+    await this.repo.update(id, { recommendationsCache: cache, recommendationsCacheAt: new Date() });
+  }
+
   async update(id: string, body: any): Promise<SafeUser> {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');

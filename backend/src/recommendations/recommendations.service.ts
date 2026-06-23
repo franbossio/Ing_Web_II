@@ -4,6 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from '../jobs/job.entity';
+import { SafeUser } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
+
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 horas
 
 export interface RecommendationResult {
   jobId:         string;
@@ -33,11 +37,40 @@ function sanitize(str: string, maxLen = 500): string {
 export class RecommendationsService {
   constructor(
     private config: ConfigService,
+    private usersService: UsersService,
     @InjectRepository(Job) private jobsRepo: Repository<Job>,
   ) {}
 
-  async getRecommendations(
-    candidateId: string,
+  /**
+   * Devuelve las recomendaciones cacheadas en el perfil del candidato si todavía
+   * son válidas (dentro del TTL y sin ofertas nuevas posteriores al cache), o las
+   * recalcula con IA y actualiza el cache si no.
+   */
+  async getRecommendations(user: SafeUser): Promise<RecommendationResult[]> {
+    const cacheAt = user.recommendationsCacheAt ? new Date(user.recommendationsCacheAt).getTime() : 0;
+    const isFresh = cacheAt > 0 && (Date.now() - cacheAt) < CACHE_TTL_MS;
+
+    if (isFresh && user.recommendationsCache) {
+      const newestJob = await this.jobsRepo.findOne({
+        where: { active: true },
+        order: { createdAt: 'DESC' },
+      });
+      const hasNewerJob = newestJob && new Date(newestJob.createdAt).getTime() > cacheAt;
+      if (!hasNewerJob) {
+        return user.recommendationsCache as RecommendationResult[];
+      }
+    }
+
+    const results = await this.computeRecommendations(
+      user.skills   || [],
+      user.jobTitle || null,
+      user.bio      || null,
+    );
+    await this.usersService.updateRecommendationsCache(user.id, results);
+    return results;
+  }
+
+  private async computeRecommendations(
     candidateSkills: string[],
     candidateJobTitle: string | null,
     candidateBio: string | null,

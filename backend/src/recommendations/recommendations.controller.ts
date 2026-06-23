@@ -21,12 +21,6 @@ export class RecommendationsController {
   async getRecommendations(@Request() req) {
     // Traer datos frescos del candidato desde la DB
     const user = await this.usersService.findById(req.user.id);
-
-    return this.recService.getRecommendations(
-      user.id,
-      user.skills        || [],
-      user.jobTitle      || null,
-      user.bio           || null,
-    );
+    return this.recService.getRecommendations(user);
   }
 }
