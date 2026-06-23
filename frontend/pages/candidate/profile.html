@@ -953,7 +953,7 @@
     let chartDemandInstance = null;
 
     async function renderSkillsCharts(user) {
-      const allSkills = [...(user?.skills || []), ...(user?.softSkills || [])];
+      const allSkills = [...(user?.skills || [])];
       const section   = document.getElementById('skills-chart-section');
       const loadingEl = document.getElementById('chart-skills-loading');
       const canvasEl  = document.getElementById('chart-skills-demand');
@@ -984,8 +984,7 @@
       const counts = allSkills.map(skill => {
         const norm = skillNormalized(skill);
         const count = jobs.filter(job =>
-          (job.skills || []).some(js => skillNormalized(js) === norm) ||
-          (job.softSkills || []).some(js => skillNormalized(js) === norm)
+          (job.skills || []).some(js => skillNormalized(js) === norm)
         ).length;
         return { skill, count };
       });
