@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Conversation } from './conversation.entity';
 import { Message } from './message.entity';
 import { User } from '../users/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 function sanitize(str: string, maxLen = 4000): string {
   return (str || '').trim().slice(0, maxLen);
@@ -15,6 +16,7 @@ export class MessagesService {
     @InjectRepository(Conversation) private conversationsRepo: Repository<Conversation>,
     @InjectRepository(Message) private messagesRepo: Repository<Message>,
     @InjectRepository(User) private usersRepo: Repository<User>,
+    private notificationsService: NotificationsService,
   ) {}
 
   async getOrCreateConversation(
@@ -135,6 +137,18 @@ export class MessagesService {
     conversation.lastMessageAt = saved.createdAt;
     conversation.lastMessagePreview = clean.slice(0, 200);
     await this.conversationsRepo.save(conversation);
+
+    const recipientId = conversation.candidateId === userId ? conversation.companyId : conversation.candidateId;
+    const sender = conversation.candidateId === userId ? conversation.candidate : conversation.company;
+    const senderName = sender?.companyName || [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || 'Alguien';
+
+    await this.notificationsService.create(
+      recipientId,
+      'new_message',
+      `Nuevo mensaje de ${senderName}`,
+      clean.slice(0, 150),
+      { conversationId, senderId: userId },
+    );
 
     return saved;
   }

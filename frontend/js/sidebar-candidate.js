@@ -157,6 +157,15 @@ window.cerrarSesion = function () {
         }
       }
     } catch {}
+
+    // Mensajes sin leer
+    try {
+      const res = await fetch(`${API}/messages/unread-count`, { headers });
+      if (res.ok) {
+        const { count } = await res.json();
+        setBadge('messages.html', count);
+      }
+    } catch {}
   }
 
   function setBadge(href, count) {

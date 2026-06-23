@@ -2,7 +2,7 @@ import {
   Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
 } from 'typeorm';
 
-export type NotifType = 'status_change' | 'new_application' | 'new_job';
+export type NotifType = 'status_change' | 'new_application' | 'new_job' | 'new_message';
 
 @Entity('notifications')
 export class Notification {

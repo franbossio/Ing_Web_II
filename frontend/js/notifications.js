@@ -20,7 +20,7 @@ function timeAgo(dateStr) {
   return `Hace ${Math.floor(hrs / 24)}d`;
 }
 
-const TYPE_ICON = { status_change: '📋', new_application: '👤', new_job: '💼' };
+const TYPE_ICON = { status_change: '📋', new_application: '👤', new_job: '💼', new_message: '✉️' };
 
 let _bell = null;
 let _dropdown = null;
