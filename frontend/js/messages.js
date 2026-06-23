@@ -94,8 +94,9 @@ export function initMessages() {
   }
 
   function renderMessages(messages) {
+    const myId = (getUser() || me).id;
     threadEl.innerHTML = messages.map(m => {
-      const mine = m.senderId === me.id;
+      const mine = m.senderId === myId;
       return `
         <div class="msg-bubble-row ${mine ? 'mine' : ''}">
           <div class="msg-bubble">
