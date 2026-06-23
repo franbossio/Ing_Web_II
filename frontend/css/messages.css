@@ -1,10 +1,9 @@
-/* ── Shell: el contenedor de la pantalla se ajusta exactamente al alto
-   disponible debajo del topbar, sea cual sea el tamaño del monitor,
-   en vez de restar un numero fijo de px a 100vh. ──────────────────── */
-.main-content.msg-shell { height: 100vh; overflow: hidden; }
+/* ── Shell: el contenedor intenta llenar el alto disponible debajo del
+   topbar, pero NUNCA recorta contenido: si en un monitor mas chico no
+   entra todo, se hace scroll en vez de desaparecer. ──────────────────── */
+.main-content.msg-shell { min-height: 100vh; }
 .page-content.msg-page-content {
   display: flex; flex-direction: column;
-  flex: 1; min-height: 0; overflow: hidden;
 }
 
 /* ── Layout mensajería ─────────────────────────────────────── */
@@ -16,8 +15,9 @@
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  height: 100%;
-  min-height: 0;
+  height: 70vh;
+  min-height: 420px;
+  max-height: 760px;
 }
 
 @media (max-width: 1100px) {
@@ -111,11 +111,8 @@
 .msg-empty-state .empty-icon { font-size: 2.2rem; margin-bottom: 10px; }
 
 @media (max-width: 760px) {
-  /* En mobile se abandona el shell "fijo a la pantalla" y se vuelve a un
-     scroll natural de la página, apilando lista de chats + conversación. */
-  .main-content.msg-shell { height: auto; overflow: visible; }
-  .page-content.msg-page-content { overflow: visible; }
-  .msg-layout { grid-template-columns: 1fr; height: auto; }
+  /* En mobile se apila la lista de chats arriba de la conversación */
+  .msg-layout { grid-template-columns: 1fr; height: auto; max-height: none; min-height: 0; }
   .msg-conv-list { max-height: 240px; }
   .msg-chat-panel { height: 480px; }
 }
