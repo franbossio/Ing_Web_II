@@ -704,7 +704,7 @@
 <!-- ══ SCRIPT MODULE (autenticado, llama al backend) ══ -->
 <script type="module">
   import { logout, getToken } from '../../js/auth.js';
-  import { updateDashboardHero } from '../../js/profile.js';
+  import { updateDashboardHero, applyPhoto } from '../../js/profile.js';
 
   window.cerrarSesion = function(e) {
     if (e) e.preventDefault();
@@ -729,7 +729,7 @@
     const avatar = document.getElementById('settings-avatar');
     if (avatar) {
       const ini = `${(u.firstName||'')[0]||''}${(u.lastName||'')[0]||''}`.toUpperCase();
-      avatar.textContent = ini || '?';
+      applyPhoto(avatar, u.photo, ini || '?');
     }
     set('settings-fullname',     [u.firstName, u.lastName].filter(Boolean).join(' '));
     set('settings-jobtitle',     u.jobTitle);
