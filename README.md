@@ -1,7 +1,7 @@
-﻿# 🤖 ConectaIA — Plataforma de Reclutamiento con IA
+# 🤖 ConectaIA — Plataforma de Reclutamiento con IA
 
 > Plataforma fullstack de reclutamiento y empleo potenciada por Inteligencia Artificial.  
-> Conecta candidatos con empresas de forma inteligente: analiza CVs, sugiere matches y gestiona postulaciones en tiempo real.
+> Conecta candidatos con empresas de forma inteligente: analiza CVs, sugiere matches, gestiona postulaciones y permite mensajería entre ambos en tiempo real.
 
 ---
 
@@ -11,11 +11,12 @@
 - [Tecnologías](#-tecnologías)
 - [Arquitectura](#-arquitectura)
 - [Funcionalidades](#-funcionalidades)
+- [Variables de entorno](#-variables-de-entorno)
 - [Instalación local](#-instalación-local)
-- [Hosting](#-Hostin-en-render)
+- [Hosting en Render](#-hosting-en-render)
 - [Estructura del proyecto](#-estructura-del-proyecto)
 - [Flujos de IA](#-flujos-de-ia)
-- [Despliegue](#-despliegue)
+- [Despliegue](#-despliegue-en-render)
 - [Equipo](#-equipo)
 
 ---
@@ -23,7 +24,7 @@
 ## 📌 Descripción
 
 **ConectaIA** es una aplicación web desarrollada para la materia **Ingeniería Web II — UNDEF 2026**.  
-Permite a candidatos crear su perfil, subir su CV para que la IA extraiga sus datos automáticamente y postularse a ofertas laborales. Las empresas pueden publicar puestos, buscar candidatos y recibir sugerencias de la IA sobre qué perfiles son más compatibles con cada vacante.
+Permite a candidatos crear su perfil, subir su CV para que la IA extraiga sus datos automáticamente y postularse a ofertas laborales. Las empresas pueden publicar puestos, buscar candidatos y recibir sugerencias de la IA sobre qué perfiles son más compatibles con cada vacante. Ambos roles pueden comunicarse entre sí mediante un sistema de mensajería propio.
 
 ---
 
@@ -33,20 +34,25 @@ Permite a candidatos crear su perfil, subir su CV para que la IA extraiga sus da
 | Tecnología | Uso |
 |---|---|
 | **NestJS** | Framework principal (Node.js + TypeScript) |
-| **TypeORM** | ORM para PostgreSQL |
+| **TypeORM** | ORM para PostgreSQL (`synchronize: true`, sin migraciones formales) |
 | **PostgreSQL** | Base de datos relacional (hosteada en Render) |
-| **JWT + Passport** | Autenticación y autorización |
-| **Groq API** (llama-3.3-70b) | Análisis de CV y matching con IA |
-| **Make.com** | Automatización de flujos de IA |
-| **pdf-parse** | Extracción de texto de PDFs |
+| **JWT (`@nestjs/jwt`)** | Autenticación con tokens firmados (8h, o 7 días con "recordarme") |
+| **bcryptjs** | Hash de contraseñas |
+| **Groq API** (`llama-3.3-70b-versatile`) | Análisis de CV, recomendaciones, sugerencia de candidatos y simulación de entrevistas — llamado directo vía `fetch()` nativo de Node, sin intermediarios |
+| **Brevo API** | Envío de emails (verificación de cuenta, notificaciones de cambio de estado de postulación) vía `fetch()` directo a `api.brevo.com` |
+| **pdf-parse** | Extracción de texto de PDFs para el análisis de CV |
 
 ### Frontend
 | Tecnología | Uso |
 |---|---|
-| **HTML5 / CSS3 / JS vanilla** | Sin frameworks frontend |
-| **CSS Variables** | Sistema de temas claro/oscuro |
-| **Canvas API** | Compresión de imágenes de perfil |
-| **Fetch API** | Comunicación con el backend |
+| **HTML5 / CSS3 / JS vanilla (ES Modules)** | Sin frameworks frontend |
+| **CSS Variables** | Sistema de temas claro/oscuro/sistema |
+| **Canvas API** | Compresión de imágenes de perfil antes de subirlas (inline en `profile.html`) |
+| **Chart.js** (CDN) | Gráficos de demanda de habilidades y score de CV |
+| **Fetch API** | Comunicación con el backend (wrapper `authFetch()` en `auth.js`) |
+| **Polling (setInterval)** | Actualización casi en tiempo real de mensajes y notificaciones, sin WebSockets |
+
+> Nota: el `package.json` del backend incluye `@google/generative-ai`, pero no está integrado en ningún módulo actual — toda la IA en producción pasa por Groq.
 
 ---
 
@@ -54,28 +60,31 @@ Permite a candidatos crear su perfil, subir su CV para que la IA extraiga sus da
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      FRONTEND                           │
-│   HTML/CSS/JS vanilla  →  Live Server / Render Static   │
-└────────────────────┬────────────────────────────────────┘
-                     │ HTTP (REST API)
-┌────────────────────▼────────────────────────────────────┐
-│                      BACKEND                            │
-│              NestJS  →  Puerto 3001                     │
-│                                                         │
-│  /api/auth          →  Login / Register                 │
-│  /api/users         →  Perfil candidato/empresa         │
-│  /api/cv            →  Análisis de CV con Groq          │
-│  /api/jobs          →  CRUD de ofertas laborales        │
-│  /api/applications  →  Gestión de postulaciones         │
-│  /api/recommendations → Matches IA vía Make.com         │
-└────────────────────┬────────────────────────────────────┘
-          ┌──────────┴──────────┐
-          │                     │
-┌─────────▼──────┐   ┌─────────▼──────────────────────┐
-│  PostgreSQL     │   │  Servicios externos             │
-│  (Render DB)   │   │  • Groq API (llama-3.3-70b)     │
-│                │   │  • Make.com (automatización)    │
-└────────────────┘   └────────────────────────────────┘
+│                      FRONTEND                            │
+│   HTML/CSS/JS vanilla  →  Render Static Site             │
+└────────────────────┬──────────────────────────────────────┘
+                      │ HTTP (REST API) + JWT en Authorization
+┌────────────────────▼──────────────────────────────────────┐
+│                      BACKEND                              │
+│              NestJS  →  Puerto 3001  →  prefijo /api      │
+│                                                            │
+│  /api/auth            →  Login / Register / Verify email  │
+│  /api/users           →  Perfil candidato/empresa          │
+│  /api/cv              →  Análisis de CV con Groq            │
+│  /api/jobs            →  CRUD de ofertas laborales          │
+│  /api/applications    →  Gestión de postulaciones           │
+│  /api/recommendations →  Matches IA (Groq directo)          │
+│  /api/interviews      →  Simulación de entrevista con IA    │
+│  /api/messages        →  Conversaciones y mensajería         │
+│  /api/notifications   →  Notificaciones (badge no leídos)    │
+└────────────────────┬───────────────────────────────────────┘
+           ┌──────────┴──────────┐
+           │                     │
+┌──────────▼──────┐   ┌──────────▼──────────────────────┐
+│  PostgreSQL      │   │  Servicios externos              │
+│  (Render DB)     │   │  • Groq API (llama-3.3-70b)      │
+│                  │   │  • Brevo API (envío de emails)   │
+└──────────────────┘   └───────────────────────────────────┘
 ```
 
 ---
@@ -83,40 +92,65 @@ Permite a candidatos crear su perfil, subir su CV para que la IA extraiga sus da
 ## ✨ Funcionalidades
 
 ### 👤 Candidato
-- Registro e inicio de sesión con JWT
-- Perfil completo: datos personales, experiencia, educación, skills, idiomas
+- Registro e inicio de sesión con JWT (con verificación de email obligatoria antes de loguear)
+- Opción **"Recordarme"**: define si la sesión persiste 7 días (`localStorage`) o solo dura mientras esté la pestaña abierta (`sessionStorage`, token de 8hs)
+- Perfil completo: datos personales, experiencia, educación, skills técnicas y blandas, idiomas
 - **Subir CV en PDF → la IA extrae y completa el perfil automáticamente**
-- **Foto de perfil** con compresión automática
-- Explorar y filtrar ofertas laborales
-- Postularse a ofertas con un click
-- Ver estado de postulaciones en tiempo real
-- **Dashboard con recomendaciones personalizadas de la IA** (Match % + razón)
+- **Foto de perfil** con compresión automática (Canvas API)
+- Explorar y filtrar ofertas laborales, postularse con un click
+- Ver estado de postulaciones (pendiente / en revisión / aceptada / rechazada)
+- **Dashboard con recomendaciones personalizadas de la IA** (Match % + razón + skills técnicas faltantes), cacheadas 12hs para no recalcular en cada visita
+- Gráfico de **habilidades más demandadas** en el mercado y de demanda de las propias habilidades
+- **Simulación de entrevista con IA**: genera preguntas y evalúa las respuestas
+- **Generador de CV** a partir de los datos del perfil
 - Guardar ofertas favoritas
-- Tema claro / oscuro
+- **Mensajería** con empresas (por conversación, con badge de no leídos)
+- Notificaciones de eventos relevantes (cambios de estado, nuevos mensajes)
+- Tema claro / oscuro / según sistema
 
 ### 🏢 Empresa
 - Registro e inicio de sesión
-- Publicar y gestionar ofertas laborales
+- Publicar y gestionar ofertas laborales (con skills técnicas y blandas en columnas separadas)
 - **Buscar candidatos con sugerencia IA** por oferta
-- Ver perfil completo y descargar CV de cada candidato
-- Gestionar postulaciones: cambiar estado, agendar entrevistas
+- Ver perfil completo y CV de cada candidato
+- Gestionar postulaciones recibidas: cambiar estado (dispara notificación al candidato)
+- Guardar candidatos como favoritos
+- **Mensajería** con candidatos
 - Dashboard con estadísticas
 - Logo de empresa con foto
 
-### 🤖 Inteligencia Artificial
-- **Análisis de CV**: Groq extrae nombre, skills, experiencia, educación, bio, idiomas y genera un comentario del CV
-- **Recomendaciones para candidato**: Make.com + Groq analiza las ofertas activas contra el perfil y devuelve las 3 mejores con Match %
-- **Sugerencia de candidatos para empresa**: dado un puesto, la IA ordena los candidatos por compatibilidad
+### 🤖 Inteligencia Artificial (Groq, `llama-3.3-70b-versatile`)
+- **Análisis de CV**: extrae nombre, skills, experiencia, educación, bio, idiomas y genera un comentario del CV
+- **Recomendaciones para candidato**: cruza las skills del candidato contra las ofertas activas y devuelve hasta 3 con Match %, razón y skills técnicas faltantes (filtradas para no mezclar con habilidades blandas)
+- **Sugerencia de candidatos para empresa**: dado un puesto, ordena los candidatos por compatibilidad
+- **Simulación de entrevista**: genera preguntas relevantes al perfil/puesto y evalúa la calidad de la respuesta del candidato
+
+---
+
+## 🔑 Variables de entorno
+
+El backend espera estas variables (configurables en `backend/.env` localmente, o en el panel de Render en producción):
+
+| Variable | Uso |
+|---|---|
+| `PORT` | Puerto del servidor (default `3001`) |
+| `JWT_SECRET` | Clave para firmar/verificar los JWT |
+| `GROQ_API_KEY` | Clave de [console.groq.com](https://console.groq.com) — requerida para CV, recomendaciones, sugerencia de candidatos y entrevistas |
+| `BREVO_API_KEY` | Clave de [Brevo](https://www.brevo.com) — requerida para el envío de emails (verificación, notificaciones) |
+| `DATABASE_URL` | URL completa de conexión a Postgres (la usa Render automáticamente); si no está presente, se usan `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` para conexión local |
+| `NODE_ENV` | Si es `production` (o si hay `DATABASE_URL`), activa SSL en la conexión a Postgres |
+
+> El `.env.example` del repo actualmente solo incluye `PORT` y `JWT_SECRET` — al levantar el proyecto localmente, completar también `GROQ_API_KEY` y `BREVO_API_KEY` para que las funciones de IA y de email funcionen.
 
 ---
 
 ## 🚀 Instalación local
 
 ### Requisitos previos
-- Node.js 18+
+- Node.js 18+ (usa `fetch()` nativo, sin `node-fetch`)
 - PostgreSQL 14+ (local o en Render)
 - Cuenta en [console.groq.com](https://console.groq.com) — gratis
-- Cuenta en [make.com](https://make.com) — gratis
+- Cuenta en [brevo.com](https://www.brevo.com) — gratis
 
 ### 1. Clonar el repositorio
 
@@ -136,7 +170,7 @@ npm install
 
 ```bash
 cp .env.example .env
-# Editá el .env con tus datos (ver sección siguiente)
+# Completar PORT, JWT_SECRET, GROQ_API_KEY, BREVO_API_KEY y datos de DB (ver sección anterior)
 ```
 
 ### 4. Levantar el backend
@@ -151,13 +185,14 @@ npm run start:dev
 Abrí `frontend/pages/index.html` con **Live Server** en VS Code  
 (click derecho sobre el archivo → *Open with Live Server*)
 
+> Nota: las páginas del frontend apuntan por defecto a la API en producción (`https://ing-web-ii.onrender.com/api`, hardcodeada en `frontend/js/auth.js`). Para probar contra el backend local hay que cambiar manualmente `API_BASE` en ese archivo.
+
 ---
 
+## 🌍 Hosting en Render
 
+https://ing-web-ii.onrender.com/
 
-## Hostin en render
-
-https://ing-web-ii-1.onrender.com/
 ---
 
 ## 📁 Estructura del proyecto
@@ -166,19 +201,21 @@ https://ing-web-ii-1.onrender.com/
 Ing_Web_II/
 ├── backend/
 │   ├── src/
-│   │   ├── app.module.ts           # Módulo raíz + TypeORM config
-│   │   ├── main.ts                 # Bootstrap (puerto, CORS, body limit 25mb)
-│   │   ├── auth/                   # Login, register, JWT strategy
+│   │   ├── app.module.ts           # Módulo raíz + TypeORM config (SSL condicional a producción)
+│   │   ├── main.ts                 # Bootstrap (puerto, CORS, prefijo /api, body limit 25mb)
+│   │   ├── auth/                   # Login, register, verificación de email, JWT
 │   │   ├── users/
 │   │   │   ├── user.entity.ts      # Entidad TypeORM (todos los campos del perfil)
-│   │   │   ├── users.service.ts    # CRUD, findCandidates, sanitize
-│   │   │   └── users.controller.ts # PATCH /me, GET /candidates, POST /suggest
-│   │   ├── cv/
-│   │   │   ├── cv.service.ts       # pdf-parse + Groq API
-│   │   │   └── cv.controller.ts    # POST /analyze, POST /analyze-preview
-│   │   ├── jobs/                   # CRUD de ofertas laborales
+│   │   │   ├── users.service.ts    # CRUD, findCandidates, suggest (IA), sanitize
+│   │   │   └── users.controller.ts # PATCH /me, GET /candidates, POST /candidates/suggest
+│   │   ├── cv/                     # pdf-parse + Groq → análisis y autocompletado de perfil
+│   │   ├── jobs/                   # CRUD de ofertas laborales + ranking de skills demandadas
 │   │   ├── applications/           # Postulaciones + cambio de estado
-│   │   └── recommendations/        # Match candidato ↔ oferta vía Make
+│   │   ├── recommendations/        # Match candidato ↔ oferta con Groq, cacheado 12hs
+│   │   ├── interviews/             # Simulación de entrevista con IA (genera y evalúa)
+│   │   ├── messages/                # Conversaciones y mensajes entre candidato y empresa
+│   │   ├── notifications/          # Notificaciones (badge de no leídos)
+│   │   └── mail/                   # Envío de emails vía Brevo API
 │   ├── .env.example
 │   └── package.json
 │
@@ -187,43 +224,56 @@ Ing_Web_II/
     │   ├── global.css              # Design tokens, temas dark/light/system
     │   ├── candidate.css           # Layout candidato + sidebar
     │   ├── company.css             # Layout empresa + sidebar
+    │   ├── messages.css            # Estilos de la mensajería
     │   └── landing.css             # Páginas públicas (index, info)
     ├── js/
-    │   ├── auth.js                 # API_BASE, login, register, logout, redirect
-    │   ├── profile.js              # initProfile, updateDashboardHero, calcPercent
-    │   ├── avatar.js               # Upload/delete foto, compresión con canvas
-    │   ├── sidebar-candidate.js    # Inyecta sidebar candidato en runtime
-    │   ├── sidebar-company.js      # Inyecta sidebar empresa en runtime
-    │   ├── theme.js                # Sistema de temas claro/oscuro/sistema
-    │   └── user-loader.js          # Guard: redirige si no hay sesión activa
+    │   ├── auth.js                  # API_BASE, authFetch, login, register, logout, redirect
+    │   ├── login.js                 # Lógica del form de login + redirect si ya hay sesión
+    │   ├── register.js              # Lógica del form de registro
+    │   ├── profile.js               # initProfile, updateDashboardHero, calcPercent, avatares
+    │   ├── messages.js              # Lógica de la mensajería (lista, chat, polling)
+    │   ├── notifications.js         # Badge y dropdown de notificaciones
+    │   ├── sidebar-candidate.js     # Inyecta sidebar candidato en runtime
+    │   ├── sidebar-company.js       # Inyecta sidebar empresa en runtime
+    │   ├── sidebar-admin.js         # Inyecta sidebar admin en runtime
+    │   ├── sidebar-toggle.js        # Colapsar/expandir sidebar en desktop
+    │   ├── mobile-sidebar.js        # Comportamiento del sidebar en mobile
+    │   ├── theme.js                 # Sistema de temas claro/oscuro/sistema
+    │   └── user-loader.js           # Guard: redirige si no hay sesión activa + autocompleta UI
     └── pages/
-        ├── index.html              # Landing principal
-        ├── info_candidate.html     # Info para candidatos
-        ├── info_company.html       # Info para empresas
-        ├── login.html
-        ├── register.html
+        ├── index.html               # Landing principal
+        ├── login.html / register.html / verify-email.html
+        ├── info_candidate.html / info_company.html
+        ├── public-profile.html      # Perfil público de un candidato/empresa
+        ├── admin/                   # dashboard.html, jobs.html, users.html (panel admin)
         ├── candidate/
-        │   ├── dashboard.html      # Recomendaciones IA + subir CV
-        │   ├── profile.html        # Editar perfil + foto
-        │   ├── jobs.html           # Explorar y filtrar ofertas
-        │   ├── applications.html   # Mis postulaciones
-        │   ├── saved.html          # Ofertas guardadas
-        │   └── settings.html       # Configuración de cuenta
+        │   ├── dashboard.html       # Recomendaciones IA + % de perfil + ranking de skills
+        │   ├── profile.html         # Editar perfil + foto + gráfico de demanda de habilidades
+        │   ├── jobs.html            # Explorar y filtrar ofertas
+        │   ├── applications.html    # Mis postulaciones
+        │   ├── saved.html           # Ofertas guardadas
+        │   ├── messages.html        # Mensajería con empresas
+        │   ├── cv-generator.html    # Generador de CV a partir del perfil
+        │   ├── interview-simulation.html # Simulación de entrevista con IA
+        │   └── settings.html        # Configuración de cuenta
         └── company/
-            ├── dashboard.html      # Stats de la empresa
-            ├── candidates.html     # Buscar candidatos + sugerencia IA
-            ├── applications.html   # Gestionar postulaciones + agendar entrevistas
-            ├── post-job.html       # Publicar oferta
-            ├── my-jobs.html        # Mis ofertas activas
-            ├── favorites.html      # Candidatos guardados
-            └── settings.html       # Perfil empresa + logo
+            ├── dashboard.html       # Stats de la empresa
+            ├── candidates.html      # Buscar candidatos + sugerencia IA
+            ├── applications.html    # Gestionar postulaciones
+            ├── post-job.html        # Publicar oferta
+            ├── my-jobs.html         # Mis ofertas activas
+            ├── favorites.html       # Candidatos guardados
+            ├── messages.html        # Mensajería con candidatos
+            └── settings.html        # Perfil empresa + logo
 ```
 
 ---
 
 ## 🤖 Flujos de IA
 
-### Flujo 1 — Análisis de CV (Groq directo)
+Todos los flujos de IA llaman **directamente** a la API de Groq desde el backend, vía `fetch()` nativo — no hay intermediarios de automatización (no se usa Make.com ni n8n ni similares).
+
+### Flujo 1 — Análisis de CV
 
 ```
 Candidato sube PDF
@@ -231,38 +281,44 @@ Candidato sube PDF
   → POST /api/cv/analyze-preview  (preview sin guardar)
      o /api/cv/analyze            (analiza y guarda)
   → Backend: pdf-parse extrae texto del PDF
-  → Groq llama-3.3-70b procesa el texto
+  → fetch() directo a Groq (llama-3.3-70b-versatile)
   → Devuelve JSON: nombre, apellido, skills, experiencia,
     educación, bio, idiomas + comentario del CV
   → Frontend muestra preview → candidato confirma
   → Perfil completado automáticamente
 ```
 
-### Flujo 2 — Recomendaciones para candidato (Make → Groq)
+### Flujo 2 — Recomendaciones para candidato
 
 ```
 Candidato abre el dashboard
-  → POST /api/recommendations
-  → Backend trae: skills del candidato + ofertas activas de la DB
-  → Manda payload al webhook de Make.com
-  → Make → HTTP → Groq API (llama-3.3-70b)
-  → Groq analiza compatibilidad y devuelve:
-    3 ofertas con { jobId, matchPct, reason }
-  → Backend enriquece con datos reales de la DB
+  → GET /api/recommendations
+  → Backend chequea caché en el propio usuario (TTL 12hs, o invalida si hay oferta más nueva)
+  → Si no hay caché válido: arma prompt con skills del candidato + ofertas activas de la DB
+  → fetch() directo a Groq → devuelve hasta 3 ofertas con { jobId, matchPct, reason, missingSkills }
+  → Backend enriquece con datos reales de la DB y filtra missingSkills para que solo sean skills técnicas
+  → Guarda el resultado en caché y lo devuelve
   → Frontend renderiza cards con % de match y razón
 ```
 
-### Flujo 3 — Sugerencia de candidatos para empresa (Make → Groq)
+### Flujo 3 — Sugerencia de candidatos para empresa
 
 ```
 Empresa selecciona oferta y hace click en "✨ Sugerir"
   → POST /api/users/candidates/suggest
   → Backend trae: todos los candidatos + datos del puesto
-  → Manda payload al webhook de Make.com
-  → Make → HTTP → Groq API (llama-3.3-70b)
-  → Groq analiza compatibilidad y devuelve:
-    candidatos ordenados con { candidateId, matchPct, reason }
+  → fetch() directo a Groq → devuelve candidatos ordenados con { candidateId, matchPct, reason }
   → Frontend reordena cards con % de match
+```
+
+### Flujo 4 — Simulación de entrevista
+
+```
+Candidato inicia la simulación
+  → POST /api/interviews/start    → Groq genera una pregunta relevante al perfil/puesto
+  → Candidato responde
+  → POST /api/interviews/evaluate → Groq evalúa la respuesta y devuelve feedback
+  → Frontend muestra el resultado de la evaluación
 ```
 
 ---
@@ -273,7 +329,7 @@ Empresa selecciona oferta y hace click en "✨ Sugerir"
 1. Crear un **Web Service** en Render apuntando a la carpeta `backend/`
 2. Build command: `npm install && npm run build`
 3. Start command: `node dist/main`
-4. Agregar todas las variables de entorno en el panel de Render
+4. Agregar todas las variables de entorno listadas en [Variables de entorno](#-variables-de-entorno) en el panel de Render
 
 ### Base de datos
 1. Crear un **PostgreSQL** en Render (plan gratuito disponible)
@@ -288,8 +344,7 @@ ssl: isProduction ? { rejectUnauthorized: false } : false
 Se activa cuando existe `DATABASE_URL` o `NODE_ENV=production`.
 
 ### Frontend
-Podés servir la carpeta `frontend/` como un **Static Site** en Render  
-o subirla a cualquier hosting estático (Netlify, Vercel, GitHub Pages).
+El frontend (`frontend/`) se sirve como **Static Site** en Render.
 
 ---
 
@@ -300,7 +355,7 @@ Proyecto académico — **Ingeniería Web II, UNDEF 2026**
 | Integrante | Rol |
 |---|---|
 | Francisco Bossio | Fullstack + Integración IA |
-| Sofia Correa | Fullstack + Integracón IA + Diseño |
+| Sofia Correa | Fullstack + Integración IA + Diseño |
 
 ---
 
