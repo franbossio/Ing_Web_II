@@ -93,7 +93,6 @@ export class RecommendationsService {
       j.id + ' - ' + sanitize(j.title, 150) +
       (j.area ? ' | area: ' + sanitize(j.area, 100) : '') +
       ' | skills: ' + (j.skills || []).map(s => sanitize(s, 100)).join(', ') +
-      (j.softSkills && j.softSkills.length ? ' | soft skills: ' + j.softSkills.map(s => sanitize(s, 100)).join(', ') : '') +
       (j.requirements ? ' | requisitos: ' + sanitize(j.requirements, 200) : '') +
       (j.description  ? ' | descripcion: ' + sanitize(j.description,  200) : '')
     ).join('\n');
@@ -113,7 +112,7 @@ export class RecommendationsService {
       '\n- Solo incluye ofertas con matchPct >= 40' +
       '\n- Si ninguna supera 40, devuelve las 2 mejores igual' +
       '\n- El campo reason debe tener entre 60 y 120 palabras explicando: que skills especificas del candidato coinciden con la oferta, que experiencia o formacion es relevante para el puesto, y por que seria una buena eleccion para ese rol en particular. Se especifico y personalizado, no generico.' +
-      '\n- El campo missingSkills debe ser un array con las 1 a 4 skills tecnicas o blandas que el candidato NO tiene pero que la oferta requiere. Si el candidato tiene todas las skills, devuelve un array vacio [].';
+      '\n- El campo missingSkills debe ser un array con las 1 a 4 skills TECNICAS (nunca habilidades blandas como "trabajo en equipo", "comunicacion", "liderazgo", etc.) que el candidato NO tiene pero que la oferta requiere. Si el candidato tiene todas las skills tecnicas, devuelve un array vacio [].';
 
     console.log('=== CALLING GROQ DIRECT ===');
     console.log('=== JOBS COUNT:', jobs.length);
@@ -200,6 +199,8 @@ export class RecommendationsService {
       console.log('=== MATCH:', rec.jobId, '->', job?.title || 'NO ENCONTRADO');
       if (!job) continue;
 
+      const technicalSkills = new Set((job.skills || []).map(s => s.trim().toLowerCase()));
+
       results.push({
         jobId:         job.id,
         title:         job.title,
@@ -213,7 +214,10 @@ export class RecommendationsService {
         matchPct:      Number(rec.matchPct || 0),
         reason:        sanitize(rec.reason || 'Compatible con tu perfil', 600),
         missingSkills: Array.isArray(rec.missingSkills)
-          ? rec.missingSkills.map((s: any) => sanitize(String(s), 80)).filter(Boolean).slice(0, 4)
+          ? rec.missingSkills
+              .map((s: any) => sanitize(String(s), 80))
+              .filter(s => s && technicalSkills.has(s.toLowerCase()))
+              .slice(0, 4)
           : [],
       });
 
