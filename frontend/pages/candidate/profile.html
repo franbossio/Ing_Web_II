@@ -384,7 +384,7 @@
               <div id="ai-result" style="display:none; margin-top:20px;">
 
                 <!-- Datos extraídos -->
-                <div style="padding:18px 20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2); margin-bottom:14px;">
+                <div id="ai-extracted-block" style="padding:18px 20px; background:rgba(76,175,132,0.06); border-radius:var(--radius-md); border:1px solid rgba(76,175,132,0.2); margin-bottom:14px;">
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
                     <span style="font-size:1.3rem;">✅</span>
                     <div>
@@ -591,6 +591,21 @@
         if (current)   current.style.display = 'none';
         if (dropTitle) dropTitle.textContent = 'Subir CV';
       }
+
+      // Comentario de la IA guardado en el perfil (generado solo al subir el CV,
+      // no se vuelve a llamar a la IA al entrar a esta pantalla)
+      const aiResult       = document.getElementById('ai-result');
+      const extractedBlock = document.getElementById('ai-extracted-block');
+      const commentBlock   = document.getElementById('ai-comment-block');
+      const commentText    = document.getElementById('ai-comment-text');
+      if (user && user.cvAnalysis) {
+        if (aiResult)       aiResult.style.display = 'block';
+        if (extractedBlock) extractedBlock.style.display = 'none';
+        if (commentBlock)   commentBlock.style.display = 'block';
+        if (commentText)    commentText.textContent = user.cvAnalysis;
+      } else {
+        if (aiResult) aiResult.style.display = 'none';
+      }
     }
 
     function handleFileSelect(input) {
@@ -741,6 +756,9 @@
         const token = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
 
         // Guardar perfil + CV directamente en /api/users/me (sin volver a analizar)
+        // cvComment -> cvAnalysis: la entidad User guarda el comentario de la IA en
+        // la columna cvAnalysis, no en cvComment (ese nombre es solo el del preview).
+        const { cvComment, ...profileData } = pendingAiData;
         const res = await fetch('https://ing-web-ii.onrender.com/api/users/me', {
           method: 'PATCH',
           headers: {
@@ -748,9 +766,10 @@
             'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
-            ...pendingAiData,
+            ...profileData,
             cvFileName: pendingFileName,
             cvUrl:      pendingBase64,
+            cvAnalysis: cvComment || null,
           }),
         });
 
