@@ -293,9 +293,10 @@
         <select class="filter-select" id="filter-location">
           <option value="">📍 Cualquier ubicación</option>
         </select>
-        <select class="filter-select" id="filter-tech">
-          <option value="">💻 Cualquier tecnología</option>
-        </select>
+        <div style="position:relative;">
+          <input type="text" class="filter-select" id="filter-tech" placeholder="💻 Tecnología..." autocomplete="off" style="width:160px;" />
+          <div id="filter-tech-suggestions" style="display:none;position:absolute;top:calc(100% + 4px);left:0;min-width:180px;background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-sm);z-index:30;box-shadow:0 4px 12px rgba(0,0,0,0.15);overflow:hidden;"></div>
+        </div>
         <select class="filter-select" id="filter-exp">
           <option value="">🏆 Cualquier experiencia</option>
           <option value="0">Sin experiencia</option>
@@ -385,6 +386,7 @@
   let DISPLAY_LIST   = []; // puede ser filtrado o sugerido por IA
   let MY_JOBS        = []; // ofertas de esta empresa
   let IS_IA_MODE     = false;
+  let ALL_TECHS      = []; // skills únicas, para autocompletar el filtro de tecnología
 
   // ── Renderizar una card ──────────────────────────────────────────────────
   function renderCard(c) {
@@ -502,7 +504,7 @@
 
       const matchQ    = !q    || nombre.includes(q) || title.includes(q) || skills.includes(q);
       const matchLoc  = !loc  || location.includes(loc);
-      const matchTech = !tech || (c.skills || []).some(s => s.toLowerCase() === tech);
+      const matchTech = !tech || (c.skills || []).some(s => s.toLowerCase().includes(tech));
 
       let matchExp = true;
       if (exp !== '') {
@@ -744,15 +746,9 @@
         locSel.appendChild(opt);
       });
 
-      // Llenar filtro de tecnologías (skills técnicas únicas entre todos los candidatos)
-      const techs = [...new Set(ALL_CANDIDATES.flatMap(c => c.skills || []).filter(Boolean))]
+      // Tecnologías únicas entre todos los candidatos, para sugerir mientras se escribe
+      ALL_TECHS = [...new Set(ALL_CANDIDATES.flatMap(c => c.skills || []).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b));
-      const techSel = document.getElementById('filter-tech');
-      techs.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.toLowerCase(); opt.textContent = t;
-        techSel.appendChild(opt);
-      });
 
       renderList(ALL_CANDIDATES);
       setTimeout(() => { updateAllFavBtns(); [...compareSet].forEach(updateCmpBtn); }, 50);
@@ -930,9 +926,50 @@
   // Eventos de filtro
   document.getElementById('search-input').addEventListener('input', applyFilters);
   document.getElementById('filter-location').addEventListener('change', applyFilters);
-  document.getElementById('filter-tech').addEventListener('change', applyFilters);
   document.getElementById('filter-exp').addEventListener('change', applyFilters);
   document.getElementById('filter-edu').addEventListener('change', applyFilters);
+
+  // ── Autocompletado del filtro de tecnología (máx. 4 sugerencias) ──────────
+  const techInput = document.getElementById('filter-tech');
+  const techSuggestBox = document.getElementById('filter-tech-suggestions');
+
+  function renderTechSuggestions(matches) {
+    if (!matches.length) { techSuggestBox.style.display = 'none'; return; }
+    techSuggestBox.innerHTML = matches.map(t => `
+      <div class="tech-suggest-item" style="padding:9px 14px;font-size:0.85rem;cursor:pointer;" data-tech="${t}">${t}</div>
+    `).join('');
+    techSuggestBox.style.display = 'block';
+    techSuggestBox.querySelectorAll('.tech-suggest-item').forEach(item => {
+      item.addEventListener('mouseenter', () => item.style.background = 'var(--clr-surface-2)');
+      item.addEventListener('mouseleave', () => item.style.background = '');
+      item.addEventListener('click', () => {
+        techInput.value = item.dataset.tech;
+        techSuggestBox.style.display = 'none';
+        applyFilters();
+      });
+    });
+  }
+
+  techInput.addEventListener('input', () => {
+    const q = techInput.value.toLowerCase().trim();
+    applyFilters();
+    if (!q) { techSuggestBox.style.display = 'none'; return; }
+    const matches = ALL_TECHS.filter(t => t.toLowerCase().includes(q)).slice(0, 4);
+    renderTechSuggestions(matches);
+  });
+
+  techInput.addEventListener('focus', () => {
+    if (!techInput.value.trim()) return;
+    const q = techInput.value.toLowerCase().trim();
+    const matches = ALL_TECHS.filter(t => t.toLowerCase().includes(q)).slice(0, 4);
+    renderTechSuggestions(matches);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!techInput.contains(e.target) && !techSuggestBox.contains(e.target)) {
+      techSuggestBox.style.display = 'none';
+    }
+  });
 
   // Reset modo IA al buscar
   document.getElementById('search-input').addEventListener('input', function() {

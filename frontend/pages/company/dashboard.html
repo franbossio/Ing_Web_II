@@ -387,12 +387,11 @@
     const list = document.getElementById('top-jobs-list');
     const deletedIds = getDeletedIds();
     const top = jobs
-      .filter(j => j.active !== false && !deletedIds.includes(j.id))
-      .slice()
+      .filter(j => j.active !== false && !deletedIds.includes(j.id) && (j.views || 0) > 0)
       .sort((a, b) => (b.views || 0) - (a.views || 0))
       .slice(0, 5);
 
-    if (top.length === 0 || top.every(j => !j.views)) {
+    if (top.length === 0) {
       list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">Todavía no hay vistas registradas.</div>';
       return;
     }
@@ -422,10 +421,11 @@
       if (cand && cand.id && !seen.has(cand.id)) seen.set(cand.id, cand);
     });
     const top = [...seen.values()]
+      .filter(c => (c.profileViews || 0) > 0)
       .sort((a, b) => (b.profileViews || 0) - (a.profileViews || 0))
       .slice(0, 5);
 
-    if (top.length === 0 || top.every(c => !c.profileViews)) {
+    if (top.length === 0) {
       list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">Todavía no hay perfiles vistos.</div>';
       return;
     }
