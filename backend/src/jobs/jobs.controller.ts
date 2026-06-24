@@ -39,6 +39,13 @@ export class JobsController {
     return this.jobsService.findOne(id);
   }
 
+  // POST /api/jobs/:id/view — registrar una vista de la oferta (candidato abrió el detalle)
+  @Post(':id/view')
+  @UseGuards(JwtAuthGuard)
+  registerView(@Param('id') id: string) {
+    return this.jobsService.incrementViews(id);
+  }
+
   // POST /api/jobs — crear oferta (empresa)
   @Post()
   @UseGuards(JwtAuthGuard)

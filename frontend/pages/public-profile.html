@@ -284,6 +284,7 @@
         }
         const user = await res.json();
         renderProfile(user);
+        fetch(`https://ing-web-ii.onrender.com/api/users/public/${id}/view`, { method: 'POST' }).catch(() => {});
       } catch (e) {
         console.error(e);
         renderError('No se pudo cargar el perfil. Intentá de nuevo más tarde.');

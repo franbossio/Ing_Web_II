@@ -117,6 +117,39 @@
 
       </div>
 
+      <!-- ── Más vistas / más buscados ── -->
+      <div class="grid-2">
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Ofertas más vistas</div>
+              <div class="panel-subtitle">Tus publicaciones con más interés</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:16px;">
+            <div class="job-list" id="top-jobs-list">
+              <div style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Perfiles más buscados</div>
+              <div class="panel-subtitle">Candidatos que más abriste de tus postulantes</div>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:16px;">
+            <div class="job-list" id="top-candidates-list">
+              <div style="text-align:center;padding:24px;color:var(--clr-muted);">Cargando...</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div><!-- /page-content -->
   </main>
 
@@ -350,6 +383,71 @@
     }).join('');
   }
 
+  function renderTopJobs(jobs) {
+    const list = document.getElementById('top-jobs-list');
+    const deletedIds = getDeletedIds();
+    const top = jobs
+      .filter(j => j.active !== false && !deletedIds.includes(j.id))
+      .slice()
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 5);
+
+    if (top.length === 0 || top.every(j => !j.views)) {
+      list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">Todavía no hay vistas registradas.</div>';
+      return;
+    }
+
+    list.innerHTML = top.map(job => `
+      <div class="job-row">
+        <div class="job-row-left">
+          <div class="job-row-icon">${jobIcon(job.title)}</div>
+          <div>
+            <div class="job-row-title">${job.title || 'Sin título'}</div>
+            <div class="job-row-meta"><span>${modalityIcon(job.modality)} ${job.modality || 'No especificado'}</span></div>
+          </div>
+        </div>
+        <div class="job-row-right">
+          <span style="font-size:0.8rem;color:var(--clr-muted);">👁 ${job.views || 0} vista${job.views === 1 ? '' : 's'}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderTopCandidates(apps) {
+    const list = document.getElementById('top-candidates-list');
+
+    // Candidatos únicos entre los postulantes, ordenados por profileViews
+    const seen = new Map();
+    apps.forEach(a => {
+      const cand = a.candidate;
+      if (cand && cand.id && !seen.has(cand.id)) seen.set(cand.id, cand);
+    });
+    const top = [...seen.values()]
+      .sort((a, b) => (b.profileViews || 0) - (a.profileViews || 0))
+      .slice(0, 5);
+
+    if (top.length === 0 || top.every(c => !c.profileViews)) {
+      list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">Todavía no hay perfiles vistos.</div>';
+      return;
+    }
+
+    list.innerHTML = top.map(cand => {
+      const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || cand.email;
+      return `
+        <div class="job-row">
+          <div class="job-row-left">
+            <div class="job-row-icon">${avatarInitials(nombre, cand.email)}</div>
+            <div>
+              <div class="job-row-title">${nombre}</div>
+              <div class="job-row-meta"><span>${cand.jobTitle || 'Sin título profesional'}</span></div>
+            </div>
+          </div>
+          <div class="job-row-right">
+            <span style="font-size:0.8rem;color:var(--clr-muted);">👁 ${cand.profileViews || 0} vista${cand.profileViews === 1 ? '' : 's'}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
   // ── Carga principal ──────────────────────────────────────────────────────────
   async function loadDashboardData() {
     try {
@@ -374,11 +472,13 @@
       renderStats(jobs, apps);
       renderJobs(jobs);
       renderActivity(apps, jobs);
+      renderTopJobs(jobs);
+      renderTopCandidates(apps);
 
     } catch (err) {
       console.error('[Dashboard]', err);
       const errMsg = '<div style="text-align:center;padding:24px;color:var(--clr-muted);">No se pudieron cargar los datos. Verificá tu conexión.</div>';
-      ['jobs-list', 'activity-list'].forEach(id => {
+      ['jobs-list', 'activity-list', 'top-jobs-list', 'top-candidates-list'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = errMsg;
       });

@@ -54,6 +54,9 @@ export class Job {
   @Column({ default: true })
   active: boolean;
 
+  @Column({ type: 'int', default: 0 })
+  views: number;
+
   // Empresa que publica la oferta
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'company_id' })

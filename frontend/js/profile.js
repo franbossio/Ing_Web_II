@@ -391,6 +391,15 @@ function updateProfileHero(u) {
   if (nm) nm.textContent = `${u.firstName||''} ${u.lastName||''}`.trim();
   const sb = document.querySelector('.avatar-sub');
   if (sb) sb.textContent = [u.jobTitle, u.location].filter(Boolean).join(' · ');
+
+  // Logo de empresa (settings.html de company) — usa el mismo patrón que el avatar de candidato
+  const logo = document.querySelector('.company-logo-lg');
+  if (logo) {
+    const companyInitials = u.companyName
+      ? u.companyName.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase()
+      : '?';
+    applyPhoto(logo, u.photo, companyInitials);
+  }
 }
 
 export function updateRing(pct) {

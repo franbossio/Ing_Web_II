@@ -201,6 +201,9 @@
   window.viewProfile = function(id) {
     const cand = getFavs().find(f => f.id === id);
     if (!cand) return;
+
+    // Registrar la vista de perfil (fire-and-forget)
+    fetch(`https://ing-web-ii.onrender.com/api/users/public/${id}/view`, { method: 'POST' }).catch(() => {});
     const nombre = [cand.firstName, cand.lastName].filter(Boolean).join(' ') || '—';
     const iniciales = nombre !== '—' ? nombre.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() : '?';
     const skillsHtml = (cand.skills || []).map(s =>

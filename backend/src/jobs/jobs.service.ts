@@ -75,6 +75,11 @@ export class JobsService {
     await this.repo.save(job);
   }
 
+  // Registrar una vista de la oferta (la incrementa un candidato al abrir el detalle)
+  async incrementViews(id: string): Promise<void> {
+    await this.repo.increment({ id }, 'views', 1);
+  }
+
   // Eliminar oferta definitivamente
   async remove(id: string, companyId: string): Promise<{ message: string }> {
     const job = await this.findOne(id);

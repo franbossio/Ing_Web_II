@@ -54,6 +54,12 @@ export class UsersController {
     return this.usersService.findPublicProfile(id);
   }
 
+  /** POST /api/users/public/:id/view — registrar una vista de perfil (empresa o link público) */
+  @Post('public/:id/view')
+  registerProfileView(@Param('id') id: string) {
+    return this.usersService.incrementProfileViews(id);
+  }
+
   /** GET /api/users/candidates */
   @Get('candidates')
   @UseGuards(JwtAuthGuard)

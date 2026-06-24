@@ -412,6 +412,12 @@ window.toggleSaveJob = function(jobId, btn) {
 window.openJobModal = function(jobId) {
   const job     = ALL_JOBS.find(j => j.id === jobId);
   if (!job) return;
+
+  // Registrar la vista (fire-and-forget, no bloquea la apertura del modal)
+  fetch(`https://ing-web-ii.onrender.com/api/jobs/${jobId}/view`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${TOKEN}` },
+  }).catch(() => {});
   const applied = APPLIED_IDS.has(jobId);
   const body    = document.getElementById('jm-body');
   const applyBtn= document.getElementById('jm-apply-btn');

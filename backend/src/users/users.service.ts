@@ -161,6 +161,11 @@ export class UsersService implements OnModuleInit {
     };
   }
 
+  // Registrar una vista de perfil (una empresa abrió el perfil de un candidato)
+  async incrementProfileViews(id: string): Promise<void> {
+    await this.repo.increment({ id }, 'profileViews', 1);
+  }
+
   async findAll(): Promise<SafeUser[]> {
     const users = await this.repo.find({ order: { createdAt: 'DESC' } });
     return users.map(u => this.sanitize(u));
