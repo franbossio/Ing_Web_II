@@ -190,20 +190,45 @@
     const resultPanel    = document.getElementById('iv-result-panel');
 
     async function loadJobs() {
+      const select = document.getElementById('iv-job-select');
+      const seen = new Map(); // jobId -> { title, company, tag }
+
       try {
-        const res = await fetch(`${API}/jobs`, { headers: { Authorization: `Bearer ${token}` } });
-        if (!res.ok) return;
-        const jobs = await res.json();
-        const select = document.getElementById('iv-job-select');
-        jobs.forEach(j => {
-          const opt = document.createElement('option');
-          opt.value = j.id;
-          opt.textContent = `${j.title} — ${j.company?.companyName || 'Empresa'}`;
-          select.appendChild(opt);
-        });
+        const recRes = await fetch(`${API}/recommendations`, { headers: { Authorization: `Bearer ${token}` } });
+        if (recRes.ok) {
+          const recs = await recRes.json();
+          (recs || []).forEach(r => {
+            seen.set(r.jobId, { title: r.title, company: r.company, tag: 'recomendada' });
+          });
+        }
       } catch (e) {
-        console.error('Error cargando ofertas', e);
+        console.error('Error cargando recomendaciones', e);
       }
+
+      try {
+        const appRes = await fetch(`${API}/applications/my`, { headers: { Authorization: `Bearer ${token}` } });
+        if (appRes.ok) {
+          const apps = await appRes.json();
+          (apps || []).forEach(a => {
+            if (!a.job) return;
+            const existing = seen.get(a.job.id);
+            seen.set(a.job.id, {
+              title: a.job.title,
+              company: a.job.company?.companyName || existing?.company || 'Empresa',
+              tag: existing ? 'recomendada y postulada' : 'postulada',
+            });
+          });
+        }
+      } catch (e) {
+        console.error('Error cargando postulaciones', e);
+      }
+
+      seen.forEach((j, jobId) => {
+        const opt = document.createElement('option');
+        opt.value = jobId;
+        opt.textContent = `${j.title} — ${j.company} (${j.tag})`;
+        select.appendChild(opt);
+      });
     }
 
     async function startInterview() {
