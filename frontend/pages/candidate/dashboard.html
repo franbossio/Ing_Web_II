@@ -305,12 +305,12 @@
             </div>
           </div>
 
-          <!-- Der: Recomendadas IA → Make → ChatGPT -->
+          <!-- Der: Recomendadas IA -->
           <div class="panel">
             <div class="panel-header">
               <div>
                 <div class="panel-title">🤖 Recomendadas para vos</div>
-                <div class="panel-subtitle">ChatGPT analizó tu perfil contra las ofertas activas</div>
+                <div class="panel-subtitle">La IA analizó tu perfil contra las ofertas activas</div>
               </div>
               <a href="jobs.html" class="icon-btn" style="font-size:0.78rem;">Ver todas</a>
             </div>
@@ -452,7 +452,7 @@
       if (confirm('¿Estás seguro de que deseas cerrar sesión?')) logout();
     };
 
-    // ── Recomendaciones IA via Make → ChatGPT ──────────────────────────────
+    // ── Recomendaciones IA  ──────────────────────────────
     // IMPORTANTE: definida ANTES de loadDashboard para que pueda llamarla
     async function loadRecommendations() {
       const token  = localStorage.getItem('talentai_token') || sessionStorage.getItem('talentai_token');
