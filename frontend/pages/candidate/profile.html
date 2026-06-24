@@ -712,6 +712,9 @@
     }
 
     function showAiPreview(data) {
+      const extractedBlock = document.getElementById('ai-extracted-block');
+      if (extractedBlock) extractedBlock.style.display = 'block';
+
       const container = document.getElementById('ai-extracted-fields');
       const summary   = document.getElementById('ai-result-summary');
       if (!container) return;
