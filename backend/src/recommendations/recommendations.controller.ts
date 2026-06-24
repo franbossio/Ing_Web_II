@@ -14,7 +14,7 @@ export class RecommendationsController {
   /**
    * POST /api/recommendations
    * El candidato llama a esto al abrir el dashboard.
-   * El backend busca sus skills, trae las ofertas y consulta Make → ChatGPT.
+   
    */
   @Post()
   @UseGuards(JwtAuthGuard)
